@@ -17,39 +17,23 @@ limitations under the License.
 */
 package controllers;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.codehaus.jettison.json.JSONArray;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-
-import models.agent.batch.commands.message.BatchResponseFromManager;
 import models.data.AgentCommandMetadata;
 import models.data.JsonResult;
-import models.data.NodeGroupSourceMetadata;
 import models.data.RawDataSourceType;
 import models.data.providers.AgentCommadProviderHelperAggregation;
-import models.data.providers.AgentCommandProviderHelperForWholeJob;
+import models.data.providers.AgentCommandProvider;
 import models.data.providers.AgentCommandProviderHelperInternalFlow;
 import models.data.providers.AgentConfigProviderHelper;
-import models.data.providers.AgentCommandProvider;
-import models.data.providers.AgentDataAggregator;
 import models.data.providers.AgentDataProvider;
-import models.data.providers.AgentDataProviderHelper;
 import models.data.providers.CommandProviderSingleServerHelper;
-import models.data.providers.LogProvider;
 import models.data.providers.NodeGroupProvider;
 import models.rest.beans.requests.RequestCommandWithNodeSpecficReplaceMap;
 import models.rest.beans.requests.RequestCommandWithReplaceMap;
@@ -58,8 +42,30 @@ import models.utils.DateUtils;
 import models.utils.MyHttpUtils;
 import models.utils.VarUtils;
 
+import org.lightj.example.task.HttpTaskBuilder;
+import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.task.ExecutableTask;
+import org.lightj.task.ExecuteOption;
+import org.lightj.task.MonitorOption;
+import org.lightj.task.StandaloneTaskExecutor;
+import org.lightj.task.StandaloneTaskListener;
+import org.lightj.task.asynchttp.UrlTemplate;
+import org.lightj.util.JsonUtil;
+import org.lightj.util.StringUtil;
+
 import play.mvc.Controller;
-import play.mvc.results.Error;
+import resources.ICommand;
+import resources.ICommandData;
+import resources.INodeGroup;
+import resources.INodeGroupData;
+import resources.INodeGroupData.NodeGroupType;
+import resources.IUserDataDao.DataType;
+import resources.JobLog;
+import resources.JobLog.UserCommand;
+import resources.TaskResourcesProvider;
+import resources.UserDataProvider;
+
+import com.google.gson.Gson;
 
 /**
  * 
@@ -75,12 +81,23 @@ public class Commands extends Controller {
 		String topnav = "commands";
 
 		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-			List<AgentCommandMetadata> commands = new ArrayList<AgentCommandMetadata>();
-			commands.addAll(adp.agentCommandMetadatas.values());
-
-			Collections.sort(commands);
-
+			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
+			List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
+			for (ICommand cmd : cmds.values()) {
+				Map<String, String> values = new HashMap<String, String>();
+				values.put("name", cmd.getName());
+				UrlTemplate req = cmd.getHttpTaskRequest().getUrlTemplate();
+				values.put("url", req.getUrl());
+				values.put("httpMethod", req.getMethod().name());
+				StringBuffer headers = new StringBuffer();
+				for (Entry<String, String> header : req.getHeaders().entrySet()) {
+					headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append("\n");
+				}
+				values.put("headers", headers.toString());
+				values.put("body", req.getBody());
+				values.put("variables", StringUtil.join(req.getVariableNames(), ","));
+				commands.add(values);
+			}
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
 
 			render(page, topnav, commands, lastRefreshed);
@@ -120,23 +137,27 @@ public class Commands extends Controller {
 		String topnav = "commands";
 
 		try {
+			
+			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
+			List<Map<String, String>> cmdsMeta = new ArrayList<Map<String,String>>();
+			for (ICommand cmd : cmds.values()) {
+				HashMap<String, String> meta = new HashMap<String, String>();
+				meta.put("agentCommandType", cmd.getName());
+				cmdsMeta.add(meta);
+			}
+			
+			Map<String, INodeGroup> ngsMap = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
+			ArrayList<Map<String, String>> ngs = new ArrayList<Map<String, String>>();
+			for (String v : ngsMap.keySet()) {
+				Map<String, String> kvp = new HashMap<String, String>(1);
+				kvp.put("nodeGroupType", v);
+				ngs.add(kvp);
+			}
+			String nodeGroupSourceMetadataListJsonArray = JsonUtil.encode(ngs);
+			
+			String agentCommandMetadataListJsonArray = JsonUtil.encode(cmdsMeta);
 
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			List<NodeGroupSourceMetadata> nodeGroupSourceMetadataList = NodeGroupSourceMetadata
-					.convertMapToList(adp.getNodegroupsourcemetadatas());
-
-			String nodeGroupSourceMetadataListJsonArray = AgentUtils
-					.toJson(nodeGroupSourceMetadataList);
-
-			List<AgentCommandMetadata> agentCommandMetadataList = AgentCommandMetadata
-					.convertMapToList(adp.getAgentcommandmetadatas());
-
-			String agentCommandMetadataListJsonArray = AgentUtils
-					.toJson(agentCommandMetadataList);
-
-			render(page, topnav, nodeGroupSourceMetadataListJsonArray,
-					agentCommandMetadataListJsonArray);
+			render(page, topnav, nodeGroupSourceMetadataListJsonArray, agentCommandMetadataListJsonArray);
 		} catch (Throwable t) {
 
 			t.printStackTrace();
@@ -169,6 +190,42 @@ public class Commands extends Controller {
 		}
 
 	}
+	
+	
+	public static void runCmdOnNodeGroup(String dataType, String nodeGroupType, String agentCommandType) 
+	{
+		DataType dType = DataType.valueOf(dataType.toUpperCase());
+		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
+		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
+		try {
+			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
+			HttpTaskRequest reqTemplate = cmd.getHttpTaskRequest();
+			reqTemplate.setExecutionOption(new ExecuteOption());
+			reqTemplate.setMonitorOption(new MonitorOption(5000));
+			
+			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
+			String[] hosts = ng.getNodeList().toArray(new String[0]);
+			reqTemplate.setHosts(hosts);
+			
+			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+			JobLog jobLog = new JobLog();
+			UserCommand userCommand = new UserCommand();
+			userCommand.cmd = cmd;
+			userCommand.nodeGroup = ng;
+			jobLog.setUserCommand(userCommand);
+			
+			StandaloneTaskListener listener = new StandaloneTaskListener();
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(jobLog));
+			new StandaloneTaskExecutor(null, listener, reqTask).execute();
+			
+		} catch (Throwable t) {
+			error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage()
+					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
+		}
+
+	}
+	
+	
 
 	/**
 	 * 20131017: only adhoc node group

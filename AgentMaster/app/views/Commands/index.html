@@ -15,16 +15,12 @@
 			<thead>
 				<tr>
 					<th>No.</th>
-					<th>Type</th>
+					<th>Name</th>
+					<th>URL</th>
 					<th>httpMethod</th>
-					<th>Protocol</th>
-					<th>Port</th>
-					<th>HttpHeader</th>
-					<th>UrlPostfix</th>
-					<th>Request Content Template</th>
-					<th>MaxConcurrency</th>
-					<th>ExtractFrom</th>
-					<th>ExtractTo</th>
+					<th>Headers</th>
+					<th>Body</th>
+					<th>Variables</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -32,8 +28,9 @@
 				<tr>
 					<td>${obj_index}</td>
 					<td>   
-						<a target=_blank href="commands/agentCommandType/${obj.agentCommandType}" >${obj.agentCommandType}</a> 
+						<a target=_blank href="config/viewConfigItem/command/${obj.name}" >${obj.name}</a> 
 					</td>   
+					<td>${obj.url}</td>
 					<td>
 					<script type="text/javascript">	
 					getHttpMethodLabel("${obj.httpMethod}");
@@ -41,18 +38,9 @@
 					
 					</td>
 					
-					<td>${obj.requestProtocol}</td>
-					<td>${obj.requestPort}</td>
-					
-					<td>
-						<a target=_blank href="/config/getHttpHeaders?httpHeaderType=${obj.httpHeaderType}" >${obj.httpHeaderType}</a> 
-					</td>
-					
-					<td>${obj.requestUrlPostfix}</td>
-					<td>${obj.requestContentTemplate}</td>					
-					<td>${obj.maxConcurrency}</td>
-					<td>${obj.responseExtractIndexStart}</td>
-					<td>${obj.responseExtractIndexEnd}</td>
+					<td>${obj.headers}</td>
+					<td>${obj.body}</td>
+					<td>${obj.variables}</td>
 				</tr>
 				#{/list}
 			</tbody>

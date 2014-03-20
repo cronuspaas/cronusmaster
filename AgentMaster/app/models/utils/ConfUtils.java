@@ -35,6 +35,8 @@ public class ConfUtils {
 	public static String aggregationConfFileLocation = VarUtils.CONFIG_FILE_FOLDER_WITH_SLASH +"aggregation.conf";
 	public static String httpHeaderConfFileLocation = VarUtils.CONFIG_FILE_FOLDER_WITH_SLASH +"httpheader.conf";
 	
+	public static String httpTemplateConfFileLocation = VarUtils.CONFIG_FILE_FOLDER_WITH_SLASH + "httptemplate.conf";
+	
 	
 	public static final String localHostName = getLocalHostName();
 

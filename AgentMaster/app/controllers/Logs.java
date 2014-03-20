@@ -18,24 +18,25 @@ limitations under the License.
 package controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import models.data.LogFile;
 import models.data.LogFileGeneric;
-import models.data.providers.AgentConfigProvider;
-import models.data.providers.AgentDataProvider;
 import models.data.providers.LogProvider;
 import models.utils.DateUtils;
 import models.utils.FileIoUtils;
 import models.utils.VarUtils;
-import models.utils.VarUtils.CONFIG_FILE_TYPE;
+
+import org.lightj.util.DateUtil;
 
 import play.mvc.Controller;
+import resources.IJobLogger;
+import resources.JobLog;
+import resources.UserDataProvider;
 
 /**
  * 
@@ -44,24 +45,41 @@ import play.mvc.Controller;
  */
 public class Logs extends Controller {
 
+	/**
+	 * show logs
+	 * @param date
+	 */
 	public static void index(String date) {
 
 		String page = "index";
 		String topnav = "logs";
 
 		try {
-			LogProvider lp = LogProvider.getInstance();
-
-			List<LogFile> logFiles = lp
-					.getLogFilesInFolder(VarUtils.LOG_FOLDER_NAME_APP_WITH_SLASH);
-
-			if (date == null) {
-				date = DateUtils.getTodaysDateStr();
+			
+			IJobLogger logger = UserDataProvider.getJobLogger();
+			List<JobLog> jobLogs = logger.listLogs();
+			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+			
+			for (JobLog jobLog : jobLogs) {
+				HashMap<String, String> log = new HashMap<String, String>();
+				log.put("name", String.format("%s.jsonlog.txt", jobLog.uuid()));
+				log.put("command", jobLog.getUserCommand().cmd.getName());
+				log.put("nodeGroup", jobLog.getUserCommand().nodeGroup.getName());
+				log.put("timeStamp", Long.toString(DateUtil.parse(jobLog.getTimestamp(), JobLog.DateFormat).getTime()));
+				log.put("timeStampDisplay", jobLog.getTimestamp());
+				logFiles.add(log);
 			}
-
 			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
+
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
+					
+				}});
 
 			// 20130510105239921-0700-ADHOC_NODE_LIST_2_BK-GET_VI.jsonlog.txt
 			// 20130510111550089-0700-ADHOC_NODEGROUP_20130510111546633-0700-GET_VI.jsonlog.txt

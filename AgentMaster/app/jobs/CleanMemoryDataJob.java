@@ -49,18 +49,18 @@ public class CleanMemoryDataJob extends Job {
 
 		//always on
 		
-		try {
-
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			adp.resetData();
-
-			models.utils.LogUtils.printLogNormal("Successful resetData " + DateUtils.getNowDateTimeStr());
-			
-		} catch (Throwable t) {
-
-			models.utils.LogUtils.printLogError("Error occured in AgentSmartUpgradeJob");
-		}
+//		try {
+//
+//			AgentDataProvider adp = AgentDataProvider.getInstance();
+//
+//			adp.resetData();
+//
+//			models.utils.LogUtils.printLogNormal("Successful resetData " + DateUtils.getNowDateTimeStr());
+//			
+//		} catch (Throwable t) {
+//
+//			models.utils.LogUtils.printLogError("Error occured in AgentSmartUpgradeJob");
+//		}
 
 	}
 

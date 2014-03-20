@@ -17,11 +17,25 @@ limitations under the License.
 */
 package jobs;
 
+import java.util.concurrent.Executors;
+
 import models.data.providers.AgentDataProvider;
 import models.monitor.MonitorProvider;
-import play.Play;
+
+import org.lightj.RuntimeContext;
+import org.lightj.example.dal.LocalDatabaseEnum;
+import org.lightj.initialization.BaseModule;
+import org.lightj.initialization.InitializationProcessor;
+import org.lightj.session.FlowModule;
+import org.lightj.task.TaskModule;
+import org.lightj.util.SpringContextUtil;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
+
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 /**
  * 
  * @author ypei
@@ -32,12 +46,25 @@ public class Bootstrap extends Job {
 
     public void doJob() {
        //do stuff
-    	AgentDataProvider adp = AgentDataProvider.getInstance();
-    	adp.updateConfigFromAllFiles();
-    	
     	MonitorProvider mp= MonitorProvider.getInstance();
     	mp.getJVMMemoryUsage();
     	mp.getFreeDiskspace();
     	
+    	RuntimeContext.setClusterUuid("restcommander", "prod", "all", Long.toString(System.currentTimeMillis()));
+    	
+		Config conf = ConfigFactory.load("actorconfig");
+		AnnotationConfigApplicationContext resourcesCtx = new AnnotationConfigApplicationContext("resources");
+		SpringContextUtil.registerContext("resources", resourcesCtx);
+		
+		AnnotationConfigApplicationContext flowCtx = new AnnotationConfigApplicationContext("flows");
+		InitializationProcessor initializer = new InitializationProcessor(
+				new BaseModule[] {
+						new TaskModule().setActorSystemConfig("restcommander", conf).getModule(),
+						new FlowModule().setDb(LocalDatabaseEnum.TESTMEMDB)
+										.setSpringContext(flowCtx)
+										.setExectuorService(Executors.newFixedThreadPool(5))
+										.getModule()
+				});
+		initializer.initialize();
     }    
 }

@@ -17,23 +17,26 @@ limitations under the License.
 */
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.io.IOException;
 import java.util.Locale;
-import java.util.Map;
 
 import models.asynchttp.actors.ActorConfig;
 import models.data.providers.AgentConfigProvider;
 import models.data.providers.AgentDataProvider;
 import models.utils.ConfUtils;
 import models.utils.DateUtils;
-import models.utils.MyHttpUtils;
-import models.utils.VarUtils;
 import models.utils.VarUtils.CONFIG_FILE_TYPE;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.lightj.util.JsonUtil;
+import org.lightj.util.SpringContextUtil;
+
 import play.mvc.Controller;
+import resources.FileUserDataDaoImpl;
+import resources.IUserDataDao;
+import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
 
 /**
  * 
@@ -42,81 +45,9 @@ import play.mvc.Controller;
  */
 public class Config extends Controller {
 
-	public static void getAgentCommand() {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			renderJSON(adp.getAgentcommandmetadatas());
-		} catch (Throwable t) {
-			renderJSON("Error occured in getAgentCommand");
-		}
-
-	}
-
-	public static void getAggregation() {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			renderJSON(adp.getAggregationmetadata());
-		} catch (Throwable t) {
-			renderJSON("Error occured in getAggregation");
-		}
-
-	}
-
-	public static void getNodeGroup() {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			renderJSON(adp.getNodegroupsourcemetadatas());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in getNodeGroup");
-		}
-
-	}
-	
-	public static void getHttpHeaders(String httpHeaderType) {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			if(httpHeaderType ==null 
-				|| 
-				!adp.getHeaderMetadataMap().containsKey(httpHeaderType)
-					){
-				
-				renderJSON(adp.getHeaderMetadataMap());
-			}else{
-				renderJSON(adp.getHeaderMetadataMap().get(httpHeaderType));
-			}
-
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in getHttpHeaders");
-		}
-
-	}
-	
-
 	/**
-	 * 
+	 * gc
 	 */
-	public static void shutDownActorSystem() {
-
-		try {
-			ActorConfig.shutDownActorSystemWhenNoJobRunning();
-			renderJSON( "Success in shutDownActorSystem at " + DateUtils.getNowDateTimeStrSdsm());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in shutDownActorSystem");
-		}
-
-	}
-	
 	public static void runGC() {
 
 		try {
@@ -128,18 +59,37 @@ public class Config extends Controller {
 		}
 
 	}
+	
+	public static void viewConfigItem(String configType, String configKey) {
+		try {
+			DataType type = DataType.valueOf(configType.toUpperCase());
+			String jsonResult = null;
+			switch (type) {
+			case COMMAND:
+				jsonResult = JsonUtil.encode(UserDataProvider.getCommandConfigs().getCommandByName(configKey));
+				break;
+			case NODEGROUP:
+			case ADHOCNODEGROUP:
+				jsonResult = JsonUtil.encode(UserDataProvider.getNodeGroupOfType(type).getNodeGroupByName(configKey));
+				break;
+			default:
+				break;
+			}
+			renderJSON(jsonResult);
+		} catch (IOException e) {
+			error(e);
+		}
+	}
 
+	/**
+	 * reload all config
+	 * @param type
+	 */
 	public static void reloadConfig(String type) {
 
-		if (type == null) {
-			type = CONFIG_FILE_TYPE.ALL.toString();
-		}
 		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			String result = adp.updateConfigFromFile(type);
-
-			renderJSON(result + " in reloadConfig with type " + type);
+			UserDataProvider.reloadAllConfigs();
+			renderJSON("Successful reload config with type " + type);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in reloadConfig with type" + type);
@@ -147,23 +97,23 @@ public class Config extends Controller {
 
 	}
 
+	/**
+	 * edit page
+	 * @param configFile
+	 */
 	public static void editConfig(String configFile) {
 
 		String page = "editConfig";
 		String topnav = "config";
 
 		try {
-			AgentConfigProvider acp = AgentConfigProvider.getInstance();
-
 			if (configFile == null) {
 				renderJSON("configFile is NULL. Error occured in editConfig");
 			}
 
-			CONFIG_FILE_TYPE configFileType = CONFIG_FILE_TYPE
-					.valueOf(configFile.toUpperCase(Locale.ENGLISH));
-
-			String configFileContent = acp.readConfigFile(configFileType);
-
+			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+			String configFileContent = userDataDao.readConfigFile(DataType.valueOf(configFile.toUpperCase()), null);
+			
 			String configFileUpper = configFile.toUpperCase(Locale.ENGLISH);
 
 			page = new String(page + configFile.toLowerCase(Locale.ENGLISH));
@@ -178,34 +128,31 @@ public class Config extends Controller {
 
 	}// end func
 
-	public static void editConfigUpdate(String configFile,
-			String configFileContent) {
+	/**
+	 * save after edit
+	 * @param configFile
+	 * @param configFileContent
+	 */
+	public static void editConfigUpdate(String configFile, String configFileContent) {
 
 		String page = "editConfig";
 		String topnav = "config";
 
 		try {
-			AgentConfigProvider acp = AgentConfigProvider.getInstance();
-
 			if (configFile == null) {
 				renderJSON("configFile is NULL. Error occured in editConfig");
 			}
 
-			CONFIG_FILE_TYPE configFileType = CONFIG_FILE_TYPE
-					.valueOf(configFile.toUpperCase(Locale.ENGLISH));
-
-			acp.saveConfigFile(configFileType, configFileContent);
+			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+			userDataDao.saveConfigFile(DataType.valueOf(configFile.toUpperCase()), null, configFileContent);
 
 			String configFileUpper = configFile.toUpperCase(Locale.ENGLISH);
-
 			page = new String(page + configFile.toLowerCase(Locale.ENGLISH));
-
 			String alert = "Config was successfully updated at "
 					+ DateUtils.getNowDateTimeStrSdsm();
 
 			// reload after
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-			adp.updateConfigFromFile(configFileUpper);
+			UserDataProvider.reloadAllConfigs();
 
 			renderTemplate("Config/editConfig.html", page, topnav,
 					configFileContent, configFileUpper, alert);
@@ -216,49 +163,29 @@ public class Config extends Controller {
 
 	}// end func
 
+	/**
+	 * show all configs
+	 */
 	public static void index() {
 
 		String page = "index";
 		String topnav = "config";
 
 		try {
-			AgentConfigProvider acp = AgentConfigProvider.getInstance();
+			IUserDataDao configsDao = SpringContextUtil.getBean("resources", IUserDataDao.class);
 
-			String configFileContentAgentCommand = acp
-					.readConfigFile(CONFIG_FILE_TYPE.AGENTCOMMAND);
-			String configFileContentNodeGroup = acp
-					.readConfigFile(CONFIG_FILE_TYPE.NODEGROUP);
+			String configFileNodeGroupTitle = DataType.NODEGROUP.toString();
+			String configFileAggregationTitle = DataType.AGGREGATION.toString();
+			String configFileCommandTitle = DataType.COMMAND.toString();
 			
-			String configFileContentAggregation= acp
-					.readConfigFile(CONFIG_FILE_TYPE.AGGREGATION);
-			
-			String configFileContentWisbvar= acp
-					.readConfigFile(CONFIG_FILE_TYPE.WISBVAR);
-			
-			String configFileContentHttpheader= acp
-					.readConfigFile(CONFIG_FILE_TYPE.HTTPHEADER);
+			String configFileCommands = configsDao.readConfigFile(DataType.COMMAND, null);
+			String configFileContentNodeGroup = configsDao.readConfigFile(DataType.NODEGROUP, null);
+			String configFileContentAggregation= configsDao.readConfigFile(DataType.AGGREGATION, null);
 
-			String configFileAgentCommandTitle = CONFIG_FILE_TYPE.AGENTCOMMAND
-					.toString();
-			String configFileNodeGroupTitle = CONFIG_FILE_TYPE.NODEGROUP
-					.toString();
-			
-			String configFileAggregationTitle = CONFIG_FILE_TYPE.AGGREGATION
-					.toString();
-			
-			String configFileWisbvarTitle = CONFIG_FILE_TYPE.WISBVAR
-					.toString();
-			
-			String configFileHttpheaderTitle = CONFIG_FILE_TYPE.HTTPHEADER
-					.toString();
-
-			render(page, topnav, configFileAgentCommandTitle,
-					configFileNodeGroupTitle, configFileAggregationTitle, configFileContentAgentCommand,
+			render(page, topnav, 
+					configFileNodeGroupTitle, configFileAggregationTitle,
 					configFileContentNodeGroup, configFileContentAggregation,
-					configFileWisbvarTitle,configFileHttpheaderTitle,
-					configFileContentWisbvar, configFileContentHttpheader
-					
-					
+					configFileCommandTitle, configFileCommands
 					);
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -266,7 +193,6 @@ public class Config extends Controller {
 		}
 
 	}
-
 
 	/**
 	 * 20130718 add
@@ -278,9 +204,6 @@ public class Config extends Controller {
 		ConfUtils.setRunCronJob(runCronJob);
 		renderText("Set runCronJob as " + runCronJob + " at time: "
 				+ DateUtils.getNowDateTimeStrSdsm());
-
 	}
-
-	
 	
 }

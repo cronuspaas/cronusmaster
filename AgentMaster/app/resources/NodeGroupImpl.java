@@ -1,0 +1,37 @@
+package resources;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class NodeGroupImpl implements INodeGroup {
+	
+	private String name;
+	private List<String> nodeList = new ArrayList<String>();
+
+	public NodeGroupImpl() {}
+	public NodeGroupImpl(String name) {
+		this.name = name;
+	}
+	
+	public NodeGroupImpl addNodesToList(List<String> nodes) {
+		nodeList.addAll(nodes);
+		return this;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public List<String> getNodeList() {
+		return nodeList;
+	}
+
+}

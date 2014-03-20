@@ -12,12 +12,19 @@
   </div>
   
 		<div class="wizard" id="wizard-commands">
+		
 			<h1>Send REST Requests</h1>
 
 			<div class="wizard-card" data-cardname="name">
 				<h3>Select Target Nodes</h3>
+				
+					<div id="ng_class" class="btn-group" data-toggle="buttons-radio">
+    					<button id="ngp_button" type="button" class="btn btn-primary">Predefined</button>
+					    <button id="nga_button" type="button" class="btn btn-primary">Adhoc</button>
+					</div>
 
-				<div class="wizard-input-section">
+				
+				<div id="ng_predefined" class="wizard-input-section"  style="display: none;">
 					<p>
 						<strong>
 						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/nodeGroups">here</a>. 
@@ -30,10 +37,22 @@
 		            </select>
 
 				</div>
+				
+				<div id="ng_adhoc" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						Please enter target nodes by fqdn line by line (no additional symbols).
+						</strong>
+					</p>
+
+            	  <textarea class="input-xlarge" id="nodeListFromText" placeholder="host.phx.ebay.com" name="nodeListFromText" rows="5"></textarea>  
+
+				</div>
+				
 			</div>
 
 			<div class="wizard-card" data-onload="" data-cardname="dcn_select_requests">
-				<h3>Select Requests</h3>
+				<h3>Select Command</h3>
 
 				<div class="wizard-input-section">
 					<p>
@@ -99,9 +118,6 @@
 		</div>
 
 </div>
-
-
-
 
 
 
@@ -241,13 +257,16 @@ $(function() {
 	});
 
 	wizard.on("submit", function(wizard) {
+		var dataType = $("#ngp_button").hasClass('active') ? "NODEGROUP" : "ADHOCNODEGROUP";
+		var nodeGroupType = $("#ngp_button").hasClass('active') ? $("#target_nodes").val() : $("#nodeListFromText").val();
 		var submitData = {
-			"nodeGroupType": $("#target_nodes").val(),
+			"dataType": dataType,
+			"nodeGroupType": nodeGroupType,
 			"agentCommandType": $("#commands").val()
 		};
 		
 	    $.ajax({
-	        url: "/commands/generateUpdateSendAgentCommandToNodeGroup",
+	        url: "/commands/runCmdOnNodeGroup",
 	        type: "POST",
 	        data: submitData,
 	        timeout: 1800000,
@@ -282,10 +301,6 @@ $(function() {
 			wizard._updateProgressBar(0);
 		}, 2000); */
 	});
-
-	
-	 
-	
 	
 
 	wizard.on("reset", function(wizard) {
@@ -312,6 +327,22 @@ $(function() {
 
 	wizard.show();
 });
+
+$("#ngp_button").on('click',function(){
+
+  $('#ng_predefined').show();
+  $('#ng_adhoc').hide();
+
+});
+
+
+$("#nga_button").on('click',function(){
+
+  $('#ng_predefined').hide();
+  $('#ng_adhoc').show();
+
+});
+
 
 </script>
 

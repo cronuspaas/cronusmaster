@@ -42,6 +42,7 @@ GET     /commands/wizard                        Commands.wizard
 
 GET     /commands/generateUpdateSendAgentCommandToNodeGroup                        Commands.generateUpdateSendAgentCommandToNodeGroup
 POST     /commands/generateUpdateSendAgentCommandToAdhocNodeGroup                        Commands.generateUpdateSendAgentCommandToAdhocNodeGroup
+POST	/commands/runCmdOnNodeGroup													Commands.runCmdOnNodeGroup
 
 POST     /commands/genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson                        Commands.genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson
 POST     /commands/genUpdateSendCommandWithReplaceVarMapAdhocJson                        Commands.genUpdateSendCommandWithReplaceVarMapAdhocJson
@@ -63,6 +64,7 @@ GET     /nodeGroups/getNodesFromTopology                            						NodeGr
 
 
 GET     /config                                       Config.index
+GET		/config/viewConfigItem/{configType}/{configKey}			Config.viewConfigItem
 GET     /config/agentCommand                                       Config.getAgentCommand
 GET     /config/aggregation                                       Config.getAggregation
 GET     /config/httpHeaders                                       Config.getHttpHeaders
