@@ -42,9 +42,13 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 
 	@Override
 	public INodeGroup getNodeGroupByName(String name) throws IOException {
-		nodeGroup = new NodeGroupImpl();
-		nodeGroup.setName(String.format("AdhocNodeGroup-%s", DateUtils.getNowDateTimeStrSdsm()));
-		nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
+		if (nodeGroup == null) {
+			nodeGroup = new NodeGroupImpl();
+			nodeGroup.setType(DataType.ADHOCNODEGROUP.name());
+			nodeGroup.setName(String.format("AdhocNodeGroup-%s", DateUtils.getNowDateTimeStrSdsm()));
+			nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
+			save(null);
+		}
 		return nodeGroup;
 	}
 
@@ -56,8 +60,9 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	}
 
 	@Override
-	public void load() throws IOException {
-		// noop
+	public void load(String configFileName) throws IOException {
+		String configFileContent = userConfigs.readConfigFile(DataType.ADHOCNODEGROUP, configFileName);
+		this.nodeGroup = JsonUtil.decode(configFileContent, NodeGroupImpl.class);
 	}
 
 	@Override

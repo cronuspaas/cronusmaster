@@ -19,23 +19,24 @@ public class CommandDataImpl implements ICommandData {
 	@Autowired(required=true)
 	private IUserDataDao userConfigs;
 	
-	/** data is loaded */
-	private boolean isLoaded = false;
-
 	/** templates */
-	private HashMap<String, ICommand> templates = new HashMap<String, ICommand>();
+	private HashMap<String, ICommand> templates = null;
 	
 	public CommandDataImpl() {}
 	
 	@Override
 	public Map<String, ICommand> getAllCommands() throws IOException {
-		load();
+		if (templates == null) {
+			load();
+		}
 		return templates;
 	}
 
 	@Override
 	public ICommand getCommandByName(String name) throws IOException {
-		load();
+		if (templates == null) {
+			load();
+		}
 		if (templates.containsKey(name)) {
 			return templates.get(name);
 		}
@@ -46,26 +47,25 @@ public class CommandDataImpl implements ICommandData {
 	public void save(String configFileContent) throws IOException {
 		validate(configFileContent);
 		userConfigs.saveConfigFile(DataType.COMMAND, null, configFileContent);
-		isLoaded = false;
+		load();
 	}
 
 	@Override
 	public void load() throws IOException {
-		if (!isLoaded) {
-			String content = userConfigs.readConfigFile(DataType.COMMAND, null);
-			if (!StringUtil.isNullOrEmpty(content)) {
-				HashMap<String, HttpTaskRequest> dataLoaded = JsonUtil.decode(content, new HttpTemplateTypeReference());
-				for (Entry<String, HttpTaskRequest> data : dataLoaded.entrySet()) {
-					String key = data.getKey();
-					HttpTaskRequest req = data.getValue();
-					CommandImpl cmd = new CommandImpl();
-					cmd.setName(key);
-					cmd.setHttpTaskRequest(req);
-					templates.put(key, cmd);
-				}
+		HashMap<String, ICommand> templates = new HashMap<String, ICommand>();
+		String content = userConfigs.readConfigFile(DataType.COMMAND, null);
+		if (!StringUtil.isNullOrEmpty(content)) {
+			HashMap<String, HttpTaskRequest> dataLoaded = JsonUtil.decode(content, new HttpTemplateTypeReference());
+			for (Entry<String, HttpTaskRequest> data : dataLoaded.entrySet()) {
+				String key = data.getKey();
+				HttpTaskRequest req = data.getValue();
+				CommandImpl cmd = new CommandImpl();
+				cmd.setName(key);
+				cmd.setHttpTaskRequest(req);
+				templates.put(key, cmd);
 			}
-			isLoaded = true;
 		}
+		this.templates = templates;
 	}
 
 	@Override

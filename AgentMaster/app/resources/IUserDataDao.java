@@ -13,25 +13,27 @@ import java.util.List;
 public interface IUserDataDao {
 	
 	public enum DataType {
-		NODEGROUP("conf", true), 
-		AGGREGATION("conf", true), 
-		COMMAND("conf", true), 
-		ADHOCNODEGROUP("app_logs", false), 
-		LOG("app_logs", false);
+		NODEGROUP("conf", true, "json.conf"), 
+		AGGREGATION("conf", true, "json.conf"), 
+		COMMAND("conf", true, "json.conf"), 
+		ADHOCNODEGROUP("adhoc_nodegroups", false, "json.conf"), 
+		LOG("app_logs", false, "json.log");
 		private final String path;
+		private final String ext;
 		private final boolean isFile;
-		DataType(String path, boolean isFile) {
+		DataType(String path, boolean isFile, String ext) {
 			this.path = path;
+			this.ext = ext;
 			this.isFile = isFile;
-		}
-		private DataType() {
-			this(null, true);
 		}
 		public boolean isFile() {
 			return isFile;
 		}
 		public String getPath() {
 			return path;
+		}
+		public String getExt() {
+			return ext;
 		}
 	};
 

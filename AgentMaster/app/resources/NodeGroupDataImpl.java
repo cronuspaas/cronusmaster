@@ -39,14 +39,14 @@ public class NodeGroupDataImpl implements INodeGroupData {
 
 	@Override
 	public Map<String, INodeGroup> getAllNodeGroups() throws IOException {
-		load();
+		load(DataType.NODEGROUP.name());
 		return nodeGroups;
 	}
 
 	@Override
 	public INodeGroup getNodeGroupByName(String name) throws IOException 
 	{
-		load();
+		load(DataType.NODEGROUP.name());
 		if (nodeGroups.containsKey(name)) {
 			return nodeGroups.get(name);
 		}
@@ -62,11 +62,11 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	}
 
 	@Override
-	public void load() throws IOException {
+	public void load(String configFileName) throws IOException {
 		
 		if (!isLoaded) {
 			HashMap<String, INodeGroup> nodeGroups = new HashMap<String, INodeGroup>();
-			String content = userConfigs.readConfigFile(DataType.NODEGROUP, null);
+			String content = userConfigs.readConfigFile(DataType.NODEGROUP, configFileName);
 
 			String[] lines = content.split("\n");
 			NodeGroupImpl nodeGroupImpl = null;
@@ -81,6 +81,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 				if (line.startsWith(NODEGROUP_NAME_TAG)) {
 					String tokens[] = line.split("=");
 					nodeGroupImpl = new NodeGroupImpl(tokens[1]);
+					nodeGroupImpl.setType(DataType.NODEGROUP.name());
 				}
 				else if (line.startsWith(NODEGROUP_LIST_START_TAG)) {
 					tmpNodeList.clear();

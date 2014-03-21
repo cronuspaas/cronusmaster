@@ -34,6 +34,7 @@ import org.lightj.util.SpringContextUtil;
 
 import play.mvc.Controller;
 import resources.FileUserDataDaoImpl;
+import resources.INodeGroupData;
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
 import resources.UserDataProvider;
@@ -69,8 +70,12 @@ public class Config extends Controller {
 				jsonResult = JsonUtil.encode(UserDataProvider.getCommandConfigs().getCommandByName(configKey));
 				break;
 			case NODEGROUP:
-			case ADHOCNODEGROUP:
 				jsonResult = JsonUtil.encode(UserDataProvider.getNodeGroupOfType(type).getNodeGroupByName(configKey));
+				break;
+			case ADHOCNODEGROUP:
+				INodeGroupData ngd = UserDataProvider.getNodeGroupOfType(type);
+				ngd.load(configKey);
+				jsonResult = JsonUtil.encode(ngd.getNodeGroupByName(configKey));
 				break;
 			default:
 				break;

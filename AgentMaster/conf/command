@@ -1,5 +1,5 @@
-{
-    "GET_CRAIGSLIST_ITEM_COUNT": {
+ {
+    "GET_HTTPS_SITE": {
         "taskType": "asyncpoll",
         "httpClientType": "httpClient",
         "urlTemplate": {

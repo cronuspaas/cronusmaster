@@ -23,5 +23,17 @@ public interface INodeGroup {
 	 * @return
 	 */
 	public List<String> getNodeList();
+	
+	/**
+	 * type of node group
+	 * @return
+	 */
+	public String getType();
+	
+	/**
+	 * set type of node group
+	 * @param ngType
+	 */
+	public void setType(String ngType);
 
 }

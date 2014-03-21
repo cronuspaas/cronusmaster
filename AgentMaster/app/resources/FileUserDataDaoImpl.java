@@ -57,8 +57,8 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		StringBuilder sb = new StringBuilder();
 
 		// in test
-		String configFileLocation = type.isFile() ? String.format("%s/%s.conf", type.getPath(), type.toString().toLowerCase()) :
-								String.format("%s/%s", type.getPath(), fileName);
+		String configFileLocation = String.format("%s/%s", type.getPath(), type.isFile() ? 
+							type.toString().toLowerCase() : fileName);								
 		BufferedReader reader = null;
 		try {
 
@@ -141,17 +141,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	 */
 	private String getFilePath(DataType cat, String fileName) {
 		String filePath = null;
-		switch(cat) {
-		case NODEGROUP:
-		case COMMAND:
-			filePath = String.format("conf/%s.conf", cat.name().toLowerCase());
-			break;
-		case LOG:
-			filePath = String.format("app_logs/%s.jsonlog.txt", fileName);
-			break;
-		default:
-			throw new IllegalArgumentException(String.format("Invalid data category %s", cat));
-		}
+		filePath = String.format("%s/%s", cat.getPath(), cat.isFile() ? cat.name().toLowerCase() : fileName);
 		return filePath;
 	}
 	

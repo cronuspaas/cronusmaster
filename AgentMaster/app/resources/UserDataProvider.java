@@ -48,7 +48,7 @@ public class UserDataProvider {
 	 * adhoc node group
 	 * @return
 	 */
-	public @Bean @Scope("singleton") INodeGroupData adhocNodeGroup() {
+	public @Bean @Scope("prototype") INodeGroupData adhocNodeGroup() {
 		return new AdhocNodeGroupDataImpl();
 	}
 	
@@ -110,8 +110,7 @@ public class UserDataProvider {
 	 * @throws IOException
 	 */
 	public static void reloadAllConfigs() throws IOException {
-		getNodeGroupOfType(DataType.NODEGROUP).load();
-		getNodeGroupOfType(DataType.ADHOCNODEGROUP).load();
+		getNodeGroupOfType(DataType.NODEGROUP).load(DataType.NODEGROUP.name());
 		getCommandConfigs().load();
 	}
 

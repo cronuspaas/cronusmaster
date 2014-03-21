@@ -44,7 +44,7 @@ public interface INodeGroupData extends IUserData {
 	/**
 	 * load all commands from backing storage
 	 */
-	public void load() throws IOException;
+	public void load(String configFileName) throws IOException;
 	
 	/**
 	 * validate config file content

@@ -62,9 +62,10 @@ public class Logs extends Controller {
 			
 			for (JobLog jobLog : jobLogs) {
 				HashMap<String, String> log = new HashMap<String, String>();
-				log.put("name", String.format("%s.jsonlog.txt", jobLog.uuid()));
+				log.put("name", String.format("%s.json.log", jobLog.uuid()));
 				log.put("command", jobLog.getUserCommand().cmd.getName());
 				log.put("nodeGroup", jobLog.getUserCommand().nodeGroup.getName());
+				log.put("nodeGroupType", jobLog.getUserCommand().nodeGroup.getType());
 				log.put("timeStamp", Long.toString(DateUtil.parse(jobLog.getTimestamp(), JobLog.DateFormat).getTime()));
 				log.put("timeStampDisplay", jobLog.getTimestamp());
 				logFiles.add(log);
@@ -80,9 +81,6 @@ public class Logs extends Controller {
 					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
 					
 				}});
-
-			// 20130510105239921-0700-ADHOC_NODE_LIST_2_BK-GET_VI.jsonlog.txt
-			// 20130510111550089-0700-ADHOC_NODEGROUP_20130510111546633-0700-GET_VI.jsonlog.txt
 
 			render(page, topnav, logFiles, date, lastRefreshed);
 		} catch (Throwable t) {

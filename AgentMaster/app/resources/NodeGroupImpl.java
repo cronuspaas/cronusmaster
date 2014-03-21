@@ -7,6 +7,7 @@ import java.util.List;
 public class NodeGroupImpl implements INodeGroup {
 	
 	private String name;
+	private String type;
 	private List<String> nodeList = new ArrayList<String>();
 
 	public NodeGroupImpl() {}
@@ -32,6 +33,14 @@ public class NodeGroupImpl implements INodeGroup {
 	@Override
 	public List<String> getNodeList() {
 		return nodeList;
+	}
+	@Override
+	public String getType() {
+		return type;
+	}
+	@Override
+	public void setType(String ngType) {
+		this.type = ngType;
 	}
 
 }
