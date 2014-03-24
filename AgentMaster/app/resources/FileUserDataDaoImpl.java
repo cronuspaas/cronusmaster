@@ -144,5 +144,24 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		filePath = String.format("%s/%s", cat.getPath(), cat.isFile() ? cat.name().toLowerCase() : fileName);
 		return filePath;
 	}
+
+	/**
+	 * delet config file
+	 */
+	@Override
+	public void deleteConfigFile(DataType type, String fileName)
+			throws IOException {
+
+		// in test
+		String configFileLocation = getFilePath(type, fileName);
+
+		VirtualFile vf = VirtualFile.fromRelativePath(configFileLocation);
+
+		vf.getRealFile().delete();
+		models.utils.LogUtils.printLogNormal("Deleted file : "
+					+ type + "/" + fileName + " at "
+					+ DateUtils.getNowDateTimeStr());
+
+	}
 	
 }

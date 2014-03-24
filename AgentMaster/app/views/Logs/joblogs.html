@@ -5,7 +5,7 @@
 #{data-table-init tableName:'log-list-all', defaultSize:'50', , sortSpec:'[]' /}
 
 <div class="container">
-	#{include 'Logs/lognav.html'/}
+#{include 'Logs/lognav.html'/}
 #{include 'tags/refresh.html'/}
 
 
@@ -38,6 +38,7 @@ Edit the regular expression used for extracting value in response: <a href="/con
 			<thead>
 				<tr>
 					<th>No.</th>
+					<th>Job</th>
 					<th>Command</th>
 					<th>NodeGroup</th>
 					<th>TimeStamp</th>
@@ -50,27 +51,24 @@ Edit the regular expression used for extracting value in response: <a href="/con
 				<tr>
 					<td>${logObj_index}</td>
 					<td>
-						<a target=_blank href="/commands/agentCommandType/${logObj.agentCommandType}" >${logObj.agentCommandType}</a> 
+						<a target=_blank href="/config/viewConfigItem/command/${logObj.jobName}" >${logObj.jobName}</a> 
 					</td>
 					<td>
-					    <a target=_blank href="/nodeGroups/nodeGroupType?nodeGroupType=${logObj.nodeGroupType}&isAdhoc=true" >${logObj.nodeGroupType}</a> 
+						<a target=_blank href="/config/viewConfigItem/command/${logObj.command}" >${logObj.command}</a> 
 					</td>
-					<td>${logObj.getTimeStampFormatSdsm()}</td>
-					
-					
+					<td>
+					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a> 
+					</td>
+					<td>${logObj.timeStampDisplay}</td>					
 					<td>   
-						<a target=_blank href="/logs/logContent/${logObj.generateFileName()}" ><i class="fa fa-download fa-lg"></i></a> 
+						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
-					
 					<td>   
-						<a target=_blank href="/agents/aggregatePieChart?nodeGroupType=${logObj.nodeGroupType}&agentCommandType=${logObj.agentCommandType}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >
+						<a target=_blank href="/agents/aggregatePieChart?nodeGroupType=${logObj.nodeGroup}&agentCommandType=${logObj.command}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >
 						<i class="fa fa-picture-o fa-lg"></i></a> 
 						&nbsp;&nbsp;
-						<a target=_blank href="/agents/aggregatePieChart?textOnly=true&nodeGroupType=${logObj.nodeGroupType}&agentCommandType=${logObj.agentCommandType}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >
+						<a target=_blank href="/agents/aggregatePieChart?textOnly=true&nodeGroupType=${logObj.nodeGroup}&agentCommandType=${logObj.command}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >
 						<i class="fa fa-list fa-lg"></i></a> 
-						
-						
-						
 					</td>  
 					
 				</tr>
@@ -80,7 +78,6 @@ Edit the regular expression used for extracting value in response: <a href="/con
 
 	</div>
 
-
 #{include 'Logs/logfooter.html'/}
 
 
@@ -88,6 +85,7 @@ Edit the regular expression used for extracting value in response: <a href="/con
 
 
 </div>
-#{include 'Application/footer.html'/}
+
+	#{include 'Application/footer.html'/}
 </body>
 </html>

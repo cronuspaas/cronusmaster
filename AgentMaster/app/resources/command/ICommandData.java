@@ -1,10 +1,12 @@
-package resources;
+package resources.command;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.Map;
 
 import org.lightj.example.task.HttpTaskRequest;
+
+import resources.IUserData;
 
 /**
  * command configs

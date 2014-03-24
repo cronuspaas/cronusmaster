@@ -9,8 +9,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import resources.INodeGroupData.NodeGroupType;
 import resources.IUserDataDao.DataType;
+import resources.command.CommandDataImpl;
+import resources.command.ICommandData;
+import resources.job.CmdIntervalJobImpl;
+import resources.job.IntervalJobData;
+import resources.job.IntervalJobDataImpl;
+import resources.log.IJobLogger;
+import resources.log.JobLoggerImpl;
+import resources.nodegroup.AdhocNodeGroupDataImpl;
+import resources.nodegroup.INodeGroupData;
+import resources.nodegroup.NodeGroupDataImpl;
+import resources.nodegroup.INodeGroupData.NodeGroupType;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
@@ -57,7 +67,29 @@ public class UserDataProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") IJobLogger jobLogger() {
-		return new JobLoggerImpl();
+		JobLoggerImpl jobLogger = new JobLoggerImpl();
+		jobLogger.setDataType(DataType.JOBLOG);
+		return jobLogger;
+	}
+	
+	/**
+	 * cmd logger
+	 * @return
+	 */
+	public @Bean @Scope("singleton") IJobLogger cmdLogger() {
+		JobLoggerImpl jobLogger = new JobLoggerImpl();
+		jobLogger.setDataType(DataType.CMDLOG);
+		return jobLogger;
+	}
+	
+	/**
+	 * cmd interval jobs
+	 * @return
+	 */
+	public @Bean @Scope("singleton") IntervalJobData cmdIntervalJob() {
+		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
+		jobDataImpl.setJobType(DataType.CMDJOB);
+		return jobDataImpl;
 	}
 	
 	/**
@@ -92,9 +124,36 @@ public class UserDataProvider {
 	 * get job logger
 	 * @return
 	 */
-	public static IJobLogger getJobLogger() {
-		IJobLogger logger = SpringContextUtil.getBean("resources", "jobLogger", IJobLogger.class);
+	public static IJobLogger getJobLoggerOfType(DataType type) {
+		IJobLogger logger = null;
+		switch(type) {
+		case CMDLOG:
+			logger = SpringContextUtil.getBean("resources", "cmdLogger", IJobLogger.class);
+			break;
+		case JOBLOG:
+			logger = SpringContextUtil.getBean("resources", "jobLogger", IJobLogger.class);
+			break;
+		default:
+			throw new IllegalArgumentException(String.format("Invalid logger type %s", type));
+		}
 		return logger;
+	}
+	
+	/**
+	 * get interval job data
+	 * @param type
+	 * @return
+	 */
+	public static IntervalJobData getIntervalJobOfType(DataType type) {
+		IntervalJobData jobData = null;
+		switch (type) {
+		case CMDJOB:
+			jobData = SpringContextUtil.getBean("resources", "cmdIntervalJob", IntervalJobData.class);
+			break;
+		default:
+			throw new IllegalArgumentException(String.format("Invalid interval job type %s", type));
+		}
+		return jobData;
 	}
 	
 	/**

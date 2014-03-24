@@ -6,12 +6,12 @@ public interface IUserData {
 	 * user configs handle persistence
 	 * @return
 	 */
-	public IUserDataDao getUserConfigs();
+	public IUserDataDao getUserDataDao();
 
 	/**
 	 * user configs handle persistence
 	 * @param userConfigs
 	 */
-	public void setUserConfigs(IUserDataDao userConfigs);
+	public void setUserDataDao(IUserDataDao userConfigs);
 
 }

@@ -19,7 +19,6 @@ package controllers;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,8 @@ import models.utils.VarUtils;
 
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.task.BatchOption;
+import org.lightj.task.BatchOption.Strategy;
 import org.lightj.task.ExecutableTask;
 import org.lightj.task.ExecuteOption;
 import org.lightj.task.MonitorOption;
@@ -54,14 +55,13 @@ import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.ICommand;
-import resources.ICommandData;
-import resources.INodeGroup;
-import resources.INodeGroupData;
-import resources.INodeGroupData.NodeGroupType;
 import resources.IUserDataDao.DataType;
-import resources.JobLog;
-import resources.JobLog.UserCommand;
+import resources.command.ICommand;
+import resources.command.ICommandData;
+import resources.log.JobLog;
+import resources.log.JobLog.UserCommand;
+import resources.nodegroup.INodeGroup;
+import resources.nodegroup.INodeGroupData;
 import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
 
@@ -106,14 +106,6 @@ public class Commands extends Controller {
 			renderJSON("Error occured in index of logs");
 		}
 
-	}
-
-	public static void commonCommands(String nodeGroup) {
-
-		String page = "commonCommands";
-		String topnav = "commands";
-
-		render(page, topnav);
 	}
 
 	public static void getAgentCommandMetadata(String agentCommandType) {
@@ -191,8 +183,19 @@ public class Commands extends Controller {
 
 	}
 	
+	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
+		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
+	}
 	
-	public static void runCmdOnNodeGroup(String dataType, String nodeGroupType, String agentCommandType) 
+	
+	/**
+	 * execute a command on a node group
+	 * @param dataType
+	 * @param nodeGroupType
+	 * @param agentCommandType
+	 * @param options
+	 */
+	public static void runCmdOnNodeGroup(String dataType, String nodeGroupType, String agentCommandType, Map<String, String> options) 
 	{
 		DataType dType = DataType.valueOf(dataType.toUpperCase());
 		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
@@ -200,12 +203,33 @@ public class Commands extends Controller {
 		try {
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
 			HttpTaskRequest reqTemplate = cmd.getHttpTaskRequest();
-			reqTemplate.setExecutionOption(new ExecuteOption());
-			reqTemplate.setMonitorOption(new MonitorOption(5000));
+
+			long exeInitDelayMs = Long.parseLong(getOptionValue(options, "exe_initde", "0")) * 1000L;
+			long exeTimoutMs = Long.parseLong(getOptionValue(options, "exe_initde", "0")) * 1000L;
+			int exeRetry = Integer.parseInt(getOptionValue(options, "exe_rede", "0"));
+			long retryDelayMs = Long.parseLong(getOptionValue(options, "exe_rede", "0")) * 1000L;
+			ExecuteOption exeOption = new ExecuteOption(exeInitDelayMs, exeTimoutMs, exeRetry, retryDelayMs);
+			
+			long monIntervalMs = Integer.parseInt(getOptionValue(options, "mon_int", "1")) * 1000L;
+			long monInitDelayMs = Long.parseLong(getOptionValue(options, "mon_initde", "0")) * 1000L;
+			long monTimoutMs = Long.parseLong(getOptionValue(options, "mon_initde", "0")) * 1000L;
+			int monRetry = Integer.parseInt(getOptionValue(options, "mon_rede", "0"));
+			long monRetryDelayMs = Long.parseLong(getOptionValue(options, "mon_rede", "0")) * 1000L;
+			MonitorOption monOption = new MonitorOption(monInitDelayMs, monIntervalMs, monTimoutMs, monRetry, monRetryDelayMs);
+					
+			Strategy strategy = Strategy.valueOf(getOptionValue(options, "thrStrategy", "UNLIMITED"));
+			int maxRate = Integer.parseInt(getOptionValue(options, "thr_rate", "1000"));
+			BatchOption batchOption = new BatchOption(maxRate, strategy);
+			
+			HashMap<String, String> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), HashMap.class);
+			
+			reqTemplate.setExecutionOption(exeOption);
+			reqTemplate.setMonitorOption(monOption);
 			
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
 			String[] hosts = ng.getNodeList().toArray(new String[0]);
 			reqTemplate.setHosts(hosts);
+			reqTemplate.addTemplateValue(varValues);
 			
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			JobLog jobLog = new JobLog();
@@ -215,8 +239,8 @@ public class Commands extends Controller {
 			jobLog.setUserCommand(userCommand);
 			
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(jobLog));
-			new StandaloneTaskExecutor(null, listener, reqTask).execute();
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog));
+			new StandaloneTaskExecutor(batchOption, listener, reqTask).execute();
 			
 		} catch (Throwable t) {
 			error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage()

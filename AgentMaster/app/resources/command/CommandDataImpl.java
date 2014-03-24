@@ -1,4 +1,4 @@
-package resources;
+package resources.command;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -12,12 +12,13 @@ import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
 
 public class CommandDataImpl implements ICommandData {
 	
 	@Autowired(required=true)
-	private IUserDataDao userConfigs;
+	private IUserDataDao userDataDao;
 	
 	/** templates */
 	private HashMap<String, ICommand> templates = null;
@@ -46,14 +47,14 @@ public class CommandDataImpl implements ICommandData {
 	@Override
 	public void save(String configFileContent) throws IOException {
 		validate(configFileContent);
-		userConfigs.saveConfigFile(DataType.COMMAND, null, configFileContent);
+		userDataDao.saveConfigFile(DataType.COMMAND, null, configFileContent);
 		load();
 	}
 
 	@Override
 	public void load() throws IOException {
 		HashMap<String, ICommand> templates = new HashMap<String, ICommand>();
-		String content = userConfigs.readConfigFile(DataType.COMMAND, null);
+		String content = userDataDao.readConfigFile(DataType.COMMAND, null);
 		if (!StringUtil.isNullOrEmpty(content)) {
 			HashMap<String, HttpTaskRequest> dataLoaded = JsonUtil.decode(content, new HttpTemplateTypeReference());
 			for (Entry<String, HttpTaskRequest> data : dataLoaded.entrySet()) {
@@ -78,12 +79,12 @@ public class CommandDataImpl implements ICommandData {
 		}
 	}
 
-	public IUserDataDao getUserConfigs() {
-		return userConfigs;
+	public IUserDataDao getUserDataDao() {
+		return userDataDao;
 	}
 
-	public void setUserConfigs(IUserDataDao userConfigs) {
-		this.userConfigs = userConfigs;
+	public void setUserDataDao(IUserDataDao userConfigs) {
+		this.userDataDao = userConfigs;
 	}
 
 	static final class HttpTemplateTypeReference extends TypeReference<HashMap<String, HttpTaskRequest>> {

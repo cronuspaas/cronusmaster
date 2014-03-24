@@ -34,9 +34,10 @@ import models.utils.VarUtils;
 import org.lightj.util.DateUtil;
 
 import play.mvc.Controller;
-import resources.IJobLogger;
-import resources.JobLog;
 import resources.UserDataProvider;
+import resources.IUserDataDao.DataType;
+import resources.log.IJobLogger;
+import resources.log.JobLog;
 
 /**
  * 
@@ -56,18 +57,17 @@ public class Logs extends Controller {
 
 		try {
 			
-			IJobLogger logger = UserDataProvider.getJobLogger();
-			List<JobLog> jobLogs = logger.listLogs();
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			List<String> logs = logger.listLogs();
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
-			for (JobLog jobLog : jobLogs) {
+			for (String logName : logs) {
+				Map<String, String> logMeta = JobLog.getLogMetaFromName(logName);
 				HashMap<String, String> log = new HashMap<String, String>();
-				log.put("name", String.format("%s.json.log", jobLog.uuid()));
-				log.put("command", jobLog.getUserCommand().cmd.getName());
-				log.put("nodeGroup", jobLog.getUserCommand().nodeGroup.getName());
-				log.put("nodeGroupType", jobLog.getUserCommand().nodeGroup.getType());
-				log.put("timeStamp", Long.toString(DateUtil.parse(jobLog.getTimestamp(), JobLog.DateFormat).getTime()));
-				log.put("timeStampDisplay", jobLog.getTimestamp());
+				log.putAll(logMeta);
+				log.put("name", logName);
+				log.put("timeStamp", Long.toString(DateUtil.parse(logMeta.get("timeStampDisplay"), JobLog.DateFormat).getTime()));
+				log.put("type", DataType.CMDLOG.name());
 				logFiles.add(log);
 			}
 			// List<>
@@ -87,6 +87,47 @@ public class Logs extends Controller {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
 		}
+
+	}
+
+	public static void jobLogs(String date) {
+
+		String page = "joblogs";
+		String topnav = "logs";
+
+		try {
+			
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.JOBLOG);
+			List<String> logs = logger.listLogs();
+			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+			
+			for (String logName : logs) {
+				Map<String, String> logMeta = JobLog.getLogMetaFromName(logName);
+				HashMap<String, String> log = new HashMap<String, String>();
+				log.putAll(logMeta);
+				log.put("name", logName);
+				log.put("timeStamp", Long.toString(DateUtil.parse(logMeta.get("timeStampDisplay"), JobLog.DateFormat).getTime()));
+				log.put("type", DataType.JOBLOG.name());
+				logFiles.add(log);
+			}
+			// List<>
+
+			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
+
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
+					
+				}});
+
+			render(page, topnav, logFiles, date, lastRefreshed);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			renderJSON("Error occured in index of logs");
+		}
+
 	}
 
 	public static void adhocLog(String date) {
@@ -136,13 +177,14 @@ public class Logs extends Controller {
 	}
 
 
-	public static void getLogContent(String logFileName) {
+	public static void download(String type, String name) {
 
 		try {
 
-			String filePath = FileIoUtils.getLogFilePathPrefix(logFileName)
-					+ logFileName;
+			DataType dtype = DataType.valueOf(type);
+			String filePath = String.format("%s/%s", dtype.getPath(), name);
 			String fileContent = FileIoUtils.readFileToString(filePath);
+			
 			renderText(fileContent);
 		} catch (Throwable t) {
 			t.printStackTrace();

@@ -3,6 +3,12 @@ package resources;
 import java.io.IOException;
 import java.util.List;
 
+import resources.command.CommandImpl;
+import resources.job.CmdIntervalJobImpl;
+import resources.log.JobLog;
+import resources.nodegroup.AdhocNodeGroupDataImpl;
+import resources.nodegroup.NodeGroupImpl;
+
 /**
  * manage persistence and CRUD of user configs
  * actual implementation can be based of local storage, object store, or database
@@ -13,18 +19,20 @@ import java.util.List;
 public interface IUserDataDao {
 	
 	public enum DataType {
-		NODEGROUP("conf", true, "json.conf"), 
-		AGGREGATION("conf", true, "json.conf"), 
-		COMMAND("conf", true, "json.conf"), 
-		ADHOCNODEGROUP("adhoc_nodegroups", false, "json.conf"), 
-		LOG("app_logs", false, "json.log");
+		NODEGROUP("conf", true, NodeGroupImpl.class), 
+		AGGREGATION("conf", true, Object.class), 
+		COMMAND("conf", true, CommandImpl.class), 
+		ADHOCNODEGROUP("adhoc_nodegroups", false, AdhocNodeGroupDataImpl.class), 
+		CMDLOG("cmd_logs", false, JobLog.class),
+		JOBLOG("job_logs", false, JobLog.class),
+		CMDJOB("cmd_jobs", false, CmdIntervalJobImpl.class);
 		private final String path;
-		private final String ext;
 		private final boolean isFile;
-		DataType(String path, boolean isFile, String ext) {
+		private final Class doKlass;
+		DataType(String path, boolean isFile, Class doKlass) {
 			this.path = path;
-			this.ext = ext;
 			this.isFile = isFile;
+			this.doKlass = doKlass;
 		}
 		public boolean isFile() {
 			return isFile;
@@ -32,8 +40,8 @@ public interface IUserDataDao {
 		public String getPath() {
 			return path;
 		}
-		public String getExt() {
-			return ext;
+		public Class getDoKlass() {
+			return doKlass;
 		}
 	};
 
@@ -53,6 +61,15 @@ public interface IUserDataDao {
 	 * @throws IOException
 	 */
 	public void saveConfigFile(DataType type, String fileName, String configFileContent) throws IOException;
+	
+	/**
+	 * delete config file
+	 * @param type
+	 * @param fileName
+	 * @return
+	 * @throws IOException
+	 */
+	public void deleteConfigFile(DataType type, String fileName) throws IOException;
 	
 	/**
 	 * list config files

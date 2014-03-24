@@ -1,4 +1,4 @@
-package resources;
+package resources.nodegroup;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -11,6 +11,7 @@ import models.utils.DateUtils;
 import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
 
 public class AdhocNodeGroupDataImpl implements INodeGroupData {
@@ -21,12 +22,12 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	private NodeGroupImpl nodeGroup;
 
 	@Override
-	public IUserDataDao getUserConfigs() {
+	public IUserDataDao getUserDataDao() {
 		return userConfigs;
 	}
 
 	@Override
-	public void setUserConfigs(IUserDataDao userConfigs) {
+	public void setUserDataDao(IUserDataDao userConfigs) {
 		this.userConfigs = userConfigs;
 	}
 

@@ -1,0 +1,33 @@
+<!-- agents top nav -->
+
+<!--<h1><font color="red">Agent tab is under maintenance.</font></h1> -->
+<ul class="nav nav-tabs">
+
+<li #{if (page == "index")} class="active" #{/if}><a href="/jobs"><i class="fa fa-search"></i>Summary</a></li>
+<li #{if (page == "wizard")} class="active" #{/if}><a href="/jobs/wizard"><i class="fa fa-magic"></i> Create Job</a></li>
+<li #{if (page == "systemjobs")} class="active" #{/if}><a href="/jobs/systemjobs"><i class="fa fa-search"></i> System Jobs</a></li>
+<li #{if (page == "joblogs")} class="active" #{/if}><a href="/logs/joblogs"><i class="fa fa-search"></i> Job Logs</a></li>
+
+</ul>
+<div class="row">
+
+</div>	
+
+
+<script type="text/javascript">
+var getHttpMethodLabel=function(httpMethod){
+
+	var output = null;
+	if(httpMethod=== "GET"){
+		output ="<span class=\"label label-success\">" + httpMethod + "</span> ";
+	} else if(httpMethod=== "POST" || httpMethod=== "PUT"){
+		output ="<span class=\"label label-warning\">" + httpMethod + "</span> ";
+	} else if(httpMethod=== "DELETE"){
+		output ="<span class=\"label label-important\">" + httpMethod + "</span> ";
+	}
+
+	 document.write(output);
+
+	 return;
+}
+</script>

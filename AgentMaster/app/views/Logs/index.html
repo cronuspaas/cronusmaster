@@ -57,7 +57,7 @@ Edit the regular expression used for extracting value in response: <a href="/con
 					</td>
 					<td>${logObj.timeStampDisplay}</td>					
 					<td>   
-						<a target=_blank href="/logs/logContent/${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
+						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
 					<td>   
 						<a target=_blank href="/agents/aggregatePieChart?nodeGroupType=${logObj.nodeGroup}&agentCommandType=${logObj.command}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >

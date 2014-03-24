@@ -21,7 +21,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import resources.JobLog.CommandResponse;
+import resources.IUserDataDao.DataType;
+import resources.log.IJobLogger;
+import resources.log.JobLog;
+import resources.log.JobLog.CommandResponse;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
@@ -32,28 +35,32 @@ public class TaskResourcesProvider {
 	
 	public static final class LogTaskEventHandler extends SimpleTaskEventHandler<FlowContext> {
 		
-		private JobLog jobLog = null;
-		public LogTaskEventHandler(JobLog jobLog) {
+		private final JobLog jobLog;
+		private final DataType logType;
+		public LogTaskEventHandler(DataType logType, JobLog jobLog) {
 			this.jobLog = jobLog;
+			this.logType = logType;
 		}
 
 		@Override
 		public void executeOnResult(FlowContext ctx, Task task,
 				TaskResult result) {
-			String host = ((SimpleHttpTask) task).getReq().getHost();
-			if (result.getStatus() == TaskResultEnum.Success) {
-				SimpleHttpResponse res = result.<SimpleHttpResponse>getRealResult();
-				jobLog.addCommandResponse(new CommandResponse(host, res.getStatusCode(), res.getResponseBody())); 
-			}
-			else {
-				jobLog.addCommandResponse(new CommandResponse(host, 0, String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
+			if (task instanceof SimpleHttpTask) {
+				String host = ((SimpleHttpTask) task).getReq().getHost();
+				if (result.getStatus() == TaskResultEnum.Success) {
+					SimpleHttpResponse res = result.<SimpleHttpResponse>getRealResult();
+					jobLog.addCommandResponse(new CommandResponse(host, res.getStatusCode(), res.getResponseBody())); 
+				}
+				else {
+					jobLog.addCommandResponse(new CommandResponse(host, 0, String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
+				}
 			}
 		}
 
 		@Override
 		public TaskResultEnum executeOnCompleted(FlowContext ctx,
 				Map<String, TaskResult> results) {
-			IJobLogger logger = UserDataProvider.getJobLogger();
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(logType);
 			try {
 				logger.saveLog(jobLog);
 			} catch (IOException e) {

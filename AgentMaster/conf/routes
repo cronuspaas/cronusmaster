@@ -81,15 +81,10 @@ GET		/config/shutDownActorSystem							Config.shutDownActorSystem
 GET		/config/runGC							Config.runGC
 
 
-
+# logs page
 GET     /logs                                       Logs.index
-GET     /logs/logContent/{logFileName}                                       Logs.getLogContent
-GET     /logs/fileContent                                       Logs.getFileContent
-
-
-
-GET     /logs/adhocLog                                       Logs.adhocLog
-GET     /logs/noneStandardLog                                    Logs.noneStandardLog
+GET     /logs/joblogs                                       Logs.jobLogs
+GET     /logs/download                                       Logs.download
 GET     /logs/exploreFiles                                       Logs.exploreFiles
 
 
@@ -99,6 +94,14 @@ GET     /logs/deleteAllAppLogs                                       Logs.delete
 GET     /logs/archiveAppLogsDailyJob                                       Logs.archiveAppLogsDailyJob
 GET     /logs/deleteAppLogsDailyJob                                       Logs.deleteAppLogsDailyJob
 
+# jobs page
+
+GET		/jobs										Jobs.index
+GET		/jobs/systemjobs									Jobs.systemJobs
+GET		/jobs/toggleStatus									Jobs.toggleJobStatus
+GET		/jobs/deleteJob										Jobs.deleteJob
+GET		/jobs/wizard										Jobs.wizard
+POST	/jobs/saveJob										Jobs.saveJob
 
 GET     /wizards                                       Wizards.index
 GET     /wizards/wizardToAdhocNodeGroup                                       Wizards.wizardToAdhocNodeGroup

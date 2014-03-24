@@ -1,4 +1,4 @@
-package resources;
+package resources.nodegroup;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -13,6 +13,7 @@ import models.utils.LogUtils;
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
 
 /**
@@ -139,12 +140,12 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	}
 
 	@Override
-	public IUserDataDao getUserConfigs() {
+	public IUserDataDao getUserDataDao() {
 		return userConfigs;
 	}
 
 	@Override
-	public void setUserConfigs(IUserDataDao userConfigs) {
+	public void setUserDataDao(IUserDataDao userConfigs) {
 		this.userConfigs = userConfigs;
 	}
 

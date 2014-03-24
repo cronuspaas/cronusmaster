@@ -1,4 +1,4 @@
-package resources;
+package resources.nodegroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;

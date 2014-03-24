@@ -1,4 +1,4 @@
-package resources;
+package resources.command;
 
 import org.lightj.example.task.HttpTaskRequest;
 

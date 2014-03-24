@@ -3,24 +3,19 @@
 
 
 <div class="container">
-	#{include 'Commands/commandsnav.html'/}
+	#{include 'Jobs/jobsnav.html'/}
 
 
  <div class="span6">
-	<button id="open-wizard" class="btn btn-primary">Command Wizard</button>
+	<button id="open-wizard" class="btn btn-primary">Job Wizard</button>
  </div>
   
-	<div class="wizard" id="wizard-commands">
-			<h1>Send REST Requests</h1>
+	<div class="wizard" id="wizard-jobs">
+			<h1>Create REST Job</h1>
 
 			<div class="wizard-card" data-cardname="name">
 				<h3>Select Target Nodes</h3>
-					<div id="ng_class" class="btn-group" data-toggle="buttons-radio">
-    					<button id="ngp_button" type="button" class="btn btn-primary">Predefined</button>
-					    <button id="nga_button" type="button" class="btn btn-primary">Adhoc</button>
-					</div>
-				
-				<div id="ng_predefined" class="wizard-input-section" style="display: none;">
+				<div id="ng_predefined" class="wizard-input-section">
 					<p>
 						<strong>
 						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/nodeGroups">here</a>. 
@@ -31,17 +26,6 @@
 		                <option value=""></option>
 		            </select>
 				</div>
-				
-				<div id="ng_adhoc" class="wizard-input-section" style="display: none;">
-					<p>
-						<strong>
-						Please enter target nodes by fqdn line by line (no additional symbols).
-						</strong>
-					</p>
-
-					<textarea class="input-xlarge" id="nodeListFromText" placeholder="host.phx.ebay.com" name="nodeListFromText" rows="5"></textarea>  
-				</div>
-				
 			</div>
 
 			<div class="wizard-card" data-onload="" data-cardname="dcn_select_requests">
@@ -112,6 +96,23 @@
 				</div>
 			</div>
 
+			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_job">
+				<h3>Save as a Job</h3>
+
+				<div class="wizard-input-section">
+					<p>
+						Select the options to save as job.
+					</p>
+					
+					<input id="job_name" class="input-large" type="text" placeholder="Unique job name" required><br/>
+					<input id="job_interval" class="input-large" type="text" placeholder="Recurring interval increment of 5 min"> X 5 MINUTE<br/>
+					<label class="checkbox">
+						<input id="job_status" type="checkbox" value="enable">
+						Enable this job to run at the recurring interval
+					</label>
+				</div>
+			</div>
+
 			<div class="wizard-card" data-cardname="dcn_send_requests">
 				<h3>Send Requests</h3>
 
@@ -150,8 +151,8 @@
 				<br/>
 
 				<div class="btn-toolbar" id="click_btngroup">
-				<a class="btn btn-success create-another-server">Send another request</a>
-				<a class="btn btn-success im-done">Done</a>
+				<a class="btn btn-success create-another-server">Make Change</a>
+				<a class="btn btn-success im-done">Create Job</a>
 				<a class="btn btn-success"href="/logs" target="_blank" >Response logs</a>
 				</div>
 			</div>
@@ -164,74 +165,10 @@
 
 <script type="text/javascript">
 
-function setServerName(card) {
-	var host = $("#new-server-fqdn").val();
-	var name = $("#new-server-name").val();
-	var displayName = host;
-
-	if (name) {
-		displayName = name + " ("+host+")";
-	};
-
-	card.wizard.setSubtitle(displayName);
-	card.wizard.el.find(".create-server-name").text(displayName);
-}
-
-function validateIP(ipaddr) {
-    //Remember, this function will validate only Class C IP.
-    //change to other IP Classes as you need
-    ipaddr = ipaddr.replace(/\s/g, "") //remove spaces for checking
-    var re = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/; //regex. check for digits and in
-                                          //all 4 quadrants of the IP
-    if (re.test(ipaddr)) {
-        //split into units with dots "."
-        var parts = ipaddr.split(".");
-        //if the first unit/quadrant of the IP is zero
-        if (parseInt(parseFloat(parts[0])) == 0) {
-            return false;
-        }
-        //if the fourth unit/quadrant of the IP is zero
-        if (parseInt(parseFloat(parts[3])) == 0) {
-            return false;
-        }
-        //if any part is greater than 255
-        for (var i=0; i<parts.length; i++) {
-            if (parseInt(parseFloat(parts[i])) > 255){
-                return false;
-            }
-        }
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-function validateFQDN(val) {
-	return /^[a-z0-9-_]+(\.[a-z0-9-_]+)*\.([a-z]{2,4})$/.test(val);
-}
-
-function fqdn_or_ip(el) {
-	var val = el.val();
-	ret = {
-		status: true
-	};
-	if (!validateFQDN(val)) {
-		if (!validateIP(val)) {
-			ret.status = false;
-			ret.msg = "Invalid IP address or FQDN";
-		}
-	}
-	return ret;
-}
-
-
-
-
 $(function() {
 	$.fn.wizard.logging = true;
 
-	var wizard = $("#wizard-commands").wizard();
+	var wizard = $("#wizard-jobs").wizard();
 
 	$(".chzn-select").chosen();
 	// console.log("!!!outside loop: + ${nodeGroupSourceMetadataListJsonArray}"  )
@@ -272,43 +209,11 @@ $(function() {
 	});
 	
 	
-	wizard.cards["dcn_send_requests"].on("validated", function(card) {
-		
-		var nodeGroupType = $("#target_nodes").val()
-		var agentCommandType = $("#commands").val()
-		var button1 ="<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/getAgentData?nodeGroupType="
-				+ nodeGroupType + "&agentCommandType=" +agentCommandType + "\">Response data</a>" 
-		var button2 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/aggregatePieChart?nodeGroupType="
-					+ nodeGroupType + "&agentCommandType=" +agentCommandType + "&rawDataSourceType=ALL_AGENT_DATA&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE\">Aggregation</a>" 
-		//var button3 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/aggregateMetrics?nodeGroupType="
-		//			+ nodeGroupType + "&agentCommandType=" +agentCommandType + "\">Number only plot</a>"
-		var button3 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/aggregatePieChart?textOnly=true&nodeGroupType="
-					+ nodeGroupType + "&agentCommandType=" +agentCommandType + "&rawDataSourceType=ALL_AGENT_DATA&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE\">Aggregation in text</a>" 
-		
-		
-		var button4 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/config/editConfig/aggregation\">Edit Regex</a>" 
-		$('#response_btngroup').children().remove();
-		$("#response_btngroup").append(button1);
-		$("#response_btngroup").append(button2);
-		$("#response_btngroup").append(button3);
-		$("#response_btngroup").append(button4);
-		 //console.log("!!!!!!button1: " + button1)
-		 //console.log("!!!!!!button2: " + button2)
-		
-	});
-
 	wizard.on("submit", function(wizard) {
-		var dataType = $("#ngp_button").hasClass('active') ? "NODEGROUP" : "ADHOCNODEGROUP";
-		var nodeGroupType = $("#ngp_button").hasClass('active') ? $("#target_nodes").val() : $("#nodeListFromText").val();
-		var exeOptions = $("#exe_initde").val() + " ," + $("#exe_to").val() + " ," + $("#exe_retry").val() + " ," + $("#exe_rede").val() + " ";
-		var monOptions = $("#mon_int").val() + "," + $("#mon_initde").val() + "," + $("#mon_to").val() + "," + $("#mon_retry").val() + "," + $("#mon_rede").val();
-		var thrOptions = $("#thrStrategy").val() + "," + $("#thr_rate").val();
-		var varValues = $("#var_values").val();
 		var submitData = {
-			"dataType": dataType,
-			"nodeGroupType": nodeGroupType,
-			"agentCommandType": $("#commands").val(),
-			"options": {
+			"nodeGroup": $("#target_nodes").val(),
+			"command": $("#commands").val(),
+			"exeOptions": {
 				"exe_initde": $("#exe_initde").val(),
 				"exe_to": $("#exe_to").val(),
 				"exe_retry": $("#exe_retry").val(),
@@ -321,11 +226,16 @@ $(function() {
 				"thrStrategy": $("#thrStrategy").val(),
 				"thr_rate": $("#thr_rate").val(),
 				"var_values": $("#var_values").val()
+			},
+			"jobOptions": {
+				"job_name": $("#job_name").val(),
+				"job_interval": $("#job_interval").val(),
+				"job_status": $("#job_status").val()
 			}
 		};
 		
 	    $.ajax({
-	        url: "/commands/runCmdOnNodeGroup",
+	        url: "/jobs/saveJob",
 	        type: "POST",
 	        data: submitData,
 	        timeout: 1800000,
@@ -352,13 +262,6 @@ $(function() {
 	        }
 	    });		
 
-/* 		setTimeout(function() {
-			wizard.trigger("success");
-			wizard.hideButtons();
-			wizard._submitting = false;
-			wizard.showSubmitCard("success");
-			wizard._updateProgressBar(0);
-		}, 2000); */
 	});
 	
 
@@ -385,21 +288,6 @@ $(function() {
 	});
 
 	wizard.show();
-});
-
-$("#ngp_button").on('click',function(){
-
-  $('#ng_predefined').show();
-  $('#ng_adhoc').hide();
-
-});
-
-
-$("#nga_button").on('click',function(){
-
-  $('#ng_predefined').hide();
-  $('#ng_adhoc').show();
-
 });
 
 </script>

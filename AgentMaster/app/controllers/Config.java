@@ -34,9 +34,9 @@ import org.lightj.util.SpringContextUtil;
 
 import play.mvc.Controller;
 import resources.FileUserDataDaoImpl;
-import resources.INodeGroupData;
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.nodegroup.INodeGroupData;
 import resources.UserDataProvider;
 
 /**
