@@ -56,13 +56,13 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	@Override
 	public void save(String configFileContent) throws IOException {
 		if (nodeGroup != null) {
-			userConfigs.saveConfigFile(DataType.ADHOCNODEGROUP, nodeGroup.getName(), JsonUtil.encode(nodeGroup));
+			userConfigs.saveData(DataType.ADHOCNODEGROUP, nodeGroup.getName(), JsonUtil.encode(nodeGroup));
 		}
 	}
 
 	@Override
 	public void load(String configFileName) throws IOException {
-		String configFileContent = userConfigs.readConfigFile(DataType.ADHOCNODEGROUP, configFileName);
+		String configFileContent = userConfigs.readData(DataType.ADHOCNODEGROUP, configFileName);
 		this.nodeGroup = JsonUtil.decode(configFileContent, NodeGroupImpl.class);
 	}
 

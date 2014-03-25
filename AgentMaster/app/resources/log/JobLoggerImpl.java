@@ -42,18 +42,23 @@ public class JobLoggerImpl implements IJobLogger {
 
 	@Override
 	public void saveLog(JobLog log) throws IOException {
-		userDataDao.saveConfigFile(dataType, log.uuid(), JsonUtil.encode(log));
+		userDataDao.saveData(dataType, log.uuid(), JsonUtil.encode(log));
 	}
 
 	@Override
 	public JobLog readLog(String fileName) throws IOException {
-		String log = userDataDao.readConfigFile(dataType, fileName);
+		String log = userDataDao.readData(dataType, fileName);
 		return JsonUtil.decode(log, JobLog.class);
 	}
 
 	@Override
 	public List<String> listLogs() throws IOException {
-		return userDataDao.listFiles(dataType);
+		return userDataDao.listNames(dataType);
+	}
+
+	@Override
+	public void deleteLog(String logId) throws IOException {
+		userDataDao.deleteData(dataType, logId);
 	}
 
 }

@@ -33,5 +33,12 @@ public interface IJobLogger extends IUserData {
 	 * @throws IOException
 	 */
 	public List<String> listLogs() throws IOException;
+	
+	/**
+	 * delete a log
+	 * @param logId
+	 * @throws IOException
+	 */
+	public void deleteLog(String logId) throws IOException;
 
 }

@@ -1,4 +1,4 @@
- {
+     {
     "GET_HTTPS_SITE": {
         "taskType": "asyncpoll",
         "httpClientType": "httpClient",
@@ -17,6 +17,19 @@
             "headers": {}
         },
         "pollProcessorName": "dummyPollProcessor",
+        "customHandler": "logTaskEventHandler"
+    },
+    "LOCAL_DELETE_LOGS": {
+        "taskType": "async",
+        "httpClientType": "httpClient",
+        "urlTemplate": {
+            "body": null,
+            "url": "http://#:host:#:9000/housekeeping/deleteLogs/#:dataType:#/#:retainFactor:#/#:numToKeep:#",
+            "method": "GET",
+            "headers": {
+                "content-type": "application/x-www-form-urlencoded"
+            }
+        },
         "customHandler": "logTaskEventHandler"
     }
 }

@@ -18,6 +18,12 @@ import resources.nodegroup.NodeGroupImpl;
  */
 public interface IUserDataDao {
 	
+	/**
+	 * different type of data
+	 * 
+	 * @author binyu
+	 *
+	 */
 	public enum DataType {
 		NODEGROUP("conf", true, NodeGroupImpl.class), 
 		AGGREGATION("conf", true, Object.class), 
@@ -26,6 +32,7 @@ public interface IUserDataDao {
 		CMDLOG("cmd_logs", false, JobLog.class),
 		JOBLOG("job_logs", false, JobLog.class),
 		CMDJOB("cmd_jobs", false, CmdIntervalJobImpl.class);
+		
 		private final String path;
 		private final boolean isFile;
 		private final Class doKlass;
@@ -52,30 +59,30 @@ public interface IUserDataDao {
 	 * @return
 	 * @throws IOException
 	 */
-	public String readConfigFile(DataType type, String fileName) throws IOException;
+	public String readData(DataType type, String name) throws IOException;
 	
 	/**
 	 * save config file of type
 	 * @param type
-	 * @param configFileContent
+	 * @param content
 	 * @throws IOException
 	 */
-	public void saveConfigFile(DataType type, String fileName, String configFileContent) throws IOException;
+	public void saveData(DataType type, String name, String content) throws IOException;
 	
 	/**
 	 * delete config file
 	 * @param type
-	 * @param fileName
+	 * @param name
 	 * @return
 	 * @throws IOException
 	 */
-	public void deleteConfigFile(DataType type, String fileName) throws IOException;
+	public void deleteData(DataType type, String name) throws IOException;
 	
 	/**
 	 * list config files
 	 * @param type
 	 * @return
 	 */
-	public List<String> listFiles(DataType type);
+	public List<String> listNames(DataType type);
 
 }

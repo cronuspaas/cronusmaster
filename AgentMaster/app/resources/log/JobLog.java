@@ -66,11 +66,16 @@ public class JobLog {
 		HashMap<String, String> meta = new HashMap<String, String>();
 		String[] tokens = uuid.split("~");
 		meta.put("timeStampDisplay", tokens[0]);
+		meta.put("timeStamp", Long.toString(DateUtil.parse(tokens[0], DateFormat).getTime()));
 		meta.put("nodeGroupType", tokens[1]);
 		meta.put("nodeGroup", tokens[2]);
 		meta.put("command", tokens[3]);
 		if (tokens.length > 4) {
 			meta.put("jobName", tokens[4]);
+			meta.put("lastToken", tokens[4]);
+		} 
+		else {
+			meta.put("lastToken", tokens[3]);
 		}
 		return meta;
 	}

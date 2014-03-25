@@ -1,18 +1,19 @@
 package resources;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
-import models.data.LogFile;
 import models.utils.DateUtils;
-import models.utils.FileIoUtils;
-import models.utils.VarUtils;
+
+import org.apache.commons.io.FileUtils;
+
 import play.Logger;
 import play.vfs.VirtualFile;
 
@@ -27,12 +28,21 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	
 	/**
 	 * list files
-	 * @param configFile
+	 * @param dataType
 	 * @return
 	 */
-	public List<String> listFiles(DataType configFile) {
+	@Override
+	public List<String> listNames(DataType dataType) 
+	{
 
-		List<String> fileNames = FileIoUtils.getFileNamesInFolder(configFile.getPath());
+		VirtualFile vf = VirtualFile.fromRelativePath(dataType.getPath());
+		File dir = vf.getRealFile();
+
+		Collection<File> files = FileUtils.listFiles(dir, null, false);
+		List<String> fileNames = new ArrayList<String>();
+		for (File file : files) {
+			fileNames.add(file.getName());
+		}
 		Collections.sort(fileNames);
 		return fileNames;
 
@@ -45,7 +55,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	 * @throws IOException 
 	 */
 	@Override
-	public String readConfigFile(DataType type, String fileName) throws IOException {
+	public String readData(DataType type, String name) throws IOException {
 
 		if (type == null) {
 			return "ERROR reading config: data type is empty.";
@@ -58,7 +68,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 
 		// in test
 		String configFileLocation = String.format("%s/%s", type.getPath(), type.isFile() ? 
-							type.toString().toLowerCase() : fileName);								
+							type.toString().toLowerCase() : name);								
 		BufferedReader reader = null;
 		try {
 
@@ -91,20 +101,20 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 
 	/**
 	 * save config file
-	 * @param configFile
+	 * @param dataType
 	 * @param configFileContent
 	 * @throws IOException 
 	 */
 	@Override
-	public void saveConfigFile(DataType configFile, String fileName, String configFileContent) throws IOException 
+	public void saveData(DataType dataType, String fileName, String configFileContent) throws IOException 
 	{
 
-		if (configFile == null) {
+		if (dataType == null) {
 			models.utils.LogUtils.printLogError("ERROR reading config: configFile is empty.");
 		}
 
 		// in test
-		String configFileLocation = getFilePath(configFile, fileName);
+		String configFileLocation = getFilePath(dataType, fileName);
 		FileWriter fw = null;
 		try {
 
@@ -134,22 +144,10 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 
 	
 	/**
-	 * get file path
-	 * @param cat
-	 * @param fileName
-	 * @return
-	 */
-	private String getFilePath(DataType cat, String fileName) {
-		String filePath = null;
-		filePath = String.format("%s/%s", cat.getPath(), cat.isFile() ? cat.name().toLowerCase() : fileName);
-		return filePath;
-	}
-
-	/**
-	 * delet config file
+	 * delete config file
 	 */
 	@Override
-	public void deleteConfigFile(DataType type, String fileName)
+	public void deleteData(DataType type, String fileName)
 			throws IOException {
 
 		// in test
@@ -164,4 +162,16 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 
 	}
 	
+	/**
+	 * get file path
+	 * @param cat
+	 * @param fileName
+	 * @return
+	 */
+	private String getFilePath(DataType cat, String fileName) {
+		String filePath = null;
+		filePath = String.format("%s/%s", cat.getPath(), cat.isFile() ? cat.name().toLowerCase() : fileName);
+		return filePath;
+	}
+
 }

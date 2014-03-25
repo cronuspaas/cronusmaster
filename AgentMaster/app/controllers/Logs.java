@@ -66,7 +66,6 @@ public class Logs extends Controller {
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
 				log.put("name", logName);
-				log.put("timeStamp", Long.toString(DateUtil.parse(logMeta.get("timeStampDisplay"), JobLog.DateFormat).getTime()));
 				log.put("type", DataType.CMDLOG.name());
 				logFiles.add(log);
 			}
@@ -106,7 +105,6 @@ public class Logs extends Controller {
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
 				log.put("name", logName);
-				log.put("timeStamp", Long.toString(DateUtil.parse(logMeta.get("timeStampDisplay"), JobLog.DateFormat).getTime()));
 				log.put("type", DataType.JOBLOG.name());
 				logFiles.add(log);
 			}
@@ -207,79 +205,6 @@ public class Logs extends Controller {
 
 	}
 
-	public static void archiveAppLogs(String archiveDate) {
-
-		try {
-			boolean success = LogProvider.archiveAppLogsOnDate(archiveDate);
-
-			if (success) {
-
-				renderText("Success archive app logs into folder "
-						+ archiveDate);
-			} else {
-				renderText("Error occured in archive app logs " + archiveDate);
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error occured in archive app logs ");
-		}
-
-	}// end func
-
-	public static void deleteAppLogs(String deleteDate) {
-
-		try {
-			boolean success = LogProvider.deleteAllAppLogsOnDate(deleteDate);
-
-			if (success) {
-
-				renderText("Success deleteAllAppLogsOnDate with date "
-						+ deleteDate);
-			} else {
-				renderText("Error occured in deleteAllAppLogsOnDate on date "
-						+ deleteDate);
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error occured in archive app logs ");
-		}
-
-	}// end func
-
-	public static void archiveAppLogsDailyJob() {
-
-		try {
-			boolean success = LogProvider.archiveAppLogsDailyJob();
-
-			if (success) {
-
-				renderText("Success archiveAppLogsDailyJob");
-			} else {
-				renderText("Error archiveAppLogsDailyJob");
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error archiveAppLogsDailyJob");
-		}
-
-	}// end func
-
-	public static void deleteAppLogsDailyJob() {
-
-		try {
-			boolean success = LogProvider.deleteAppLogsDailyJob();
-			if (success) {
-				renderText("Success deleteAppLogsDailyJob");
-			} else {
-				renderText("Error deleteAppLogsDailyJob");
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error deleteAppLogsDailyJob");
-		}
-
-	}// end func
-
 	/**
 	 * Generic display any files.
 	 * 
@@ -306,42 +231,6 @@ public class Logs extends Controller {
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in exploreFiles of logs");
-		}
-
-	}// end func
-
-	public static void deleteAllAppLogs(String pin) {
-		if (pin == null) {
-			renderText("Authorization required. Please input the right PIN (Password) to this command. Thanks for your cooperation. "
-					+ DateUtils.getNowDateTimeStrSdsm());
-		} else if (!pin.equals(VarUtils.SUPERMAN_PIN)) {
-			renderText("Authorization required. Please input the right PIN (Password) to this command. Thanks for your cooperation. "
-					+ DateUtils.getNowDateTimeStrSdsm());
-		}
-
-		try {
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_APP_WITH_SLASH);
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_WITH_SLASH);
-
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_NONESTARDARD_WITH_SLASH);
-
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_COMPONENTS_AGGREGATION_RULES
-							+ "/");
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_COMPONENTS_COMMANDS
-							+ "/");
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_COMPONENTS_NODE_GROUPS
-							+ "/");
-
-			renderText("Success deleteAllAppLogs logs in all logs folder ");
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error occured in deleteAllAppLogs of Json logs");
 		}
 
 	}// end func

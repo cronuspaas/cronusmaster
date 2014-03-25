@@ -47,14 +47,14 @@ public class CommandDataImpl implements ICommandData {
 	@Override
 	public void save(String configFileContent) throws IOException {
 		validate(configFileContent);
-		userDataDao.saveConfigFile(DataType.COMMAND, null, configFileContent);
+		userDataDao.saveData(DataType.COMMAND, null, configFileContent);
 		load();
 	}
 
 	@Override
 	public void load() throws IOException {
 		HashMap<String, ICommand> templates = new HashMap<String, ICommand>();
-		String content = userDataDao.readConfigFile(DataType.COMMAND, null);
+		String content = userDataDao.readData(DataType.COMMAND, null);
 		if (!StringUtil.isNullOrEmpty(content)) {
 			HashMap<String, HttpTaskRequest> dataLoaded = JsonUtil.decode(content, new HttpTemplateTypeReference());
 			for (Entry<String, HttpTaskRequest> data : dataLoaded.entrySet()) {

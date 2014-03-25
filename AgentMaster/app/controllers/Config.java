@@ -46,21 +46,6 @@ import resources.UserDataProvider;
  */
 public class Config extends Controller {
 
-	/**
-	 * gc
-	 */
-	public static void runGC() {
-
-		try {
-			ActorConfig.runGCWhenNoJobRunning();
-			renderJSON( "Success in RunGC at " + DateUtils.getNowDateTimeStrSdsm());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in RunGC");
-		}
-
-	}
-	
 	public static void viewConfigItem(String configType, String configKey) {
 		try {
 			DataType type = DataType.valueOf(configType.toUpperCase());
@@ -117,7 +102,7 @@ public class Config extends Controller {
 			}
 
 			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
-			String configFileContent = userDataDao.readConfigFile(DataType.valueOf(configFile.toUpperCase()), null);
+			String configFileContent = userDataDao.readData(DataType.valueOf(configFile.toUpperCase()), null);
 			
 			String configFileUpper = configFile.toUpperCase(Locale.ENGLISH);
 
@@ -149,7 +134,7 @@ public class Config extends Controller {
 			}
 
 			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
-			userDataDao.saveConfigFile(DataType.valueOf(configFile.toUpperCase()), null, configFileContent);
+			userDataDao.saveData(DataType.valueOf(configFile.toUpperCase()), null, configFileContent);
 
 			String configFileUpper = configFile.toUpperCase(Locale.ENGLISH);
 			page = new String(page + configFile.toLowerCase(Locale.ENGLISH));
@@ -183,9 +168,9 @@ public class Config extends Controller {
 			String configFileAggregationTitle = DataType.AGGREGATION.toString();
 			String configFileCommandTitle = DataType.COMMAND.toString();
 			
-			String configFileCommands = configsDao.readConfigFile(DataType.COMMAND, null);
-			String configFileContentNodeGroup = configsDao.readConfigFile(DataType.NODEGROUP, null);
-			String configFileContentAggregation= configsDao.readConfigFile(DataType.AGGREGATION, null);
+			String configFileCommands = configsDao.readData(DataType.COMMAND, null);
+			String configFileContentNodeGroup = configsDao.readData(DataType.NODEGROUP, null);
+			String configFileContentAggregation= configsDao.readData(DataType.AGGREGATION, null);
 
 			render(page, topnav, 
 					configFileNodeGroupTitle, configFileAggregationTitle,
@@ -199,16 +184,4 @@ public class Config extends Controller {
 
 	}
 
-	/**
-	 * 20130718 add
-	 * 
-	 * @param runCronJob
-	 */
-	public static void setRunCronJob(boolean runCronJob) {
-
-		ConfUtils.setRunCronJob(runCronJob);
-		renderText("Set runCronJob as " + runCronJob + " at time: "
-				+ DateUtils.getNowDateTimeStrSdsm());
-	}
-	
 }

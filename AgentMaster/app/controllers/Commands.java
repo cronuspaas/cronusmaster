@@ -221,7 +221,11 @@ public class Commands extends Controller {
 			int maxRate = Integer.parseInt(getOptionValue(options, "thr_rate", "1000"));
 			BatchOption batchOption = new BatchOption(maxRate, strategy);
 			
-			HashMap<String, String> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), HashMap.class);
+			HashMap<Object, Object> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), HashMap.class);
+			HashMap<String, String> values = new HashMap<String, String>();
+			for (Entry<Object, Object> entry : varValues.entrySet()) {
+				values.put(entry.getKey().toString(), entry.getValue().toString());
+			}
 			
 			reqTemplate.setExecutionOption(exeOption);
 			reqTemplate.setMonitorOption(monOption);
@@ -229,7 +233,7 @@ public class Commands extends Controller {
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
 			String[] hosts = ng.getNodeList().toArray(new String[0]);
 			reqTemplate.setHosts(hosts);
-			reqTemplate.addTemplateValue(varValues);
+			reqTemplate.addTemplateValue(values);
 			
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			JobLog jobLog = new JobLog();
@@ -243,6 +247,7 @@ public class Commands extends Controller {
 			new StandaloneTaskExecutor(batchOption, listener, reqTask).execute();
 			
 		} catch (Throwable t) {
+			t.printStackTrace();
 			error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage()
 					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
 		}

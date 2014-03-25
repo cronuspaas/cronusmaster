@@ -40,8 +40,8 @@ public class IntervalJobDataImpl implements IntervalJobData {
 	@Override
 	public List<IntervalJob> getAllJobs() throws IOException {
 		ArrayList<IntervalJob> jobs = new ArrayList<IntervalJob>();
-		for (String fileName : userDataDao.listFiles(jobType)) {
-			String jobDataContent = userDataDao.readConfigFile(jobType, fileName);
+		for (String fileName : userDataDao.listNames(jobType)) {
+			String jobDataContent = userDataDao.readData(jobType, fileName);
 			jobs.add(JsonUtil.decode(jobDataContent, CmdIntervalJobImpl.class));
 		}
 		return jobs;
@@ -49,17 +49,17 @@ public class IntervalJobDataImpl implements IntervalJobData {
 
 	@Override
 	public void save(IntervalJob job) throws IOException {
-		userDataDao.saveConfigFile(jobType, job.getName(), JsonUtil.encode(job));
+		userDataDao.saveData(jobType, job.getName(), JsonUtil.encode(job));
 	}
 
 	@Override
 	public void delete(String jobId) throws IOException {
-		userDataDao.deleteConfigFile(jobType, jobId);
+		userDataDao.deleteData(jobType, jobId);
 	}
 
 	@Override
 	public IntervalJob getJobById(String jobId) throws IOException {
-		String jobContent = userDataDao.readConfigFile(jobType, jobId);
+		String jobContent = userDataDao.readData(jobType, jobId);
 		return (IntervalJob) JsonUtil.decode(jobContent, jobType.getDoKlass());
 	}
 

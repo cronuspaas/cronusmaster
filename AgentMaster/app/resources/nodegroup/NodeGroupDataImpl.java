@@ -58,7 +58,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	public void save(String configFileContent) throws IOException 
 	{
 		validate(configFileContent);
-		userConfigs.saveConfigFile(DataType.valueOf(source), null, configFileContent);
+		userConfigs.saveData(DataType.valueOf(source), null, configFileContent);
 		isLoaded = false;
 	}
 
@@ -67,7 +67,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 		
 		if (!isLoaded) {
 			HashMap<String, INodeGroup> nodeGroups = new HashMap<String, INodeGroup>();
-			String content = userConfigs.readConfigFile(DataType.NODEGROUP, configFileName);
+			String content = userConfigs.readData(DataType.NODEGROUP, configFileName);
 
 			String[] lines = content.split("\n");
 			NodeGroupImpl nodeGroupImpl = null;
