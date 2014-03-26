@@ -43,7 +43,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	@Override
 	public Map<String, INodeGroup> getAllNodeGroups() throws IOException {
 		if (nodeGroups == null) {
-			load(dataType.name());
+			load();
 		}
 		return nodeGroups;
 	}
@@ -51,7 +51,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	@Override
 	public INodeGroup getNodeGroupByName(String name) throws IOException {
 		if (nodeGroups == null) {
-			load(dataType.name());
+			load();
 		}
 		if (nodeGroups.containsKey(name)) {
 			return nodeGroups.get(name);
@@ -61,78 +61,39 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	}
 
 	@Override
-	public void save(String configFileContent) throws IOException {
-		validate(configFileContent);
-		userConfigs.saveData(dataType, null, configFileContent);
-		load(dataType.name());
+	public void save(String ngName, String configFileContent) throws IOException {
+		userConfigs.saveData(dataType, ngName, configFileContent);
+		load();
 	}
 
 	@Override
-	public void load(String configFileName) throws IOException {
+	public void load() throws IOException {
 
 		HashMap<String, INodeGroup> nodeGroups = new HashMap<String, INodeGroup>();
-		String content = userConfigs.readData(DataType.NODEGROUP,
-				configFileName);
+		
+		List<String> ngNames = userConfigs.listNames(dataType);
+		for (String ngName : ngNames) {
+			String content = userConfigs.readData(DataType.NODEGROUP, ngName);
 
-		String[] lines = content.split("\n");
-		NodeGroupImpl nodeGroupImpl = null;
-		List<String> tmpNodeList = new ArrayList<String>();
-		boolean isNode = false;
-		for (String line : lines) {
-			// trim the comments or empty lines
-			if (StringUtil.isNullOrEmptyAfterTrim(line)) {
-				continue;
-			}
-
-			if (line.startsWith(NODEGROUP_NAME_TAG)) {
-				String tokens[] = line.split("=");
-				nodeGroupImpl = new NodeGroupImpl(tokens[1]);
-				nodeGroupImpl.setType(DataType.NODEGROUP.name());
-			} else if (line.startsWith(NODEGROUP_LIST_START_TAG)) {
-				tmpNodeList.clear();
-				isNode = true;
-			} else if (line.startsWith(NODEGROUP_LIST_END_TAG)) {
-				nodeGroupImpl.addNodesToList(tmpNodeList);
-				if (nodeGroupImpl != null) {
-					nodeGroups.put(nodeGroupImpl.getName(), nodeGroupImpl);
+			String[] lines = content.split("\n");
+			List<String> tmpNodeList = new ArrayList<String>();
+			for (String line : lines) {
+				// trim the comments or empty lines
+				if (StringUtil.isNullOrEmptyAfterTrim(line)) {
+					continue;
 				}
-				isNode = false;
-			} else if (isNode) {
 				tmpNodeList.add(line);
 			}
-
+			NodeGroupImpl nodeGroupImpl = new NodeGroupImpl(ngName);
+			nodeGroupImpl.setType(DataType.NODEGROUP.name());
+			nodeGroupImpl.addNodesToList(tmpNodeList);
+			nodeGroups.put(ngName, nodeGroupImpl);
 		}
 
 		LogUtils.printLogNormal("Completed NodeGroup loading with node group count: "
 				+ nodeGroups.size() + " at " + DateUtils.getNowDateTimeStr());
 
 		this.nodeGroups = nodeGroups;
-	}
-
-	@Override
-	public void validate(String configFileContent) throws IOException {
-		String[] lines = configFileContent.split("\n");
-		int nameCnt = 0, startCnt = 0, endCnt = 0;
-		for (String line : lines) {
-			// trim the comments or empty lines
-			if (StringUtil.isNullOrEmptyAfterTrim(line)) {
-				continue;
-			}
-
-			if (line.startsWith(NODEGROUP_NAME_TAG)) {
-				nameCnt++;
-				assert nameCnt == (startCnt + 1);
-				assert nameCnt == (endCnt + 1);
-			} else if (line.startsWith(NODEGROUP_LIST_START_TAG)) {
-				startCnt++;
-				assert nameCnt == startCnt;
-				assert nameCnt == (endCnt + 1);
-			} else if (line.startsWith(NODEGROUP_LIST_END_TAG)) {
-				endCnt++;
-				assert nameCnt == startCnt;
-				assert nameCnt == endCnt;
-			}
-		}
 	}
 
 	@Override

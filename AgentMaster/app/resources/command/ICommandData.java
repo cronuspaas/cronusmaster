@@ -30,21 +30,14 @@ public interface ICommandData extends IUserData {
 
 	/**
 	 * save command configs
-	 * @param configFileContent
+	 * @param content
 	 * @throws IOException
 	 */
-	public void save(String configFileContent) throws IOException;
+	public void save(String cmdName, String content) throws IOException;
 	
 	/**
 	 * load all commands from backing storage
 	 */
 	public void load() throws IOException;
 	
-	/**
-	 * validate config file content
-	 * @param configFileContent
-	 * @throws InvalidObjectException
-	 */
-	public void validate(String configFileContent) throws IOException;
-
 }

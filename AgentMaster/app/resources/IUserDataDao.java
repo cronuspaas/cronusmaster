@@ -25,9 +25,9 @@ public interface IUserDataDao {
 	 *
 	 */
 	public enum DataType {
-		NODEGROUP("conf", true, NodeGroupImpl.class), 
+		NODEGROUP("user_data/nodegroups", false, NodeGroupImpl.class), 
 		AGGREGATION("conf", true, Object.class), 
-		COMMAND("conf", true, CommandImpl.class), 
+		COMMAND("user_data/commands", false, CommandImpl.class), 
 		ADHOCNODEGROUP("user_data/adhoc_nodegroups", false, AdhocNodeGroupDataImpl.class), 
 		CMDLOG("user_data/cmd_logs", false, JobLog.class),
 		JOBLOG("user_data/job_logs", false, JobLog.class),

@@ -3,10 +3,10 @@ package resources.command;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.codehaus.jackson.type.TypeReference;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
@@ -45,38 +45,27 @@ public class CommandDataImpl implements ICommandData {
 	}
 
 	@Override
-	public void save(String configFileContent) throws IOException {
-		validate(configFileContent);
-		userDataDao.saveData(DataType.COMMAND, null, configFileContent);
+	public void save(String cmdName, String content) throws IOException {
+		JsonUtil.decode(content, HttpTaskRequest.class);
+		userDataDao.saveData(DataType.COMMAND, cmdName, content);
 		load();
 	}
 
 	@Override
 	public void load() throws IOException {
 		HashMap<String, ICommand> templates = new HashMap<String, ICommand>();
-		String content = userDataDao.readData(DataType.COMMAND, null);
-		if (!StringUtil.isNullOrEmpty(content)) {
-			HashMap<String, HttpTaskRequest> dataLoaded = JsonUtil.decode(content, new HttpTemplateTypeReference());
-			for (Entry<String, HttpTaskRequest> data : dataLoaded.entrySet()) {
-				String key = data.getKey();
-				HttpTaskRequest req = data.getValue();
+		List<String> cmdNames = userDataDao.listNames(DataType.COMMAND);
+		for (String cmdName : cmdNames) {
+			String content = userDataDao.readData(DataType.COMMAND, cmdName);
+			if (!StringUtil.isNullOrEmpty(content)) {
+				HttpTaskRequest req = JsonUtil.decode(content, HttpTaskRequest.class);
 				CommandImpl cmd = new CommandImpl();
-				cmd.setName(key);
+				cmd.setName(cmdName);
 				cmd.setHttpTaskRequest(req);
-				templates.put(key, cmd);
+				templates.put(cmdName, cmd);
 			}
 		}
 		this.templates = templates;
-	}
-
-	@Override
-	public void validate(String configFileContent) throws IOException {
-		if (!StringUtil.isNullOrEmpty(configFileContent)) {
-			JsonUtil.decode(configFileContent, new HttpTemplateTypeReference());
-		}
-		else {
-			throw new InvalidObjectException("Command content cannot be empty");
-		}
 	}
 
 	public IUserDataDao getUserDataDao() {
@@ -87,6 +76,4 @@ public class CommandDataImpl implements ICommandData {
 		this.userDataDao = userConfigs;
 	}
 
-	static final class HttpTemplateTypeReference extends TypeReference<HashMap<String, HttpTaskRequest>> {
-	}
 }

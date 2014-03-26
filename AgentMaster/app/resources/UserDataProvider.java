@@ -171,7 +171,7 @@ public class UserDataProvider {
 	 * @throws IOException
 	 */
 	public static void reloadAllConfigs() throws IOException {
-		getNodeGroupOfType(DataType.NODEGROUP).load(DataType.NODEGROUP.name());
+		getNodeGroupOfType(DataType.NODEGROUP).load();
 		getCommandConfigs().load();
 	}
 

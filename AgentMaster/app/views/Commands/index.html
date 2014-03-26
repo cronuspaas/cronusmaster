@@ -22,6 +22,7 @@
 					<th>Parameters</th>
 					<th>Body</th>
 					<th>Variables</th>
+					<th>Manage</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -43,12 +44,14 @@
 					<td>${obj.parameters}</td>
 					<td>${obj.body}</td>
 					<td>${obj.variables}</td>
+					<td>   
+						<a target=_blank href="config/editConfig/command/${obj.name}" class="btn btn-primary">Edit</a> 
+					</td>   
 				</tr>
 				#{/list}
 			</tbody>
 		</table>
 
-<p><br/>* MaxConcurrency value 0 or negative: will use the default value of 1500 (defined as MAX_CONCURRENT_SEND_SIZE in application.conf).</p>
 	</div>
 
 

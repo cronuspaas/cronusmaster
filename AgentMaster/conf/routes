@@ -23,9 +23,10 @@ GET		/config/viewConfigItem/{configType}/{configKey}			Config.viewConfigItem
 GET     /config/agentCommand                                    Config.getAgentCommand
 GET     /config/aggregation                                     Config.getAggregation
 GET     /config/nodeGroup                                       Config.getNodeGroup
-GET     /config/reloadConfig                                    Config.reloadConfig
-GET     /config/editConfig/{configFile}                         Config.editConfig
-POST    /config/editConfigUpdate/{configFile}                   Config.editConfigUpdate
+GET     /config/reloadConfig  									Config.reloadConfig
+GET		/config/showConfigs/{dataType}							Config.showConfigs
+GET     /config/editConfig/{dataType}/{configName}				Config.editConfig
+POST    /config/editConfigUpdate/{dataType}/{configName}		Config.editConfigUpdate
 
 # housekeeping
 POST	/housekeeping/runGC							HouseKeeping.runGC

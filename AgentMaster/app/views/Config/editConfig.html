@@ -15,9 +15,9 @@
       <h2>Edit ${configFileUpper} Configuration  </h2>
        <p> </p>
 
-      <form class="form-horizontal" action="/config/editConfigUpdate/${configFileUpper}" method="post" >  
+      <form class="form-horizontal" action="/config/editConfigUpdate/${configFileUpper}/${configName}" method="post" >  
         
-       	<textarea class="field span12" id="textarea" rows="30" placeholder="configFileContent" name="configFileContent"> ${configFileContent}</textarea>
+       	<textarea class="field span12" id="textarea" rows="30" placeholder="content" name="content"> ${content}</textarea>
        	<br/><br/>
         <button type="submit" class="btn btn-primary">Save</button>  
         <a class="btn" href="#">Cancel</a>  

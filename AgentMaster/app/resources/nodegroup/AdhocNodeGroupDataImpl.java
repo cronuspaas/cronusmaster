@@ -48,26 +48,20 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 			nodeGroup.setType(DataType.ADHOCNODEGROUP.name());
 			nodeGroup.setName(String.format("AdhocNodeGroup-%s", DateUtils.getNowDateTimeStrSdsm()));
 			nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
-			save(null);
+			save(nodeGroup.getName(), JsonUtil.encode(nodeGroup));
 		}
 		return nodeGroup;
 	}
 
 	@Override
-	public void save(String configFileContent) throws IOException {
+	public void save(String ngName, String configFileContent) throws IOException {
 		if (nodeGroup != null) {
-			userConfigs.saveData(DataType.ADHOCNODEGROUP, nodeGroup.getName(), JsonUtil.encode(nodeGroup));
+			userConfigs.saveData(DataType.ADHOCNODEGROUP, ngName, configFileContent);
 		}
 	}
 
 	@Override
-	public void load(String configFileName) throws IOException {
-		String configFileContent = userConfigs.readData(DataType.ADHOCNODEGROUP, configFileName);
-		this.nodeGroup = JsonUtil.decode(configFileContent, NodeGroupImpl.class);
-	}
-
-	@Override
-	public void validate(String configFileContent) throws IOException {
+	public void load() throws IOException {
 		// noop
 	}
 

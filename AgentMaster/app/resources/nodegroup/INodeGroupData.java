@@ -41,19 +41,11 @@ public interface INodeGroupData extends IUserData {
 	 * @param configFileContent
 	 * @throws IOException
 	 */
-	public void save(String configFileContent) throws IOException;
+	public void save(String ngName, String configFileContent) throws IOException;
 	
 	/**
 	 * load all commands from backing storage
 	 */
-	public void load(String configFileName) throws IOException;
-	
-	/**
-	 * validate config file content
-	 * @param configFileContent
-	 * @throws InvalidObjectException
-	 */
-	public void validate(String configFileContent) throws IOException;
-
+	public void load() throws IOException;
 	
 }

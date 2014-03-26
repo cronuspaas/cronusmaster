@@ -106,9 +106,9 @@ public class Commands extends Controller {
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
 
 			render(page, topnav, commands, lastRefreshed);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in index of logs");
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
 		}
 
 	}
