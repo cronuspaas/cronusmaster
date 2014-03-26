@@ -1,4 +1,4 @@
-    
+     
 %WARNING: PLEASE DO NOT MODIFY EXISTING PRIMARY_KEY
 %Comments begin with %
 %FORMAT: source nodeGroupType dataSourceType statehubURL  
@@ -22,3 +22,7 @@ pittsburgh.craigslist.org
 honolulu.craigslist.org
 ```NODEGROUP_END
 
+```NODEGROUP_NAME=NODE_LIST_LOCALHOST
+```NODEGROUP_START
+localhost
+```NODEGROUP_END

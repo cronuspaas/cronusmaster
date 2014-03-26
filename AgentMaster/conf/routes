@@ -7,10 +7,10 @@ GET     /                                       Application.index
 GET		/whatsnew								Application.whatsnew
 GET		/whatsold								Application.whatsold
 GET		/introVideo								Application.introVideo
+GET		/jsonedit								Application.jsonedit
 
 
 #commands 
-
 GET     /commands                        		Commands.index
 GET     /commands/common                        Commands.commonCommands
 GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
@@ -30,7 +30,7 @@ POST    /config/editConfigUpdate/{configFile}                   Config.editConfi
 # housekeeping
 POST	/housekeeping/runGC							HouseKeeping.runGC
 POST	/housekeeping/setRunCronJob					HouseKeeping.setRunCronJob	
-GET     /housekeeping/deleteLogs/{dataType}/{retainFactor}/{numToKeep}		            HouseKeeping.deleteLogs
+POST     /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
 
 # logs page
 GET     /logs                                       Logs.index
@@ -40,9 +40,9 @@ GET     /logs/exploreFiles                                       Logs.exploreFil
 
 # jobs page
 GET		/jobs										Jobs.index
-GET		/jobs/systemjobs									Jobs.systemJobs
 GET		/jobs/toggleStatus									Jobs.toggleJobStatus
 GET		/jobs/deleteJob										Jobs.deleteJob
+GET		/jobs/runJobNow										Jobs.runJobNow
 GET		/jobs/wizard										Jobs.wizard
 POST	/jobs/saveJob										Jobs.saveJob
 

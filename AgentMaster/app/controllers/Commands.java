@@ -96,6 +96,11 @@ public class Commands extends Controller {
 				values.put("headers", headers.toString());
 				values.put("body", req.getBody());
 				values.put("variables", StringUtil.join(req.getVariableNames(), ","));
+				StringBuffer parameters = new StringBuffer();
+				for (Entry<String, String> param : req.getParameters().entrySet()) {
+					parameters.append(String.format("%s=%s | ", param.getKey(), param.getValue()));
+				}
+				values.put("parameters", parameters.toString());
 				commands.add(values);
 			}
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();

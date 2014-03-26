@@ -28,10 +28,10 @@ public interface IUserDataDao {
 		NODEGROUP("conf", true, NodeGroupImpl.class), 
 		AGGREGATION("conf", true, Object.class), 
 		COMMAND("conf", true, CommandImpl.class), 
-		ADHOCNODEGROUP("adhoc_nodegroups", false, AdhocNodeGroupDataImpl.class), 
-		CMDLOG("cmd_logs", false, JobLog.class),
-		JOBLOG("job_logs", false, JobLog.class),
-		CMDJOB("cmd_jobs", false, CmdIntervalJobImpl.class);
+		ADHOCNODEGROUP("user_data/adhoc_nodegroups", false, AdhocNodeGroupDataImpl.class), 
+		CMDLOG("user_data/cmd_logs", false, JobLog.class),
+		JOBLOG("user_data/job_logs", false, JobLog.class),
+		CMDJOB("user_data/cmd_jobs", false, CmdIntervalJobImpl.class);
 		
 		private final String path;
 		private final boolean isFile;

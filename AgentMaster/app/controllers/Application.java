@@ -118,7 +118,11 @@ public class Application extends Controller {
     	render(topnav);
     }
     
-    
+    public static void jsonedit() {
+    	String topnav = "new";
+    	render(topnav);
+    }
+   
 
     
 
