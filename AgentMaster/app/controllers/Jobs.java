@@ -126,6 +126,22 @@ public class Jobs extends Controller {
 	}
 	
 	/**
+	 * delete job 
+	 * @param jobId
+	 */
+	public static void runJobNow(String dataType, String jobId) {
+		try {
+			DataType type = DataType.valueOf(dataType.toUpperCase());
+			IntervalJob job = UserDataProvider.getIntervalJobOfType(type).getJobById(jobId);
+			job.runJobAsync();
+			renderJSON("Successfully launched job " + jobId);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			renderJSON("Error launching job " + jobId);
+		}
+	}
+
+	/**
 	 * create job wizard
 	 */
 	public static void wizard() {

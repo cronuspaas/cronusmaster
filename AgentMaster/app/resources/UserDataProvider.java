@@ -51,7 +51,9 @@ public class UserDataProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") INodeGroupData predefinedNodeGroup() {
-		return new NodeGroupDataImpl(DataType.NODEGROUP.name());
+		NodeGroupDataImpl ngd = new NodeGroupDataImpl();
+		ngd.setDataType(DataType.NODEGROUP);
+		return ngd;		
 	}
 
 	/**

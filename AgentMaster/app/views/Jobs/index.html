@@ -19,6 +19,7 @@
 					<th>Interval</th>
 					<th>Description</th>
 					<th>Status</th>
+					<th>Manage</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -32,8 +33,12 @@
 					<td>${obj.interval}</td>
 					<td>${obj.description}</td>
 					<td>${obj.status}</td>
-					<td><a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target="_blank" class="btn btn-primary">${obj.statustoggle}</a>
+					<td>
+					<a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target="_blank" class="btn btn-primary">${obj.statustoggle}</a>
 					<a href="/jobs/deleteJob?dataType=${obj.type}&jobId=${obj.name}" target="_blank" class="btn btn-danger">Delete</a>
+					</td>
+					<td>
+					<a href="/jobs/runJobNow?dataType=${obj.type}&jobId=${obj.name}" target="_blank" class="btn btn-primary">Run</a>
 					</td>
 				</tr>
 				#{/list}
