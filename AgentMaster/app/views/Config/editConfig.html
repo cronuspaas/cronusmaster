@@ -12,15 +12,15 @@
        		getAlertAndWrite("${alert}");
 		</script>
  
-      <h2>Edit ${dataType} Configuration  </h2>
+      <h3 style="text-transform: uppercase">Edit ${dataType} Configuration  </h3>
        <p> </p>
 
       <form class="form-horizontal" action="/config/editConfigUpdate/${dataType}/${configName}" method="post" >  
-        <input id="textfield" class="input-large" type="text" placeholder="${configNameNew}" name="configNameNew"><br/>
-       	<textarea class="field span12" id="textarea" rows="30" placeholder="content" name="content"> ${content}</textarea>
+        <p><input id="textfield" class="input-large" type="text" placeholder="Name" name="configNameNew" #{if (configName != "newConfig")} disabled value="${configName}" #{/if}></p>
+       	<textarea class="field span6" id="textarea" rows="30" placeholder="Content" name="content">${content}</textarea>
        	<br/><br/>
         <button type="submit" class="btn btn-primary">Save</button>  
-        <a class="btn" href="#">Cancel</a>  
+        <a class="btn" href="javascript:void(0);" onclick="window.history.back();">Cancel</a>  
        </form>
   </div>
 

@@ -6,31 +6,7 @@
 
 <div class="container">
 #{include 'Logs/lognav.html'/}
-#{include 'tags/refresh.html'/}
-
-
-	<script  type="text/javascript">
-		
-    var generateIcon=function(healthStr){
-   	
-					var	iconDiskHealthy="";
-					
-					if(healthStr==true){
-						iconDiskHealthy=" <i class=\"icon-ok\"></i>"
-					}else{
-						iconDiskHealthy=" <i class=\"icon-remove\"></i>"
-					}
-					document.write(iconDiskHealthy);
-					
-    }
-    </script>
-
-<h2>Log Analysis with Response Aggregation</h2>
-
-<p>
-
-Edit the regular expression used for extracting value in response: <a href="/config/editConfig/aggregation" class="btn btn-small" target="_blank"><i class="fa fa-pencil fa-lg"></i> Edit Aggregation</a>
-</p>
+<h3 style="text-transform: uppercase">Log Analysis with Response Aggregation</h3>		 
 
 	<div  id="agent-list-all-row">
 		<br/>
@@ -78,11 +54,7 @@ Edit the regular expression used for extracting value in response: <a href="/con
 
 	</div>
 
-#{include 'Logs/logfooter.html'/}
-
-
-
-
+#{include 'tags/refresh.html'/}
 
 </div>
 

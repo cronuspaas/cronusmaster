@@ -4,17 +4,18 @@
 #{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
 <div class="container">
 	#{include 'Config/confignav.html'/}
-#{include 'tags/refresh.html'/}
 
-<h2>${dataType}</h2>
+<script type="text/javascript">	
+	getAlertAndWrite("${alert}");
+</script>
 
-        <script type="text/javascript">	
-       		getAlertAndWrite("${alert}");
-		</script>
+<h3 style="text-transform: uppercase">${dataType}</h3>		 
+<a target=_self href="/config/editConfig/${dataType}/newConfig" class="btn btn-primary">Create New</a> 
+<a target=_self href="/config/reloadConfig/${dataType}" class="btn btn-primary">Reload</a>
+
 
 	<div  id="list-all-row">
 		<br/>
-		<a target=_blank href="/config/editConfig/${dataType}/newConfig" class="btn btn-primary">New</a> 
 		<br/>
 			#{table-declare tableName:'list-all' /}
 			<thead>
@@ -32,8 +33,8 @@
 						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
 					</td>   
 					<td>   
-						<a target=_blank href="/config/editConfig/${dataType}/${obj}" class="btn btn-primary">Edit</a> 
-						<a target=_blank href="/config/deleteConfig/${dataType}/${obj}" class="btn btn-danger">Delete</a> 
+						<a target=_self href="/config/editConfig/${dataType}/${obj}" class="btn btn-primary">Edit</a> 
+						<a target=_self href="/config/deleteConfig/${dataType}/${obj}" class="btn btn-danger">Delete</a> 
 					</td>   
 				</tr>
 				#{/list}
@@ -42,6 +43,8 @@
 
 	</div>
 
+
+#{include 'tags/refresh.html'/}
 
 </div>
 	#{include 'Application/footer.html'/}

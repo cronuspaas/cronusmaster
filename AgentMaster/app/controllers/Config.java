@@ -54,22 +54,25 @@ public class Config extends Controller {
 			String jsonResult = UserDataProvider.getUserDataDao().readData(type, configKey);;
 			renderJSON(jsonResult);
 		} catch (IOException e) {
-			error(e);
+			e.printStackTrace();
+			renderJSON(e);
 		}
 	}
 
 	/**
 	 * reload all config
-	 * @param type
+	 * @param dataType
 	 */
-	public static void reloadConfig(String type) {
+	public static void reloadConfig(String dataType) {
 
 		try {
 			UserDataProvider.reloadAllConfigs();
-			renderJSON("Successful reload config with type " + type);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in reloadConfig with type" + type);
+			String alert = "Successful reload config with type " + dataType;
+			redirect("Config.showConfigs", dataType, alert);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
 		}
 
 	}
@@ -80,7 +83,7 @@ public class Config extends Controller {
 	 */
 	public static void showConfigs(String dataType, String alert) {
 		
-		String page = "showConfig";
+		String page = "showConfigs"+dataType.toLowerCase();
 		String topnav = "config";
 
 		try {

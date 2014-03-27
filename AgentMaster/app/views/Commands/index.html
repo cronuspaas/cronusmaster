@@ -6,9 +6,8 @@
 
 <div class="container">
 	#{include 'Commands/commandsnav.html'/}
-#{include 'tags/refresh.html'/}
 
-<h2>Commands Defined in Config</h2>
+<h3 style="text-transform: uppercase">Commands Defined</h3>		 
 	<div  id="list-all-row">
 		<br/>
 			#{table-declare tableName:'list-all' /}
@@ -22,7 +21,6 @@
 					<th>Parameters</th>
 					<th>Body</th>
 					<th>Variables</th>
-					<th>Manage</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -37,16 +35,11 @@
 					<script type="text/javascript">	
 					getHttpMethodLabel("${obj.httpMethod}");
 					</script>
-					
 					</td>
-					
 					<td>${obj.headers}</td>
 					<td>${obj.parameters}</td>
 					<td>${obj.body}</td>
 					<td>${obj.variables}</td>
-					<td>   
-						<a target=_blank href="config/editConfig/command/${obj.name}" class="btn btn-primary">Edit</a> 
-					</td>   
 				</tr>
 				#{/list}
 			</tbody>
@@ -54,6 +47,7 @@
 
 	</div>
 
+#{include 'tags/refresh.html'/}
 
 </div>
 	#{include 'Application/footer.html'/}

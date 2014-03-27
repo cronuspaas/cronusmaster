@@ -2,12 +2,8 @@
 
 <!--<h1><font color="red">Agent tab is under maintenance.</font></h1> -->
 <ul class="nav nav-tabs">
-<li #{if (page == "editConfigagentcommand")} class="active" #{/if}><a href="/config"><i class="fa fa-search"></i> Commands</a></li>
-<li #{if (page == "editConfignodegroup")} class="active" #{/if}><a href="/config/showConfigs/nodegroup"><i class="fa fa-search"></i> NodeGroup</a></li>
-
-<li #{if (page == "reloadConfig")} class="active" #{/if}><a href="/config/reloadConfig"><i class="fa fa-refresh"></i> Reload </a></li>
-<li #{if (topnav == "agents")} class="active" #{/if}><a href="/agents/resetData"><i class="fa fa-trash-o"></i> Clear All Data</a></li>
-<li #{if (page == "editConfignotes")} class="active" #{/if}><a href="/config/editConfig/notes"><i class="fa fa-search"></i>Notes</a></li>
+<li #{if (page == "showConfigscommand")} class="active" #{/if}><a href="/config"><i class="fa fa-search"></i> Commands</a></li>
+<li #{if (page == "showConfigsnodegroup")} class="active" #{/if}><a href="/config/showConfigs/nodegroup"><i class="fa fa-search"></i> NodeGroup</a></li>
 </ul>
 <div class="row">
 

@@ -3,12 +3,12 @@
         "httpClientType": "httpClient",
         "urlTemplate": {
             "body": null,
-            "url": "http://#:host:#:9000/housekeeping/deleteLogs",
-            "method": "GET",
+            "url": "http://<host>:9000/housekeeping/deleteLogs",
+            "method": "POST",
             "headers": {
                 "content-type": "application/x-www-form-urlencoded"
             },
-            "parameters": {"dataType": "#:dataType:#", "retainFactor": "#:retainFactor:#", "numToKeep": "#:numToKeep:#"}
+            "parameters": {"dataType": "<dataType>", "retainFactor": "<retainFactor>", "numToKeep": "<numToKeep>"}
         },
         "customHandler": "logTaskEventHandler"
     }

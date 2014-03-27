@@ -6,9 +6,8 @@
 
 <div class="container">
 	#{include 'Jobs/jobsnav.html'/}
-#{include 'tags/refresh.html'/}
 
-<h2>Jobs Defined</h2>
+<h3 style="text-transform: uppercase">Jobs Defined</h3>		 
 	<div  id="list-all-row">
 		<br/>
 			#{table-declare tableName:'list-all' /}
@@ -46,6 +45,8 @@
 		</table>
 
 	</div>
+
+#{include 'tags/refresh.html'/}
 
 
 </div>
