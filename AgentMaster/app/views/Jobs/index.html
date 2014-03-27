@@ -7,6 +7,10 @@
 <div class="container">
 	#{include 'Jobs/jobsnav.html'/}
 
+<script type="text/javascript">	
+	getAlertAndWrite("${alert}");
+</script>
+
 <h3 style="text-transform: uppercase">Jobs Defined</h3>		 
 	<div  id="list-all-row">
 		<br/>
@@ -27,17 +31,17 @@
 				<tr>
 					<td>${obj_index}</td>
 					<td>   
-						<a target=_blank href="config/viewConfigItem/command/${obj.name}" >${obj.name}</a> 
+						<a target=_self href="config/viewConfigItem/CMDJOB/${obj.name}" >${obj.name}</a> 
 					</td>   
 					<td>${obj.interval}</td>
 					<td>${obj.description}</td>
 					<td>${obj.status}</td>
 					<td>
-					<a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target="_blank" class="btn btn-primary">${obj.statustoggle}</a>
-					<a href="/jobs/deleteJob?dataType=${obj.type}&jobId=${obj.name}" target="_blank" class="btn btn-danger">Delete</a>
+					<a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target=_self class="btn btn-primary">${obj.statustoggle}</a>
+					<a href="/jobs/deleteJob?dataType=${obj.type}&jobId=${obj.name}" target=_self class="btn btn-danger">Delete</a>
 					</td>
 					<td>
-					<a href="/jobs/runJobNow?dataType=${obj.type}&jobId=${obj.name}" target="_blank" class="btn btn-primary">Run</a>
+					<a href="/jobs/runJobNow?dataType=${obj.type}&jobId=${obj.name}" target=_self class="btn btn-primary">Run</a>
 					</td>
 				</tr>
 				#{/list}

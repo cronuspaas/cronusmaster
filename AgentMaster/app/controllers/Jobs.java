@@ -45,7 +45,7 @@ public class Jobs extends Controller {
 	 * show job index page
 	 * @param date
 	 */
-	public static void index() {
+	public static void index(String alert) {
 
 		String page = "index";
 		String topnav = "jobs";
@@ -71,26 +71,14 @@ public class Jobs extends Controller {
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
 
-			render(page, topnav, jobDetails, lastRefreshed);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in index of logs");
+			render(page, topnav, jobDetails, alert, lastRefreshed);
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
 		}
 
 	}
 
-	/**
-	 * system job for house keeping
-	 * @param nodeGroup
-	 */
-	public static void systemJobs(String nodeGroup) {
-
-		String page = "systemjobs";
-		String topnav = "jobs";
-
-		render(page, topnav);
-	}
-	
 	/**
 	 * toggle job enable status
 	 */
@@ -101,10 +89,12 @@ public class Jobs extends Controller {
 			IntervalJob job = jobData.getJobById(jobId);
 			job.setEnabled(StringUtil.equalIgnoreCase(status, "enable") ? true : false);
 			jobData.save(job);
-			renderJSON("Successfully toggle job status " + jobId);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error toggle job status " + jobId);
+			
+			redirect("Jobs.index", "Successfully toggle job status " + jobId);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error toggle job status %s, %s", jobId, e.getLocalizedMessage()));
 		}
 		
 		
@@ -118,10 +108,12 @@ public class Jobs extends Controller {
 		try {
 			DataType type = DataType.valueOf(dataType.toUpperCase());
 			UserDataProvider.getIntervalJobOfType(type).delete(jobId);
-			renderJSON("Successfully deleted job " + jobId);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error delete job " + jobId);
+
+			redirect("Jobs.index", "Successfully deleted job " + jobId);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error delete job %s, %s", jobId, e.getLocalizedMessage()));
 		}
 	}
 	
@@ -134,10 +126,12 @@ public class Jobs extends Controller {
 			DataType type = DataType.valueOf(dataType.toUpperCase());
 			IntervalJob job = UserDataProvider.getIntervalJobOfType(type).getJobById(jobId);
 			job.runJobAsync();
-			renderJSON("Successfully launched job " + jobId);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error launching job " + jobId);
+
+			redirect("Jobs.index", "Successfully launched job " + jobId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error launch job %s, %s", jobId, e.getLocalizedMessage()));
 		}
 	}
 
@@ -171,14 +165,21 @@ public class Jobs extends Controller {
 			String agentCommandMetadataListJsonArray = JsonUtil.encode(cmdsMeta);
 
 			render(page, topnav, nodeGroupSourceMetadataListJsonArray, agentCommandMetadataListJsonArray);
-		} catch (Throwable t) {
 
-			t.printStackTrace();
-			renderJSON(new JsonResult("Error occured in wizard"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error occur in job wizard, %s", e.getLocalizedMessage()));
 		}
 
 	}
-	
+
+	/**
+	 * save job from wizard
+	 * @param nodeGroup
+	 * @param command
+	 * @param exeOptions
+	 * @param jobOptions
+	 */
 	public static void saveJob(
 			String nodeGroup, String command, 
 			Map<String, String> exeOptions, Map<String, String> jobOptions) 
@@ -217,8 +218,8 @@ public class Jobs extends Controller {
 			
 			UserDataProvider.getIntervalJobOfType(DataType.CMDJOB).save(job);
 			
-		} catch (Throwable t) {
-			error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage()
+		} catch (Exception e) {
+			error(	"Error occured in runCmdOnNodeGroup: " + e.getLocalizedMessage()
 					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
 		}
 
@@ -227,7 +228,5 @@ public class Jobs extends Controller {
 	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
 		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
 	}
-	
-
 
 }

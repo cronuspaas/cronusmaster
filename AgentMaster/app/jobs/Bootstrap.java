@@ -46,7 +46,11 @@ public class Bootstrap extends Job {
 
     public void doJob() {
        //do stuff
-    	RuntimeContext.setClusterUuid("restcommander", "prod", "all", Long.toString(System.currentTimeMillis()));
+        MonitorProvider mp= MonitorProvider.getInstance();
+        mp.getJVMMemoryUsage();
+        mp.getFreeDiskspace();
+
+        RuntimeContext.setClusterUuid("restcommander", "prod", "all", Long.toString(System.currentTimeMillis()));
     	
 		Config conf = ConfigFactory.load("actorconfig");
 		AnnotationConfigApplicationContext resourcesCtx = new AnnotationConfigApplicationContext("resources");

@@ -18,23 +18,23 @@ limitations under the License.
 package controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import models.utils.DateUtils;
 
+import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.task.asynchttp.UrlTemplate;
+import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
 import resources.UserDataProvider;
-import resources.command.ICommand;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -119,7 +119,14 @@ public class Config extends Controller {
 			String content = null;
 			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
 				// this is for new configuration
-				content = "";
+				final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
+				HttpTaskRequest sampleReq = new HttpTaskRequest();
+				UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
+				sampleReq.setUrlTemplate(temp);
+				sampleReq.setPollTemplate(temp);
+				sampleReq.setTaskType("asyncpoll");
+				sampleReq.setHttpClientType("httpClient");
+				content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(sampleReq);
 			}
 			else {
 				IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
