@@ -1,0 +1,10 @@
+ {
+        "taskType": "async",
+        "httpClientType": "httpClient",
+        "urlTemplate": {
+            "body": null,
+            "url": "http://#:host:#/q?s=#:symbol:#&ql=1",
+            "method": "GET",
+            "hosts": ["finance.yahoo.com"]
+        }
+    }

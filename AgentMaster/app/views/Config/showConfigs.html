@@ -6,8 +6,15 @@
 	#{include 'Config/confignav.html'/}
 #{include 'tags/refresh.html'/}
 
-<h2>Commands Defined in Config</h2>
+<h2>${dataType}</h2>
+
+        <script type="text/javascript">	
+       		getAlertAndWrite("${alert}");
+		</script>
+
 	<div  id="list-all-row">
+		<br/>
+		<a target=_blank href="/config/editConfig/${dataType}/newConfig" class="btn btn-primary">New</a> 
 		<br/>
 			#{table-declare tableName:'list-all' /}
 			<thead>
@@ -26,6 +33,7 @@
 					</td>   
 					<td>   
 						<a target=_blank href="/config/editConfig/${dataType}/${obj}" class="btn btn-primary">Edit</a> 
+						<a target=_blank href="/config/deleteConfig/${dataType}/${obj}" class="btn btn-danger">Delete</a> 
 					</td>   
 				</tr>
 				#{/list}

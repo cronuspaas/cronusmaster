@@ -78,7 +78,7 @@ public class Config extends Controller {
 	 * show all configs of a type
 	 * @param dataType
 	 */
-	public static void showConfigs(String dataType) {
+	public static void showConfigs(String dataType, String alert) {
 		
 		String page = "showConfig";
 		String topnav = "config";
@@ -87,9 +87,9 @@ public class Config extends Controller {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			List<String> cfgNames = UserDataProvider.getUserDataDao().listNames(dType);
 
-			String alert = dataType + " Configs at " + DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
 
-			render(page, topnav, dataType, cfgNames, alert);
+			render(page, topnav, dataType, cfgNames, lastRefreshed, alert);
 
 		}
 		catch (Exception e) {
@@ -102,6 +102,7 @@ public class Config extends Controller {
 	 * edit page
 	 * @param dataType
 	 */
+	static final String NEW_CONFIG_NAME = "newConfig";
 	public static void editConfig(String dataType, String configName) {
 
 		String page = "editConfig";
@@ -112,15 +113,19 @@ public class Config extends Controller {
 				renderJSON("configFile is NULL. Error occured in editConfig");
 			}
 
-			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
-			String content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
+			String content = null;
+			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
+				// this is for new configuration
+				content = "";
+			}
+			else {
+				IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+				content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
+			}
 			
-			String configFileUpper = dataType.toUpperCase(Locale.ENGLISH);
-			page = new String(page + dataType.toLowerCase(Locale.ENGLISH));
-
 			String alert = null;
 
-			render(page, topnav, configFileUpper, configName, content, alert);
+			render(page, topnav, dataType, configName, content, alert);
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
@@ -133,28 +138,58 @@ public class Config extends Controller {
 	 * @param dataType
 	 * @param content
 	 */
-	public static void editConfigUpdate(String dataType, String configName, String content) {
-
-		String page = "editConfig";
-		String topnav = "config";
+	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content) {
 
 		try {
 			if (dataType == null) {
 				renderJSON("configFile is NULL. Error occured in editConfig");
 			}
+			
+			
+			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
+				// new config
+				configName = configNameNew;
+			}
 
 			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
 			userDataDao.saveData(DataType.valueOf(dataType.toUpperCase()), configName, content);
 
-			String configFileUpper = dataType.toUpperCase(Locale.ENGLISH);
-			page = new String(page + dataType.toLowerCase(Locale.ENGLISH));
-			String alert = "Config was successfully updated at "
-					+ DateUtils.getNowDateTimeStrSdsm();
+			String alert = "Config was successfully updated at " + DateUtils.getNowDateTimeStrSdsm();
 
 			// reload after
 			UserDataProvider.reloadAllConfigs();
+			
+			redirect("Config.showConfigs", dataType, alert);
 
-			renderTemplate("Config/editConfig.html", page, topnav, content, configFileUpper, configName, alert);
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+
+	}// end func
+
+	/**
+	 * delete a config
+	 * @param dataType
+	 * @param configName
+	 */
+	public static void deleteConfig(String dataType, String configName) {
+
+		try {
+			if (dataType == null) {
+				renderJSON("configFile is NULL. Error occured in editConfig");
+			}
+			
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			UserDataProvider.getUserDataDao().deleteData(dType, configName);
+			
+			String alert = String.format("%s was successfully deleted at %s ", configName, DateUtils.getNowDateTimeStrSdsm());
+
+			// reload after
+			UserDataProvider.reloadAllConfigs();
+			
+			redirect("Config.showConfigs", dataType, alert);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
@@ -166,40 +201,8 @@ public class Config extends Controller {
 	 * show all configs
 	 */
 	public static void index() {
-
-		String page = "index";
-		String topnav = "config";
-
-		try {
-			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
-			List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
-			for (ICommand cmd : cmds.values()) {
-				Map<String, String> values = new HashMap<String, String>();
-				values.put("name", cmd.getName());
-				UrlTemplate req = cmd.getHttpTaskRequest().getUrlTemplate();
-				values.put("url", req.getUrl());
-				values.put("httpMethod", req.getMethod().name());
-				StringBuffer headers = new StringBuffer();
-				for (Entry<String, String> header : req.getHeaders().entrySet()) {
-					headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append("\n");
-				}
-				values.put("headers", headers.toString());
-				values.put("body", req.getBody());
-				values.put("variables", StringUtil.join(req.getVariableNames(), ","));
-				StringBuffer parameters = new StringBuffer();
-				for (Entry<String, String> param : req.getParameters().entrySet()) {
-					parameters.append(String.format("%s=%s | ", param.getKey(), param.getValue()));
-				}
-				values.put("parameters", parameters.toString());
-				commands.add(values);
-			}
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-
-			render(page, topnav, commands, lastRefreshed);
-		} catch (Exception e) {
-			e.printStackTrace();
-			error(e);
-		}
+		
+		redirect("Config.showConfigs", "command");
 
 	}
 
