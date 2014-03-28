@@ -90,15 +90,19 @@ public class Commands extends Controller {
 				values.put("url", req.getUrl());
 				values.put("httpMethod", req.getMethod().name());
 				StringBuffer headers = new StringBuffer();
-				for (Entry<String, String> header : req.getHeaders().entrySet()) {
-					headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append("\n");
+				if (req.getHeaders() != null) {
+					for (Entry<String, String> header : req.getHeaders().entrySet()) {
+						headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append("\n");
+					}
 				}
 				values.put("headers", headers.toString());
 				values.put("body", req.getBody());
 				values.put("variables", StringUtil.join(req.getVariableNames(), ","));
 				StringBuffer parameters = new StringBuffer();
-				for (Entry<String, String> param : req.getParameters().entrySet()) {
-					parameters.append(String.format("%s=%s | ", param.getKey(), param.getValue()));
+				if (req.getParameters() != null) {
+					for (Entry<String, String> param : req.getParameters().entrySet()) {
+						parameters.append(String.format("%s=%s | ", param.getKey(), param.getValue()));
+					}
 				}
 				values.put("parameters", parameters.toString());
 				commands.add(values);
@@ -113,21 +117,9 @@ public class Commands extends Controller {
 
 	}
 
-	public static void getAgentCommandMetadata(String agentCommandType) {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-			AgentCommandMetadata agentCommandMetadata = adp.agentCommandMetadatas
-					.get(agentCommandType);
-
-			renderJSON(agentCommandMetadata);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error occured in getAgentCommandMetadata");
-		}
-
-	}
-
+	/**
+	 * command wizard
+	 */
 	public static void wizard() {
 
 		String page = "wizard";
@@ -140,6 +132,8 @@ public class Commands extends Controller {
 			for (ICommand cmd : cmds.values()) {
 				HashMap<String, String> meta = new HashMap<String, String>();
 				meta.put("agentCommandType", cmd.getName());
+				HttpTaskRequest req = cmd.getHttpTaskRequest();
+				meta.put("type", req.getTaskType());
 				cmdsMeta.add(meta);
 			}
 			

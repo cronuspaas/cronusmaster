@@ -1,20 +1,16 @@
 {
-        "taskType": "asyncpoll",
-        "httpClientType": "httpClient",
-        "urlTemplate": {
-            "body": null,
-            "url": "https://<host>",
-            "method": "GET",
-            "headers": {
-                "content-type": "application/json"
-            }
-        },
-        "pollTemplate": {
-            "body": null,
-            "url": "https://<host>",
-            "method": "GET",
-            "headers": {}
-        },
-        "pollProcessorName": "dummyPollProcessor",
-        "customHandler": "logTaskEventHandler"
-    }
+  "taskType" : "async",
+  "httpClientType" : "httpClient",
+  "executionOption" : {
+    "timeoutInMs" : 0,
+    "initialDelayMs" : 0,
+    "maxRetry" : 0,
+    "retryDelayMs" : 0
+  },
+  "urlTemplate" : {
+    "method" : "GET",
+    "url" : "https://<host>",
+    "headers" : {},
+    "parameters" : {}
+  }
+}
