@@ -37,6 +37,8 @@ public class VarUtils {
 	//20140102: for using logger or not. even use it; may redirect to systemout
 	public static boolean useLogger = true;
 	
+	public static final String AGENT_CRT_LOCATION = "conf/park.der";
+	
 	public static final String ADHOC = "ADHOC";
 	public static final String ADHOCDATASTORE = ADHOC + "DATASTORE";
 

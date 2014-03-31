@@ -48,7 +48,7 @@ public class TaskResourcesProvider {
 			if (task instanceof SimpleHttpTask) {
 				String host = ((SimpleHttpTask) task).getReq().getHost();
 				if (result.getStatus() == TaskResultEnum.Success) {
-					SimpleHttpResponse res = result.<SimpleHttpResponse>getRealResult();
+					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
 					jobLog.addCommandResponse(new CommandResponse(host, res.getStatusCode(), res.getResponseBody())); 
 				}
 				else {
