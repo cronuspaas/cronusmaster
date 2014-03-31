@@ -126,7 +126,7 @@ public class AssetDiscoveryFlowFactory {
 			public void executeOnResult(AssetDiscoveryFlowContext ctx, Task task, TaskResult result) {
 				if (result.getStatus() == TaskResultEnum.Success) {
 					Map<String, String> iaasParam = new HashMap<String, String>();
-					iaasParam.put("boday", result.<SimpleHttpResponse>getRawResult().getResponseBody());
+					iaasParam.put("body", result.<SimpleHttpResponse>getRawResult().getResponseBody());
 					ctx.addIaaSParam(iaasParam);
 				}
 				else {
