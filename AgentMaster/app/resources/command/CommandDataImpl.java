@@ -46,8 +46,9 @@ public class CommandDataImpl implements ICommandData {
 
 	@Override
 	public void save(String cmdName, String content) throws IOException {
-		JsonUtil.decode(content, HttpTaskRequest.class);
-		userDataDao.saveData(DataType.COMMAND, cmdName, content);
+		CommandImpl commandImpl = JsonUtil.decode(content, CommandImpl.class);
+		commandImpl.setName(cmdName);
+		userDataDao.saveData(DataType.COMMAND, cmdName, JsonUtil.encode(commandImpl));
 		load();
 	}
 
@@ -58,10 +59,7 @@ public class CommandDataImpl implements ICommandData {
 		for (String cmdName : cmdNames) {
 			String content = userDataDao.readData(DataType.COMMAND, cmdName);
 			if (!StringUtil.isNullOrEmpty(content)) {
-				HttpTaskRequest req = JsonUtil.decode(content, HttpTaskRequest.class);
-				CommandImpl cmd = new CommandImpl();
-				cmd.setName(cmdName);
-				cmd.setHttpTaskRequest(req);
+				CommandImpl cmd = JsonUtil.decode(content, CommandImpl.class);
 				templates.put(cmdName, cmd);
 			}
 		}

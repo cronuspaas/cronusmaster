@@ -1,4 +1,6 @@
  {
+  "name": "YAHOO_FINANCE",
+  "httpTaskRequest": {
         "taskType": "async",
         "httpClientType": "httpClient",
         "urlTemplate": {
@@ -7,4 +9,6 @@
             "method": "GET",
             "hosts": ["finance.yahoo.com"]
         }
-    }
+  },
+  "aggRegexs": null
+ }

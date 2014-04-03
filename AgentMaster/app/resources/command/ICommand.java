@@ -1,5 +1,7 @@
 package resources.command;
 
+import java.util.List;
+
 import org.lightj.example.task.HttpTaskRequest;
 
 /**
@@ -9,22 +11,16 @@ import org.lightj.example.task.HttpTaskRequest;
  */
 public interface ICommand {
 	
-	/**
-	 * command name
-	 * @return
-	 */
 	public String getName();
 	
-	/**
-	 * command name
-	 * @param name
-	 */
 	public void setName(String name);
 	
-	/**
-	 * command template
-	 * @return
-	 */
-	public HttpTaskRequest getHttpTaskRequest();
+	public HttpTaskRequest createCopy();
+	
+	public List<String> getAggRegexs();
+
+	public void setAggRegexs(List<String> aggRegexs);
+	
+	public void setHttpTaskRequest(HttpTaskRequest httpTaskRequest);
 
 }

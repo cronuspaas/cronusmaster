@@ -37,11 +37,11 @@
 					<td>${obj.description}</td>
 					<td>${obj.status}</td>
 					<td>
-					<a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target=_self class="btn btn-primary">${obj.statustoggle}</a>
-					<a href="/jobs/deleteJob?dataType=${obj.type}&jobId=${obj.name}" target=_self class="btn btn-danger">Delete</a>
+					<a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target=_self class="btn btn-small btn-primary">${obj.statustoggle}</a>
+					<a href="/jobs/deleteJob?dataType=${obj.type}&jobId=${obj.name}" target=_self class="btn btn-small btn-danger">Delete</a>
 					</td>
 					<td>
-					<a href="/jobs/runJobNow?dataType=${obj.type}&jobId=${obj.name}" target=_self class="btn btn-primary">Run</a>
+					<a href="/jobs/runJobNow?dataType=${obj.type}&jobId=${obj.name}" target=_self class="btn btn-small btn-primary">Run</a>
 					</td>
 				</tr>
 				#{/list}

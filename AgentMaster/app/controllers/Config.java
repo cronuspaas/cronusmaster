@@ -22,8 +22,6 @@ import java.util.List;
 
 import models.utils.DateUtils;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.ExecuteOption;
 import org.lightj.task.MonitorOption;
@@ -31,7 +29,8 @@ import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.StringUtil;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.mvc.Controller;
 import resources.IUserDataDao;
@@ -119,19 +118,25 @@ public class Config extends Controller {
 			}
 
 			String content = null;
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
-				// this is for new configuration
-				final ObjectMapper mapper = new ObjectMapper();
-				mapper.getSerializationConfig().setSerializationInclusion(Inclusion.NON_NULL);
-				HttpTaskRequest sampleReq = new HttpTaskRequest();
-				UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
-				sampleReq.setUrlTemplate(temp);
-				sampleReq.setPollTemplate(temp);
-				sampleReq.setTaskType("asyncpoll");
-				sampleReq.setHttpClientType("httpClient");
-				sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
-				sampleReq.setMonitorOption(new MonitorOption(10000L, 0));
-				content = mapper.defaultPrettyPrintingWriter().writeValueAsString(sampleReq);
+				if (dType == DataType.COMMAND) {
+					// this is for new configuration
+					final ObjectMapper mapper = new ObjectMapper();
+					mapper.setSerializationInclusion(Include.NON_NULL);
+					HttpTaskRequest sampleReq = new HttpTaskRequest();
+					UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
+					sampleReq.setUrlTemplate(temp);
+					sampleReq.setPollTemplate(temp);
+					sampleReq.setTaskType("asyncpoll");
+					sampleReq.setHttpClientType("httpClient");
+					sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
+					sampleReq.setMonitorOption(new MonitorOption(10000L, 0));
+					content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(sampleReq);
+				}
+				else if (dType == DataType.NODEGROUP) {
+					content = "line separated hosts";
+				}
 			}
 			else {
 				IUserDataDao userDataDao = UserDataProvider.getUserDataDao();

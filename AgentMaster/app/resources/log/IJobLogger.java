@@ -40,5 +40,6 @@ public interface IJobLogger extends IUserData {
 	 * @throws IOException
 	 */
 	public void deleteLog(String logId) throws IOException;
-
+	
+	
 }

@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.lightj.util.DateUtil;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import resources.command.CommandImpl;
 import resources.command.ICommand;
@@ -62,6 +63,20 @@ public class JobLog {
 						userCommand.nodeGroup.getName(), 
 						userCommand.cmd.getName());
 	}
+	/**
+	 * aggregation
+	 * @param matchField
+	 * @param matchRegex
+	 * @return
+	 */
+	public LogAggregation aggregate(String matchField, String matchRegex) {
+		LogAggregation aggregation = new LogAggregation(matchField, matchRegex);
+		for (CommandResponse cmdRes : commandResponses) {
+			aggregation.aggregateEntry(cmdRes);
+		}
+		return aggregation;
+	}
+
 	public static Map<String, String> getLogMetaFromName(String uuid) {
 		HashMap<String, String> meta = new HashMap<String, String>();
 		String[] tokens = uuid.split("~");

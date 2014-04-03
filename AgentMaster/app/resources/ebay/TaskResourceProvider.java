@@ -41,12 +41,12 @@ public class TaskResourceProvider {
 
 			@Override
 			public String getValueByName(String pivotValue, String name) {
-				return PkiAuthKeys.containsKey(pivotValue) ? PkiAuthKeys.get(pivotValue) : BaseAuthKey;
+				return hasName(pivotValue, name) ? PkiAuthKeys.get(pivotValue) : BaseAuthKey;
 			}
 
 			@Override
 			public boolean hasName(String pivotValue, String name) {
-				return PkiAuthKeys.containsKey(pivotValue);
+				return PkiAuthKeys.containsKey(pivotValue) && StringUtil.equalIgnoreCase("agentAuthKey", name);
 			}
 
 			@Override
@@ -56,10 +56,8 @@ public class TaskResourceProvider {
 
 			@Override
 			public void setValueForName(String pivotValue, String name, Object value) {
-				if (value != null) {
+				if (pivotValue != null && value != null) {
 					PkiAuthKeys.put(pivotValue, value.toString());
-				} else {
-					PkiAuthKeys.remove(pivotValue);
 				}
 			}
 			

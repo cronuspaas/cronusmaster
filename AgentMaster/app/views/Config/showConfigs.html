@@ -10,8 +10,8 @@
 </script>
 
 <h3 style="text-transform: uppercase">${dataType}</h3>		 
-<a target=_self href="/config/editConfig/${dataType}/newConfig" class="btn btn-primary">Create New</a> 
-<a target=_self href="/config/reloadConfig/${dataType}" class="btn btn-primary">Reload</a>
+<a target=_self href="/config/editConfig/${dataType}/newConfig" class="btn btn-small btn-primary">Create New</a> 
+<a target=_self href="/config/reloadConfig/${dataType}" class="btn btn-small btn-primary">Reload</a>
 
 
 	<div  id="list-all-row">
@@ -33,8 +33,8 @@
 						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
 					</td>   
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/${obj}" class="btn btn-primary">Edit</a> 
-						<a target=_self href="/config/deleteConfig/${dataType}/${obj}" class="btn btn-danger">Delete</a> 
+						<a target=_self href="/config/editConfig/${dataType}/${obj}" class="btn btn-small btn-primary">Edit</a> 
+						<a target=_self href="/config/deleteConfig/${dataType}/${obj}" class="btn btn-small btn-danger">Delete</a> 
 					</td>   
 				</tr>
 				#{/list}

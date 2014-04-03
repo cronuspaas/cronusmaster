@@ -1,4 +1,6 @@
 {
+  "name": "GET_HTTPS_SITE",
+  "httpTaskRequest": {
   "taskType" : "async",
   "httpClientType" : "httpClient",
   "executionOption" : {
@@ -9,8 +11,10 @@
   },
   "urlTemplate" : {
     "method" : "GET",
-    "url" : "https://<host>",
+    "url" : "https://<host>/",
     "headers" : {},
     "parameters" : {}
   }
+},
+"aggRegexs": [".*<title>(.*)</title>.*"]
 }

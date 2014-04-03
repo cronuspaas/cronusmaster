@@ -147,9 +147,9 @@ public class Jobs extends Controller {
 			
 			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
 			List<Map<String, String>> cmdsMeta = new ArrayList<Map<String,String>>();
-			for (ICommand cmd : cmds.values()) {
+			for (String cmd : cmds.keySet()) {
 				HashMap<String, String> meta = new HashMap<String, String>();
-				meta.put("agentCommandType", cmd.getName());
+				meta.put("agentCommandType", cmd);
 				cmdsMeta.add(meta);
 			}
 			

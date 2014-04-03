@@ -36,10 +36,7 @@
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
 					<td>   
-						<a target=_blank href="/agents/aggregatePieChart?nodeGroupType=${logObj.nodeGroup}&agentCommandType=${logObj.command}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >
-						<i class="fa fa-picture-o fa-lg"></i></a> 
-						&nbsp;&nbsp;
-						<a target=_blank href="/agents/aggregatePieChart?textOnly=true&nodeGroupType=${logObj.nodeGroup}&agentCommandType=${logObj.command}&timeStamp=${logObj.timeStamp}&rawDataSourceType=LOG_FILE&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE" >
+						<a target=_blank href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
 						<i class="fa fa-list fa-lg"></i></a> 
 					</td>  
 					

@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import models.data.LogFile;
 import models.data.LogFileGeneric;
@@ -32,12 +33,15 @@ import models.utils.FileIoUtils;
 import models.utils.VarUtils;
 
 import org.lightj.util.DateUtil;
+import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
 import resources.log.IJobLogger;
 import resources.log.JobLog;
+import resources.log.LogAggregation;
+import resources.log.LogAggregation.LogAggregationItem;
 
 /**
  * 
@@ -50,9 +54,9 @@ public class Logs extends Controller {
 	 * show logs
 	 * @param date
 	 */
-	public static void index(String date) {
+	public static void cmdLogs(String date) {
 
-		String page = "index";
+		String page = "cmdlogs";
 		String topnav = "logs";
 
 		try {
@@ -234,5 +238,60 @@ public class Logs extends Controller {
 		}
 
 	}// end func
+
+
+	/**
+	 * aggregate result
+	 */
+	public static void aggregate(
+							String logType,
+							String logId,
+							String aggField,
+							String aggRegEx) 
+	{
+		String page = "cmdLogs";
+		String topnav = "logs";
+		String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+		
+		try {
+			DataType type = DataType.valueOf(logType.toUpperCase());
+			JobLog log = UserDataProvider.getJobLoggerOfType(type).readLog(logId);
+			String agentCommandType = log.getUserCommand().cmd.getName();
+			String nodeGroupType = log.getUserCommand().nodeGroup.getName();
+			String dataType = log.getUserCommand().nodeGroup.getType();
+			List<String> regExs = log.getUserCommand().cmd.getAggRegexs();
+			LogAggregation logAggregation = log.aggregate(aggField, aggRegEx);
+			ArrayList<Map<String, String>> aggList = new ArrayList<Map<String,String>>();
+			for (Entry<String, LogAggregationItem> aggEntry : logAggregation.getAggregations().entrySet()) {
+				Map<String, String> agg = new HashMap<String, String>();
+				agg.put("value", aggEntry.getKey());
+				agg.put("matchField", aggField);
+				agg.put("matchRegEx", aggRegEx);
+				agg.put("nodeCount", Integer.toString(aggEntry.getValue().count));
+				agg.put("nodes", StringUtil.join(aggEntry.getValue().hosts, "\n"));
+				aggList.add(agg);
+			}
+			HashMap<String, String> logMeta = new HashMap<String, String>();
+			logMeta.put("logType", logType);
+			logMeta.put("logId", logId);
+			logMeta.put("aggField", aggField);
+			render(page, topnav, aggList, lastRefreshed, agentCommandType, nodeGroupType, dataType, regExs, logMeta);
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+	}
+
+	/**
+	 * index page
+	 */
+	public static void index() {
+		
+		redirect("Logs.cmdLogs", (String) null);
+
+	}
+
+
 
 }

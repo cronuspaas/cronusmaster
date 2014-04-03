@@ -41,6 +41,7 @@ import models.utils.DateUtils;
 import models.utils.MyHttpUtils;
 import models.utils.VarUtils;
 
+import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.BatchOption;
@@ -83,16 +84,17 @@ public class Commands extends Controller {
 		try {
 			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
 			List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
-			for (ICommand cmd : cmds.values()) {
+			for (Entry<String, ICommand> entry : cmds.entrySet()) {
 				Map<String, String> values = new HashMap<String, String>();
-				values.put("name", cmd.getName());
-				UrlTemplate req = cmd.getHttpTaskRequest().getUrlTemplate();
+				ICommand cmd = entry.getValue();
+				values.put("name", entry.getKey());
+				UrlTemplate req = cmd.createCopy().getUrlTemplate();
 				values.put("url", req.getUrl());
 				values.put("httpMethod", req.getMethod().name());
 				StringBuffer headers = new StringBuffer();
 				if (req.getHeaders() != null) {
 					for (Entry<String, String> header : req.getHeaders().entrySet()) {
-						headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append("\n");
+						headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append(",");
 					}
 				}
 				values.put("headers", headers.toString());
@@ -101,7 +103,7 @@ public class Commands extends Controller {
 				StringBuffer parameters = new StringBuffer();
 				if (req.getParameters() != null) {
 					for (Entry<String, String> param : req.getParameters().entrySet()) {
-						parameters.append(String.format("%s=%s | ", param.getKey(), param.getValue()));
+						parameters.append(String.format("%s=%s", param.getKey(), param.getValue())).append(",");
 					}
 				}
 				values.put("parameters", parameters.toString());
@@ -129,11 +131,9 @@ public class Commands extends Controller {
 			
 			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
 			List<Map<String, String>> cmdsMeta = new ArrayList<Map<String,String>>();
-			for (ICommand cmd : cmds.values()) {
+			for (String cmdName : cmds.keySet()) {
 				HashMap<String, String> meta = new HashMap<String, String>();
-				meta.put("agentCommandType", cmd.getName());
-				HttpTaskRequest req = cmd.getHttpTaskRequest();
-				meta.put("type", req.getTaskType());
+				meta.put("agentCommandType", cmdName);
 				cmdsMeta.add(meta);
 			}
 			
@@ -157,31 +157,6 @@ public class Commands extends Controller {
 
 	}
 
-	
-
-
-
-	public static void generateUpdateSendAgentCommandToNodeGroup(
-			String nodeGroupType, String agentCommandType) {
-
-		try {
-
-			AgentCommandProvider
-					.generateUpdateSendAgentCommandToNodeGroupPredefined(
-							nodeGroupType, agentCommandType);
-
-			renderJSON(new JsonResult(
-					"Successful generateUpdateSendAgentCommandToNodeGroup "
-							+ DateUtils.getNowDateTimeStr()));
-		} catch (Throwable t) {
-
-			error(	"Error occured in generateUpdateSendAgentCommandToNodeGroup: " + t.getLocalizedMessage()
-					+ " at: " + DateUtils.getNowDateTimeStrSdsm()
-					);
-		}
-
-	}
-	
 	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
 		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
 	}
@@ -201,7 +176,7 @@ public class Commands extends Controller {
 		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
 		try {
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
-			HttpTaskRequest reqTemplate = cmd.getHttpTaskRequest();
+			HttpTaskRequest reqTemplate = cmd.createCopy();
 
 			long exeInitDelayMs = Long.parseLong(getOptionValue(options, "exe_initde", "0")) * 1000L;
 			long exeTimoutMs = Long.parseLong(getOptionValue(options, "exe_initde", "0")) * 1000L;
@@ -232,7 +207,7 @@ public class Commands extends Controller {
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
 			String[] hosts = ng.getNodeList().toArray(new String[0]);
 			reqTemplate.setHosts(hosts);
-			reqTemplate.addTemplateValue(values);
+			reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
 			
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			JobLog jobLog = new JobLog();
@@ -253,489 +228,4 @@ public class Commands extends Controller {
 
 	}
 	
-	
-
-	/**
-	 * 20131017: only adhoc node group
-	 * 
-	 * @param nodeGroupType
-	 * @param agentCommandType
-	 */
-	public static void generateUpdateSendAgentCommandToAdhocNodeGroup(
-			String nodeListFromText, String agentCommandType) {
-
-		try {
-			List<String> targetNodes = new ArrayList<String>();
-
-			if (nodeListFromText != null) {
-
-				boolean removeDuplicate = true;
-				targetNodes.addAll(AgentUtils.getNodeListFromString(
-						nodeListFromText, removeDuplicate));
-			}
-
-			String nodeGroupType = NodeGroupProvider
-					.generateAdhocNodeGroupHelper(targetNodes);
-
-			AgentCommandProvider
-					.generateUpdateSendAgentCommandWithoutReplaceVarAdhocMap(
-							nodeGroupType, agentCommandType);
-
-			renderJSON(new JsonResult(nodeGroupType));
-		} catch (Throwable t) {
-
-			renderJSON(new JsonResult(
-					"Error occured in generateUpdateSendAgentCommandToAdhocNodeGroup :"
-							+ t.getLocalizedMessage()));
-		}
-
-	}
-
-	/**
-	 * 20131022: only adhoc node group with WithReplaceVarMapNodeSpecificAdhoc
-	 * 
-	 * @param nodeGroupType
-	 * @param agentCommandType
-	 */
-	public static void genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson() {
-
-		if (request == null || request.body == null) {
-			VarUtils.printSysErrWithTimeAndOptionalReason(
-					"genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson",
-					"NULL request or request body.");
-
-			renderJSON(new JsonResult(
-					"Error occured in genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson"));
-
-		}
-
-		String supermanClientIpAddress = request.remoteAddress;
-
-		models.utils.LogUtils.printLogNormal
-				 ("supermanClientIpAddress in genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson() is "
-						+ supermanClientIpAddress
-						+ " "
-						+ DateUtils.getNowDateTimeStrSdsm());
-
-		String postData = MyHttpUtils.readHttpRequestPostData(request.body);
-
-		if (postData != null) {
-
-			try {
-				RequestCommandWithNodeSpecficReplaceMap requestCommand = new Gson()
-						.fromJson(postData,
-								RequestCommandWithNodeSpecficReplaceMap.class);
-				int reducedNodeCount = AgentUtils
-						.removeDuplicateNodeList(requestCommand
-								.getTargetNodes());
-
-				models.utils.LogUtils.printLogNormal("reducedNodeCount for duplicated nodes "
-						+ reducedNodeCount);
-
-				AgentDataProvider adp = AgentDataProvider.getInstance();
-
-				// this nodeGroupType has the timestamp.
-				String nodeGroupType = NodeGroupProvider
-						.generateAdhocNodeGroupHelper(requestCommand
-								.getTargetNodes());
-
-				// 20131026: START update to check if to add and use new adhoc
-				// command?
-				Boolean useNewAgentCommand = (requestCommand
-						.getUseNewAgentCommand() == null) ? false
-						: requestCommand.getUseNewAgentCommand();
-
-				String agentCommandType = null;
-
-				if (useNewAgentCommand) {
-					String commandLine = requestCommand
-							.getNewAgentCommandLine();
-					String requestContentTemplate = requestCommand
-							.getNewAgentCommandContentTemplate();
-					// now to add update into memory hashmap
-					agentCommandType = AgentConfigProviderHelper
-							.addOrUpdateAgentCommandInMemoryFromString(
-									commandLine, requestContentTemplate);
-				} else {
-					agentCommandType = requestCommand.getAgentCommandType();
-				}
-
-				// 20131026: END update to check if to add and use new adhoc
-				// command?
-
-				// 20131110: START update to check if need to aggregate
-				// responses; if yes: check if needs to create a new reg exp.
-				// Use which regular expression
-				Boolean willAggregateResponse = (requestCommand
-						.getWillAggregateResponse() == null) ? false
-						: requestCommand.getWillAggregateResponse();
-
-				Boolean useNewAggregation = (requestCommand
-						.getUseNewAggregation() == null) ? false
-						: requestCommand.getUseNewAggregation();
-				String aggregationType = null;
-
-				if (willAggregateResponse) {
-					aggregationType = requestCommand.getAggregationType();
-				}
-				// only when need to aggregate, and also use new expression.
-
-				if (willAggregateResponse && useNewAggregation) {
-
-					String aggregationExpression = requestCommand
-							.getNewAggregationExpression();
-					/**
-					 * Assumption: the aggregationExpression is encoded by URL
-					 * encoder http://meyerweb.com/eric/tools/dencoder/;
-					 * 
-					 * Therefore; need to decode
-					 * http://stackoverflow.com/questions
-					 * /6138127/how-to-do-url-decoding-in-java
-					 * 
-					 * String result = URLDecoder.decode(url, "UTF-8");
-					 * 
-					 * e.g. get agent version: origin:
-					 * .*"Version"[:,]\s"(.*?)".* after encoder:
-					 * .*%22Version%22%5B%3A%2C%5D%5Cs%22(.*%3F)%22.*
-					 * 
-					 * PATTERN_AGENT_VERSION_FROM_AGENT_VI now to process and
-					 * decode.
-					 */
-
-					String aggregationExpressionAfterDecode = URLDecoder
-							.decode(aggregationExpression, "UTF-8");
-					// now to add update into memory hashmap
-					AgentConfigProviderHelper
-							.addOrUpdateAggregationMetadataInMemoryFromString(
-									aggregationType,
-									aggregationExpressionAfterDecode);
-				}
-
-				// validate: now in memory aggregationMetadatas should have this
-				// entry: aggregationType
-				if (willAggregateResponse
-						&& adp.aggregationMetadatas.get(aggregationType) == null) {
-					String errorMsg = "ERROR. aggregationType "
-							+ aggregationType
-							+ " does not exist in aggregationMetadatas";
-
-					renderJSON(new JsonResult(errorMsg));
-
-				}
-
-				// 20131110: END update to check if need to aggregate responses;
-				// if yes: check if needs to create a new reg exp.
-				// Use which regular expression
-
-				AgentCommandProvider
-						.generateUpdateSendAgentCommandWithReplaceVarMapNodeSpecificAdhoc(
-								nodeGroupType, agentCommandType, requestCommand
-										.getReplacementVarMapNodeSpecific());
-
-				// 20131110: START whether or not aggregate response?
-				if (!willAggregateResponse) {
-					renderJSON(adp.adhocAgentData.get(nodeGroupType)
-							.getNodeGroupDataMapValidForSingleCommand(
-									agentCommandType));
-				} else {
-					// not from log; timeStamp is only used to make log file
-					// names.
-					String timeStamp = null;
-					String rawDataSourceType = RawDataSourceType.ADHOC_AGENT_DATA
-							.toString();
-					String responseText = AgentCommadProviderHelperAggregation
-							.genAggregationResultTextGivenAggregationType(
-									nodeGroupType, agentCommandType, timeStamp,
-									rawDataSourceType, aggregationType);
-
-					renderJSON(responseText);
-				}
-				// 20131110: END whether or not aggregate response?
-
-			} catch (Throwable t) {
-
-				t.printStackTrace();
-				renderJSON(new JsonResult(
-						"Error occured in genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson. Error msg:"+ t.getLocalizedMessage()));
-			}
-
-		} else {
-			VarUtils.printSysErrWithTimeAndOptionalReason(
-					"genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson",
-					"NULL: postData.");
-
-			renderJSON(new JsonResult(
-					"Error occured in upgradeAgents: NULL: postData."));
-		}
-
-	}
-
-	/**
-	 * 20131023: only adhoc node group with WithReplaceVarMap All nodes with the
-	 * same replacement
-	 * 
-	 * 20131110: add reg expression.
-	 * 
-	 * @param nodeGroupType
-	 * @param agentCommandType
-	 */
-	public static void genUpdateSendCommandWithReplaceVarMapAdhocJson() {
-
-		if (request == null || request.body == null) {
-			VarUtils.printSysErrWithTimeAndOptionalReason(
-					"genUpdateSendCommandWithReplaceVarMapAdhocJson",
-					"NULL request or request body.");
-
-			renderJSON(new JsonResult(
-					"Error occured in genUpdateSendCommandWithReplaceVarMapAdhocJson"));
-
-		}
-
-		String supermanClientIpAddress = request.remoteAddress;
-
-		models.utils.LogUtils.printLogNormal
-				 ("supermanClientIpAddress in genUpdateSendCommandWithReplaceVarMapAdhocJson() is "
-						+ supermanClientIpAddress
-						+ " "
-						+ DateUtils.getNowDateTimeStrSdsm());
-
-		String postData = MyHttpUtils.readHttpRequestPostData(request.body);
-
-		if (postData != null) {
-
-			try {
-				RequestCommandWithReplaceMap requestCommand = new Gson()
-						.fromJson(postData, RequestCommandWithReplaceMap.class);
-				int reducedNodeCount = AgentUtils
-						.removeDuplicateNodeList(requestCommand
-								.getTargetNodes());
-
-				models.utils.LogUtils.printLogNormal("reducedNodeCount for duplicated nodes "
-						+ reducedNodeCount);
-
-				AgentDataProvider adp = AgentDataProvider.getInstance();
-
-				// this nodeGroupType has the timestamp.
-				String nodeGroupType = NodeGroupProvider
-						.generateAdhocNodeGroupHelper(requestCommand
-								.getTargetNodes());
-
-				// 20131026: START update to check if to add and use new adhoc
-				// command?
-				Boolean useNewAgentCommand = (requestCommand
-						.getUseNewAgentCommand() == null) ? false
-						: requestCommand.getUseNewAgentCommand();
-
-				String agentCommandType = null;
-
-				if (useNewAgentCommand) {
-					String commandLine = requestCommand
-							.getNewAgentCommandLine();
-					String requestContentTemplate = requestCommand
-							.getNewAgentCommandContentTemplate();
-					// now to add update into memory hashmap
-					agentCommandType = AgentConfigProviderHelper
-							.addOrUpdateAgentCommandInMemoryFromString(
-									commandLine, requestContentTemplate);
-				} else {
-					agentCommandType = requestCommand.getAgentCommandType();
-				}
-
-				// 20131026: END update to check if to add and use new adhoc
-				// command?
-
-				// 20131110: START update to check if need to aggregate
-				// responses; if yes: check if needs to create a new reg exp.
-				// Use which regular expression
-				Boolean willAggregateResponse = (requestCommand
-						.getWillAggregateResponse() == null) ? false
-						: requestCommand.getWillAggregateResponse();
-
-				Boolean useNewAggregation = (requestCommand
-						.getUseNewAggregation() == null) ? false
-						: requestCommand.getUseNewAggregation();
-				String aggregationType = null;
-
-				if (willAggregateResponse) {
-					aggregationType = requestCommand.getAggregationType();
-				}
-				// only when need to aggregate, and also use new expression.
-
-				if (willAggregateResponse && useNewAggregation) {
-
-					String aggregationExpression = requestCommand
-							.getNewAggregationExpression();
-					/**
-					 * Assumption: the aggregationExpression is encoded by URL
-					 * encoder http://meyerweb.com/eric/tools/dencoder/;
-					 * 
-					 * Therefore; need to decode
-					 * http://stackoverflow.com/questions
-					 * /6138127/how-to-do-url-decoding-in-java
-					 * 
-					 * String result = URLDecoder.decode(url, "UTF-8");
-					 * 
-					 * e.g. get agent version: origin:
-					 * .*"Version"[:,]\s"(.*?)".* after encoder:
-					 * .*%22Version%22%5B%3A%2C%5D%5Cs%22(.*%3F)%22.*
-					 * 
-					 * PATTERN_AGENT_VERSION_FROM_AGENT_VI now to process and
-					 * decode.
-					 */
-
-					String aggregationExpressionAfterDecode = URLDecoder
-							.decode(aggregationExpression, "UTF-8");
-					// now to add update into memory hashmap
-					AgentConfigProviderHelper
-							.addOrUpdateAggregationMetadataInMemoryFromString(
-									aggregationType,
-									aggregationExpressionAfterDecode);
-				}
-
-				// validate: now in memory aggregationMetadatas should have this
-				// entry: aggregationType
-				if (willAggregateResponse
-						&& adp.aggregationMetadatas.get(aggregationType) == null) {
-					String errorMsg = "ERROR. aggregationType "
-							+ aggregationType
-							+ " does not exist in aggregationMetadatas";
-
-					renderJSON(new JsonResult(errorMsg));
-
-				}
-
-				// 20131110: END update to check if need to aggregate responses;
-				// if yes: check if needs to create a new reg exp.
-				// Use which regular expression
-
-				AgentCommandProvider
-						.generateUpdateSendAgentCommandWithReplaceVarAdhocMap(
-								nodeGroupType, agentCommandType,
-								requestCommand.getReplacementVarMap());
-
-				// 20131110: START whether or not aggregate response?
-				if (!willAggregateResponse) {
-					renderJSON(adp.adhocAgentData.get(nodeGroupType)
-							.getNodeGroupDataMapValidForSingleCommand(
-									agentCommandType));
-				} else {
-					// not from log; timeStamp is only used to make log file
-					// names.
-					String timeStamp = null;
-					String rawDataSourceType = RawDataSourceType.ADHOC_AGENT_DATA
-							.toString();
-					String responseText = AgentCommadProviderHelperAggregation
-							.genAggregationResultTextGivenAggregationType(
-									nodeGroupType, agentCommandType, timeStamp,
-									rawDataSourceType, aggregationType);
-
-					renderJSON(responseText);
-				}
-
-				// 20131110: END whether or not aggregate response?
-
-			} catch (Throwable t) {
-
-				t.printStackTrace();
-				renderJSON(new JsonResult(
-						"Error occured in genUpdateSendCommandWithReplaceVarMapAdhocJson() with reason: "
-								+ t.getLocalizedMessage()));
-			}
-
-		} else {
-			VarUtils.printSysErrWithTimeAndOptionalReason(
-					"genUpdateSendCommandWithReplaceVarMapAdhocJson",
-					"NULL: postData.");
-
-			renderJSON(new JsonResult(
-					"Error occured in upgradeAgents: NULL: postData."));
-		}
-
-	}
-
-
-
-	/**
-	 * NONE ADHOC DATA ONLY
-	 * 
-	 * @param nodeGroupType
-	 * @param agentCommandType
-	 */
-	public static void updateRequestContentGeneric(String nodeGroupType,
-			String agentCommandType) {
-
-		try {
-
-			AgentCommandProviderHelperInternalFlow.updateRequestContentGeneric(
-					nodeGroupType, agentCommandType,
-					AgentDataProvider.allAgentData,
-					AgentDataProvider.nodeGroupSourceMetadatas);
-
-			renderJSON(new JsonResult("Successful updateRequestContentGeneric "
-					+ DateUtils.getNowDateTimeStr()));
-		} catch (Throwable t) {
-
-			renderJSON(new JsonResult(
-					"Error occured in updateRequestContentGeneric"));
-		}
-
-	}
-	
-
-	
-	public static void commandToSingleTargetServer(String nodeListFromText,
-			String agentCommandType, String varName,
-			 String targetServerNew) {
-
-
-		String nodeGroupType = null;
-		try {
-
-			if (nodeListFromText == null || nodeListFromText.isEmpty()
-					|| agentCommandType == null
-					|| agentCommandType.isEmpty()
-					
-					|| varName == null
-					|| varName.isEmpty()
-					
-					|| targetServerNew == null
-					|| targetServerNew.isEmpty()
-			) {
-				models.utils.LogUtils
-						.printLogError("nodeListFromText or agentCommandType or varName or targetServerNew is NULL or empty; now exit in func execScriptViaAgentWorkFlow() !!"
-								+ DateUtils.getNowDateTimeStrSdsm());
-
-				error(("Error occured in commandToSingleTargetServer is null or empty "));
-			}
-			
-			
-			// trim white spaces
-			agentCommandType = agentCommandType.trim();
-			varName = varName.trim();
-			targetServerNew = targetServerNew.trim();
-
-			List<String> targetNodes = new ArrayList<String>();
-			if (nodeListFromText != null) {
-
-				boolean removeDuplicate = true;
-				targetNodes.addAll(AgentUtils.getNodeListFromString(
-						nodeListFromText, removeDuplicate));
-			} else {
-				models.utils.LogUtils
-						.printLogError("User input an empty nodeListFromText"
-								+ DateUtils.getNowDateTimeStrSdsm());
-			}
-			nodeGroupType = CommandProviderSingleServerHelper
-					.commandToSingleTargetServer(targetNodes,
-							agentCommandType, varName, targetServerNew);
-
-			renderJSON(new JsonResult(nodeGroupType));
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON(new JsonResult(
-					"Error occured in commandToSingleTargetServer"));
-		}
-
-	}// end func
-
 }

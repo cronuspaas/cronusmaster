@@ -36,9 +36,11 @@ POST     /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
 
 # logs page
 GET     /logs                                       Logs.index
+GET     /logs/cmdlogs                                       Logs.cmdLogs
 GET     /logs/joblogs                                       Logs.jobLogs
-GET     /logs/download                                       Logs.download
-GET     /logs/exploreFiles                                       Logs.exploreFiles
+GET     /logs/download                                      Logs.download
+GET     /logs/exploreFiles                                  Logs.exploreFiles
+GET		/logs/aggregate										Logs.aggregate
 
 # jobs page
 GET		/jobs										Jobs.index
@@ -47,7 +49,6 @@ GET		/jobs/deleteJob										Jobs.deleteJob
 GET		/jobs/runJobNow										Jobs.runJobNow
 GET		/jobs/wizard										Jobs.wizard
 POST	/jobs/saveJob										Jobs.saveJob
-
 
 GET    /logconsole               LogConsole.index
 GET    /logconsoleAjax           LogConsole.indexAjax

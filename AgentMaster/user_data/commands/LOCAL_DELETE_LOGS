@@ -1,4 +1,6 @@
  {
+   "name": "LOCAL_DELETE_LOGS",
+   "httpTaskRequest": {
         "taskType": "async",
         "httpClientType": "httpClient",
         "urlTemplate": {
@@ -11,4 +13,6 @@
             "parameters": {"dataType": "<dataType>", "retainFactor": "<retainFactor>", "numToKeep": "<numToKeep>"}
         },
         "customHandler": "logTaskEventHandler"
-    }
+    },
+   "aggRegexs": null
+}

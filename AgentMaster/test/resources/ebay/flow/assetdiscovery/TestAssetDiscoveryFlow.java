@@ -16,6 +16,8 @@ import org.lightj.util.JsonUtil;
 import org.lightj.util.SpringContextUtil;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import resources.ebay.flow.assetdiscovery.AssetDiscoveryFlowContext.AssetDiscoveryUserInput;
+
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
@@ -24,12 +26,13 @@ public class TestAssetDiscoveryFlow extends BaseTestCase {
 	public void testNormalFlow() throws Exception {
 		// create an instance of skeleton flow, fill in the flesh for each steps
 		AssetDiscoveryFlow flow = FlowSessionFactory.getInstance().createSession(AssetDiscoveryFlow.class);
-		flow.getSessionContext().setAgentHosts(new String[] {"10.9.248.186"});
-		HashMap<String, String> agentParams = new HashMap<String, String>();
-		agentParams.put("scriptLocation", "http://cronus-srepo.vip.ebay.com/packages/discover_os_info.py");
-		agentParams.put("scriptName", "discover_os_info.py");		
-		flow.getSessionContext().setAgentParams(agentParams);
+		AssetDiscoveryUserInput userInput = new AssetDiscoveryUserInput();
+		userInput.agentHosts = new String[] {"10.9.248.186"};
+		userInput.scriptLocation = "http://cronus-srepo.vip.ebay.com/packages/discover_os_info.py";
+		userInput.scriptName ="discover_os_info.py";
+		flow.getSessionContext().setUserInput(userInput);
 		flow.save();
+		
 		// kick off flow
 		flow.runFlow();
 		

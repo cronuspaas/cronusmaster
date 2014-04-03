@@ -36,10 +36,10 @@
 					getHttpMethodLabel("${obj.httpMethod}");
 					</script>
 					</td>
-					<td>${obj.headers}</td>
-					<td>${obj.parameters}</td>
+					<td><script type="text/javascript">displayList("${obj.headers}");</script></td>
+					<td><script type="text/javascript">displayList("${obj.parameters}");</script></td>
 					<td>${obj.body}</td>
-					<td>${obj.variables}</td>
+					<td><script type="text/javascript">displayList("${obj.variables}");</script></td>
 				</tr>
 				#{/list}
 			</tbody>

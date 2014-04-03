@@ -6,6 +6,7 @@ import java.util.Map;
 
 import models.utils.DateUtils;
 
+import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.BatchOption;
@@ -117,10 +118,10 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 		ICommandData cmdData = UserDataProvider.getCommandConfigs();
 		try {
 			ICommand cmd = cmdData.getCommandByName(cmdName);
-			HttpTaskRequest reqTemplate = cmd.getHttpTaskRequest();
+			HttpTaskRequest reqTemplate = cmd.createCopy();
 			reqTemplate.setExecutionOption(executeOption);
 			reqTemplate.setMonitorOption(monitorOption);
-			reqTemplate.setTemplateValues(templateValues);
+			reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addAllTemplateValues(templateValues));
 
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupName);
 			String[] hosts = ng.getNodeList().toArray(new String[0]);
