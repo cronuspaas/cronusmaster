@@ -9,20 +9,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.lightj.session.CtxProp;
-import org.lightj.session.FlowContext;
 import org.lightj.session.CtxProp.CtxDbType;
-import org.lightj.session.exception.FlowExecutionException;
+import org.lightj.session.FlowContext;
 
-import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
+import resources.IUserInputs;
+import resources.UserDataProvider;
+import resources.ebay.flow.assetdiscovery.AssetDiscoveryFlowContext.AssetDiscoveryUserInput;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("rawtypes")
-public class AssetDiscoveryFlowContext extends FlowContext {
+public class AssetDiscoveryFlowContext extends FlowContext implements IUserInputs<AssetDiscoveryUserInput> {
 	
 	public static String[] AgentParameters = new String[] {"scriptLocation", "scriptName"};
 	
 	@CtxProp(dbType=CtxDbType.BLOB)
-	private AssetDiscoveryUserInput userInput;
+	private AssetDiscoveryUserInput userInputs;
 	
 	private List<Map<String, String>> iaasParams = new ArrayList<Map<String,String>>();
 	
@@ -31,16 +34,22 @@ public class AssetDiscoveryFlowContext extends FlowContext {
 	
 	/** any agent failed in between */
 	@CtxProp(dbType=CtxDbType.BLOB)
-	private final Set<String> failedAgentHosts = new HashSet<String>();
+	private Set<String> failedAgentHosts = new HashSet<String>();
 	
+	public void setFailedAgentHosts(Set<String> failedAgentHosts) {
+		this.failedAgentHosts = failedAgentHosts;
+	}
 	public String[] getAgentHosts() {
-		return userInput.agentHosts;
+		if (userInputs.agentHosts==null) {
+			userInputs.populateAgentHosts();
+		}
+		return userInputs.agentHosts;			
 	}
 	public String[] getAgentParams() {
-		return new String[] {"scriptLocation", userInput.scriptLocation, "scriptName", userInput.scriptName};
+		return new String[] {"scriptLocation", userInputs.scriptLocation, "scriptName", userInputs.scriptName};
 	}
 	public String getIaasHost() {
-		return userInput.iaasHost;
+		return userInputs.iaasHost;
 	}
 	public List<Map<String, String>> getIaasParams() {
 		return iaasParams;
@@ -65,13 +74,22 @@ public class AssetDiscoveryFlowContext extends FlowContext {
 		return failedAgentHosts;
 	}
 	
-	public AssetDiscoveryUserInput getUserInput() {
-		return userInput;
+	@Override
+	public AssetDiscoveryUserInput getUserInputs() {
+		return userInputs;
 	}
-	public void setUserInput(AssetDiscoveryUserInput userInput) {
-		this.userInput = userInput;
+	@Override
+	public void setUserInputs(AssetDiscoveryUserInput userInput) {
+		this.userInputs = userInput;
 	}
-
+	@Override
+	public AssetDiscoveryUserInput getSampleUserInputs() {
+		return new AssetDiscoveryUserInput(
+				"existing node group", 
+				"http://cronus-srepo.vip.ebay.com/packages/discover_os_info.py", 
+				"discover_os_info.py", 
+				"cmiaas.vip.ebay.com");
+	}
 	/**
 	 * user input
 	 * @author biyu
@@ -79,12 +97,31 @@ public class AssetDiscoveryFlowContext extends FlowContext {
 	 */
 	public static class AssetDiscoveryUserInput {
 		/** original agent requests */
-		String[] agentHosts;
-		String scriptLocation;
-		String scriptName;
+		@JsonIgnore
+		public String[] agentHosts;
+		public String agentNodeGroup;
+		public String scriptLocation;
+		public String scriptName;
 	
 		/** request to iaas */
-		String iaasHost;
+		public String iaasHost;
+		
+		public AssetDiscoveryUserInput() {}
+		public AssetDiscoveryUserInput(String agentNodeGroup, String scriptLocation, String scriptName, String iaasHost) {
+			this.agentNodeGroup = agentNodeGroup;
+			this.scriptLocation = scriptLocation;
+			this.scriptName = scriptName;
+			this.iaasHost = iaasHost;
+		}
+		void populateAgentHosts() {
+			if (agentHosts == null && agentNodeGroup != null) {
+				try {
+					agentHosts = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getNodeGroupByName(agentNodeGroup).getNodeList().toArray(new String[0]);
+				} catch (IOException e) {
+					agentHosts = new String[] {};
+				}
+			}
+		}
 	}
-	
+
 }

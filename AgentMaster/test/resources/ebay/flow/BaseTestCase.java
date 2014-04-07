@@ -1,4 +1,4 @@
-package resources.ebay.flow.assetdiscovery;
+package resources.ebay.flow;
 import java.io.File;
 
 import junit.framework.TestCase;

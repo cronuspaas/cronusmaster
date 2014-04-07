@@ -62,10 +62,10 @@ public class AssetDiscoveryFlowFactory {
 			@Override
 			public void executeOnResult(AssetDiscoveryFlowContext ctx, Task task, TaskResult result) {
 				if (result.getStatus() == TaskResultEnum.Success) {
-					ctx.addAgentUuid(result.getDetails().get("host"), result.getDetails().get("uuid"));
+					ctx.addAgentUuid(result.getResultDetail("host"), result.getResultDetail("uuid"));
 				}
 				else {
-					ctx.addFailedAgentHost(result.getDetails().get("host"));
+					ctx.addFailedAgentHost(result.getResultDetail("host"));
 				}
 			}
 		};
@@ -126,7 +126,7 @@ public class AssetDiscoveryFlowFactory {
 					ctx.addIaaSParam(iaasParam);
 				}
 				else {
-					ctx.addFailedAgentHost(result.getDetails().get("host"));
+					ctx.addFailedAgentHost(result.getResultDetail("host"));
 				}
 			}
 		};
@@ -152,7 +152,7 @@ public class AssetDiscoveryFlowFactory {
 						// set sync req
 						UrlTemplate reqTemplate = new UrlTemplate(reqUrl);
 						reqTemplate.addHeader("content-type", "application/json");
-						taskReq.setSyncTaskOptions("httpClient", reqTemplate, new ExecuteOption(0,0,3,0));
+						taskReq.setSyncTaskOptions("httpClient", reqTemplate, new ExecuteOption(0,0,3,0), null);
 						// host template
 						List<String> goodHosts = new ArrayList<String>();
 						for (String host : ctx.getAgentHosts()) {
@@ -201,7 +201,7 @@ public class AssetDiscoveryFlowFactory {
 						// sync task req
 						UrlTemplate reqTemplate = new UrlTemplate(reqUrl, HttpMethod.POST, reqBody);
 						reqTemplate.addHeader("content-type", "application/json");
-						taskReq.setSyncTaskOptions("httpClient", reqTemplate, new ExecuteOption());
+						taskReq.setSyncTaskOptions("httpClient", reqTemplate, new ExecuteOption(), null);
 						// host
 						taskReq.setHosts(ctx.getIaasHost());
 						// multiple request to the same host

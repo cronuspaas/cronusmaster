@@ -1,4 +1,4 @@
-package resources.ebay.flow.assetdiscovery;
+package resources.ebay.flow.deploymanifest;
 
 import org.lightj.session.FlowProperties;
 import org.lightj.session.FlowResult;
@@ -10,30 +10,32 @@ import org.lightj.session.step.StepBuilder;
 import org.lightj.session.step.StepTransition;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@FlowProperties(typeId="AssetDiscovery", desc="run asset discovery", clustered=false, interruptible=false, timeoutInSec=0)
-public class AssetDiscoveryFlow extends FlowSession<AssetDiscoveryFlowContext> {
+import resources.IUserInputs;
+
+@FlowProperties(typeId="DeployManifest", desc="deploy manifest", clustered=false, interruptible=false, timeoutInSec=0)
+public class DeployManifestFlow extends FlowSession<DeployManifestFlowContext> {
 
 	//////////////// step implementation /////////////////
 	
 	@Autowired(required=true)
-	private IFlowStep discoverAssetsStep;
+	private IFlowStep createServiceIfNeededStep;
 	@Autowired(required=true)
-	private IFlowStep retrieveAssetPayloadStep;
+	private IFlowStep createManifestStep;
 	@Autowired(required=true)
-	private IFlowStep registerAssetsStep;
+	private IFlowStep activateManifestStep;
 	
 	// method with the same name as in flow step enum, framework will use reflection to run each step
-	@FlowStepProperties(stepWeight=1, isFirstStep=true, stepIdx=10, onSuccess="retrieveAssetPayload", onElse="handleError")
-	public IFlowStep discoverAssets() {
-		return discoverAssetsStep;
+	@FlowStepProperties(stepWeight=1, isFirstStep=true, stepIdx=10, onSuccess="createManifest", onElse="handleError")
+	public IFlowStep createServiceIfNeeded() {
+		return createServiceIfNeededStep;
 	}	
-	@FlowStepProperties(stepWeight=1, stepIdx=20, onSuccess="registerAssets", onElse="handleError")
-	public IFlowStep retrieveAssetPayload() {
-		return retrieveAssetPayloadStep;
+	@FlowStepProperties(stepWeight=1, stepIdx=20, onSuccess="activateManifest", onElse="handleError")
+	public IFlowStep createManifest() {
+		return createManifestStep;
 	}	
 	@FlowStepProperties(stepWeight=1, stepIdx=30, onSuccess="stop", onElse="handleError")
-	public IFlowStep registerAssets() {
-		return registerAssetsStep;
+	public IFlowStep activateManifest() {
+		return activateManifestStep;
 	}
 	@FlowStepProperties(stepWeight=1, stepIdx=40)
 	public IFlowStep stop() {
