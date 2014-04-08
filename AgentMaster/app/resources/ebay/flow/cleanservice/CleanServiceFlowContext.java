@@ -67,6 +67,11 @@ public class CleanServiceFlowContext extends FlowContext implements IUserInputs<
 				"service_name");
 	}
 	
+	/**
+	 * user input
+	 * @author biyu
+	 *
+	 */
 	public static class CleanServiceUserInput {
 		
 		/** original agent requests */

@@ -25,8 +25,8 @@ public class TestAgentFlows extends BaseTestCase {
 	public void testDeployManifestFlow() throws Exception {
 		// create an instance of skeleton flow, fill in the flesh for each steps
 		DeployManifestFlow flow = FlowSessionFactory.getInstance().createSession(DeployManifestFlow.class);
-		DeployManifestUserInput userInput = new DeployManifestUserInput(null, "hmtest", "hmtest-1.0.0", 
-				new String[]{"http://cronus-srepo.vip.ebay.com/packages/hadoopmonitorsw-0.1.20140403174008.centos.cronus"});
+		DeployManifestUserInput userInput = new DeployManifestUserInput(null, "perlserver", "perlserver-1.0.0", 
+				new String[]{"http://dl.dropboxusercontent.com/u/255815/perlserver-1.0.0.unix.cronus"});
 		userInput.agentHosts = new String[] {"10.9.248.186"};
 		flow.getSessionContext().setUserInputs(userInput);
 		flow.save();
@@ -66,27 +66,27 @@ public class TestAgentFlows extends BaseTestCase {
 
 	}
 
-	public void testAssetDiscoveryFlow() throws Exception {
-		// create an instance of skeleton flow, fill in the flesh for each steps
-		AssetDiscoveryFlow flow = FlowSessionFactory.getInstance().createSession(AssetDiscoveryFlow.class);
-		AssetDiscoveryUserInput userInput = new AssetDiscoveryUserInput();
-		userInput.agentHosts = new String[] {"10.9.248.186"};
-		userInput.scriptLocation = "http://cronus-srepo.vip.ebay.com/packages/discover_os_info.py";
-		userInput.scriptName ="discover_os_info.py";
-		flow.getSessionContext().setUserInputs(userInput);
-		flow.save();
-		
-		// kick off flow
-		flow.runFlow();
-		
-		// checking flow state and print progress
-		while (!flow.getState().isComplete()) {
-			System.out.println(flow.getFlowInfo().getProgress());
-			Thread.sleep(1000);
-		}
-		System.out.println(JsonUtil.encode(flow.getFlowInfo()));
-		
-	}
+//	public void testAssetDiscoveryFlow() throws Exception {
+//		// create an instance of skeleton flow, fill in the flesh for each steps
+//		AssetDiscoveryFlow flow = FlowSessionFactory.getInstance().createSession(AssetDiscoveryFlow.class);
+//		AssetDiscoveryUserInput userInput = new AssetDiscoveryUserInput();
+//		userInput.agentHosts = new String[] {"10.9.248.186"};
+//		userInput.scriptLocation = "http://cronus-srepo.vip.ebay.com/packages/discover_os_info.py";
+//		userInput.scriptName ="discover_os_info.py";
+//		flow.getSessionContext().setUserInputs(userInput);
+//		flow.save();
+//		
+//		// kick off flow
+//		flow.runFlow();
+//		
+//		// checking flow state and print progress
+//		while (!flow.getState().isComplete()) {
+//			System.out.println(flow.getFlowInfo().getProgress());
+//			Thread.sleep(1000);
+//		}
+//		System.out.println(JsonUtil.encode(flow.getFlowInfo()));
+//		
+//	}
 
 	@Override
 	protected void afterInitialize(String home) throws InitializationException {
