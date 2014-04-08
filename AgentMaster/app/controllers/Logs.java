@@ -184,8 +184,7 @@ public class Logs extends Controller {
 		try {
 
 			DataType dtype = DataType.valueOf(type);
-			String filePath = String.format("%s/%s", dtype.getPath(), name);
-			String fileContent = FileIoUtils.readFileToString(filePath);
+			String fileContent = UserDataProvider.getUserDataDao().readData(dtype, name);
 			
 			renderText(fileContent);
 		} catch (Throwable t) {

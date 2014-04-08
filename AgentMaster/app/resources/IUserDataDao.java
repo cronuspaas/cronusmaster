@@ -36,6 +36,7 @@ public interface IUserDataDao {
 		private final String path;
 		private final boolean isFile;
 		private final Class doKlass;
+		private String uuid;
 		DataType(String path, boolean isFile, Class doKlass) {
 			this.path = path;
 			this.isFile = isFile;
@@ -49,6 +50,12 @@ public interface IUserDataDao {
 		}
 		public Class getDoKlass() {
 			return doKlass;
+		}
+		public String getUuid() {
+			return uuid;
+		}
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
 		}
 	};
 
