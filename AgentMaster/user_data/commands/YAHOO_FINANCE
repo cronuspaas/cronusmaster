@@ -10,5 +10,6 @@
             "hosts": ["finance.yahoo.com"]
         }
   },
-  "aggRegexs": null
+  "aggRegexs": null,
+  "userData": {"symbol": "ebay"}
  }

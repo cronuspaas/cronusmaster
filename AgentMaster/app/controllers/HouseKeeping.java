@@ -16,7 +16,7 @@ import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
 import resources.UserDataProvider;
 import resources.log.IJobLogger;
-import resources.log.JobLog;
+import resources.log.BaseLog;
 
 /**
  * housekeeping
@@ -43,7 +43,7 @@ public class HouseKeeping extends Controller {
 				cal.add(Calendar.DATE, 0-numToKeep);
 				long ts = cal.getTimeInMillis();
 				for (String logFile : logFiles) {
-					long fileTs = Long.parseLong(JobLog.getLogMetaFromName(logFile).get("timeStamp"));
+					long fileTs = Long.parseLong(BaseLog.getLogMetaFromName(logFile).get("timeStamp"));
 					if (fileTs < ts) {
 						jobLogger.deleteLog(logFile);
 						deletedFiles.add(logFile);
@@ -53,7 +53,7 @@ public class HouseKeeping extends Controller {
 			else if (StringUtil.equalIgnoreCase("name", retainFactor)) {
 				HashMap<String, AtomicInteger> nameCount = new HashMap<String, AtomicInteger>();
 				for (String logFile : logFiles) {
-					String lastToken = JobLog.getLogMetaFromName(logFile).get("lastToken");
+					String lastToken = BaseLog.getLogMetaFromName(logFile).get("lastToken");
 					if (!nameCount.containsKey(lastToken)) {
 						nameCount.put(lastToken, new AtomicInteger(0));
 					}

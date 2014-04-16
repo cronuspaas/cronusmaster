@@ -23,8 +23,8 @@ import org.springframework.context.annotation.Scope;
 
 import resources.IUserDataDao.DataType;
 import resources.log.IJobLogger;
-import resources.log.JobLog;
-import resources.log.JobLog.CommandResponse;
+import resources.log.BaseLog;
+import resources.log.BaseLog.CommandResponse;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
@@ -35,9 +35,9 @@ public class TaskResourcesProvider {
 	
 	public static final class LogTaskEventHandler extends SimpleTaskEventHandler<FlowContext> {
 		
-		private final JobLog jobLog;
+		private final BaseLog jobLog;
 		private final DataType logType;
-		public LogTaskEventHandler(DataType logType, JobLog jobLog) {
+		public LogTaskEventHandler(DataType logType, BaseLog jobLog) {
 			this.jobLog = jobLog;
 			this.logType = logType;
 		}

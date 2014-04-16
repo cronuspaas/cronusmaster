@@ -10,13 +10,13 @@ import resources.IUserData;
  * @author binyu
  *
  */
-public interface IJobLogger extends IUserData {
+public interface IJobLogger<T extends ILog> extends IUserData {
 	
 	/**
 	 * save log
 	 * @param log
 	 */
-	public void saveLog(JobLog log) throws IOException;
+	public void saveLog(T log) throws IOException;
 	
 	/**
 	 * read from persistence job log
@@ -24,7 +24,7 @@ public interface IJobLogger extends IUserData {
 	 * @return
 	 * @throws IOException
 	 */
-	public JobLog readLog(String jobUuid) throws IOException;
+	public T readLog(String jobUuid) throws IOException;
 	
 	
 	/**

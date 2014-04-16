@@ -22,7 +22,8 @@
 				<tr>
 					<th>No.</th>
 					<th>Name</th>
-					<th>Manage</th>
+					<th>Edit</th>
+					<th>Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -33,8 +34,14 @@
 						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
 					</td>   
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/${obj}" class="btn btn-small btn-primary">Edit</a> 
-						<a target=_self href="/config/deleteConfig/${dataType}/${obj}" class="btn btn-small btn-danger">Delete</a> 
+						<a target=_self href="/config/editConfig/${dataType}/${obj}">
+						<i class="fa fa-wrench fa-lg"></i></a>	
+						</a>
+					</td>
+					<td>
+						<a target=_self href="/config/deleteConfig/${dataType}/${obj}">
+						<i class="fa fa-trash-o fa-lg"></i></a>
+						</a> 
 					</td>   
 				</tr>
 				#{/list}

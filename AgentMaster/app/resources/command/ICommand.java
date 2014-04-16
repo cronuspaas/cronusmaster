@@ -5,13 +5,8 @@ import java.util.Map;
 
 import org.lightj.example.task.HttpTaskRequest;
 
-/**
- * command interface
- * @author binyu
- *
- */
 public interface ICommand {
-	
+
 	/** name of the command */
 	public String getName();
 	
@@ -29,5 +24,10 @@ public interface ICommand {
 	
 	/** set http request */
 	public void setHttpTaskRequest(HttpTaskRequest httpTaskRequest);
-	
+
+	/** user data */
+	public void setUserData(Map<String, String> userData);
+
+	/** user data */
+	public Map<String, String> getUserData();
 }

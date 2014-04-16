@@ -17,6 +17,7 @@ limitations under the License.
 */
 package jobs;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 
 import models.data.providers.AgentDataProvider;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
+import resources.UserDataProvider;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -66,5 +68,11 @@ public class Bootstrap extends Job {
 										.getModule()
 				});
 		initializer.initialize();
+		
+		try {
+			UserDataProvider.reloadAllConfigs();
+		} catch (IOException e) {
+			play.Logger.error(e, "error load configs");
+		}
     }    
 }

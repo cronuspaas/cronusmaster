@@ -18,6 +18,9 @@ limitations under the License.
 package controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import models.utils.DateUtils;
@@ -35,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import play.mvc.Controller;
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.command.CommandImpl;
 import resources.UserDataProvider;
 
 /**
@@ -124,6 +128,9 @@ public class Config extends Controller {
 					// this is for new configuration
 					final ObjectMapper mapper = new ObjectMapper();
 					mapper.setSerializationInclusion(Include.NON_NULL);
+					
+					CommandImpl command = new CommandImpl();
+					
 					HttpTaskRequest sampleReq = new HttpTaskRequest();
 					UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
 					sampleReq.setUrlTemplate(temp);
@@ -131,8 +138,18 @@ public class Config extends Controller {
 					sampleReq.setTaskType("asyncpoll");
 					sampleReq.setHttpClientType("httpClient");
 					sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
-					sampleReq.setMonitorOption(new MonitorOption(10000L, 0));
-					content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(sampleReq);
+					sampleReq.setMonitorOption(new MonitorOption(10, 0));
+					command.setHttpTaskRequest(sampleReq);
+					
+					command.addUserData("some variable", "value");
+					command.setAggRegexs(Arrays.asList(new String[] {"some regex"}));
+					
+					HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
+					cmdMap.put("userInputs", command.getUserData());
+					cmdMap.put("httpTaskRequest", command.createCopy());
+					cmdMap.put("aggRegexs", command.getAggRegexs());
+					
+					content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cmdMap);
 				}
 				else if (dType == DataType.NODEGROUP) {
 					content = "line separated hosts";

@@ -67,8 +67,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		StringBuilder sb = new StringBuilder();
 
 		// in test
-		String configFileLocation = String.format("%s/%s", type.getPath(), type.isFile() ? 
-							type.toString().toLowerCase() : name);								
+		String configFileLocation = String.format("%s/%s", type.getPath(), name);								
 		BufferedReader reader = null;
 		try {
 
@@ -170,7 +169,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	 */
 	private String getFilePath(DataType cat, String fileName) {
 		String filePath = null;
-		filePath = String.format("%s/%s", cat.getPath(), cat.isFile() ? cat.name().toLowerCase() : fileName);
+		filePath = String.format("%s/%s", cat.getPath(), fileName);
 		return filePath;
 	}
 

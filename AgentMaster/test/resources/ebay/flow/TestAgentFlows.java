@@ -13,22 +13,17 @@ import org.lightj.util.JsonUtil;
 import org.lightj.util.SpringContextUtil;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import resources.ebay.flow.assetdiscovery.AssetDiscoveryFlow;
-import resources.ebay.flow.assetdiscovery.AssetDiscoveryFlowContext.AssetDiscoveryUserInput;
-import resources.ebay.flow.cleanservice.CleanServiceFlow;
-import resources.ebay.flow.cleanservice.CleanServiceFlowContext.CleanServiceUserInput;
 import resources.ebay.flow.deploymanifest.DeployManifestFlow;
-import resources.ebay.flow.deploymanifest.DeployManifestUserInput;
 
 public class TestAgentFlows extends BaseTestCase {
 	
 	public void testDeployManifestFlow() throws Exception {
 		// create an instance of skeleton flow, fill in the flesh for each steps
 		DeployManifestFlow flow = FlowSessionFactory.getInstance().createSession(DeployManifestFlow.class);
-		DeployManifestUserInput userInput = new DeployManifestUserInput(null, "perlserver", "perlserver-1.0.0", 
-				new String[]{"http://dl.dropboxusercontent.com/u/255815/perlserver-1.0.0.unix.cronus"});
-		userInput.agentHosts = new String[] {"10.9.248.186"};
-		flow.getSessionContext().setUserInputs(userInput);
+		flow.getSessionContext().setServiceName("perlserer");
+		flow.getSessionContext().setManifestName("perlserver-1.0.0");
+		flow.getSessionContext().setManifestPkgs(new String[]{"http://cronus-srepo.vip.ebay.com/packages/perlserver-1.0.0.unix.cronus"});
+		flow.getSessionContext().setHosts(new String[] {"10.9.248.186"});
 		flow.save();
 		
 		// kick off flow
@@ -43,28 +38,26 @@ public class TestAgentFlows extends BaseTestCase {
 		
 	}
 
-	public void testCleanServiceFlow() throws Exception {
-		// create an instance of skeleton flow, fill in the flesh for each steps
-		CleanServiceFlow flow = FlowSessionFactory.getInstance()
-				.createSession(CleanServiceFlow.class);
-		CleanServiceUserInput userInput = new CleanServiceUserInput(
-				null,
-				"perlserver");
-		userInput.agentHosts = new String[] { "10.9.248.186" };
-		flow.getSessionContext().setUserInputs(userInput);
-		flow.save();
-
-		// kick off flow
-		flow.runFlow();
-
-		// checking flow state and print progress
-		while (!flow.getState().isComplete()) {
-			System.out.println(flow.getFlowInfo().getProgress());
-			Thread.sleep(1000);
-		}
-		System.out.println(JsonUtil.encode(flow.getFlowInfo()));
-
-	}
+//	public void testCleanServiceFlow() throws Exception {
+//		// create an instance of skeleton flow, fill in the flesh for each steps
+//		CleanServiceFlow flow = FlowSessionFactory.getInstance()
+//				.createSession(CleanServiceFlow.class);
+//		flow.getSessionContext().addUserData("hosts", new String[] { "10.9.248.186" });
+//		flow.getSessionContext().addUserData("serviceName", "perlserver");
+//		
+//		flow.save();
+//
+//		// kick off flow
+//		flow.runFlow();
+//
+//		// checking flow state and print progress
+//		while (!flow.getState().isComplete()) {
+//			System.out.println(flow.getFlowInfo().getProgress());
+//			Thread.sleep(1000);
+//		}
+//		System.out.println(JsonUtil.encode(flow.getFlowInfo()));
+//
+//	}
 
 //	public void testAssetDiscoveryFlow() throws Exception {
 //		// create an instance of skeleton flow, fill in the flesh for each steps

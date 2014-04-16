@@ -15,12 +15,17 @@ import resources.command.ICommandData;
 import resources.job.CmdIntervalJobImpl;
 import resources.job.IntervalJobData;
 import resources.job.IntervalJobDataImpl;
+import resources.log.CmdLog;
+import resources.log.FlowLog;
 import resources.log.IJobLogger;
-import resources.log.JobLoggerImpl;
+import resources.log.JobLog;
+import resources.log.LoggerImpl;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.INodeGroupData;
 import resources.nodegroup.NodeGroupDataImpl;
 import resources.nodegroup.INodeGroupData.NodeGroupType;
+import resources.workflow.IWorkflowData;
+import resources.workflow.WorkflowDataImpl;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
@@ -69,9 +74,21 @@ public class UserDataProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") IJobLogger jobLogger() {
-		JobLoggerImpl jobLogger = new JobLoggerImpl();
-		jobLogger.setDataType(DataType.JOBLOG);
-		return jobLogger;
+		LoggerImpl logger = new LoggerImpl<JobLog>();
+		logger.setDataType(DataType.JOBLOG);
+		logger.setLogDoKlass(JobLog.class);
+		return logger;
+	}
+
+	/**
+	 * flow logger
+	 * @return
+	 */
+	public @Bean @Scope("singleton") IJobLogger flowLogger() {
+		LoggerImpl logger = new LoggerImpl<FlowLog>();
+		logger.setDataType(DataType.FLOWLOG);
+		logger.setLogDoKlass(FlowLog.class);
+		return logger;
 	}
 	
 	/**
@@ -79,9 +96,10 @@ public class UserDataProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") IJobLogger cmdLogger() {
-		JobLoggerImpl jobLogger = new JobLoggerImpl();
-		jobLogger.setDataType(DataType.CMDLOG);
-		return jobLogger;
+		LoggerImpl logger = new LoggerImpl<CmdLog>();
+		logger.setDataType(DataType.CMDLOG);
+		logger.setLogDoKlass(CmdLog.class);
+		return logger;
 	}
 	
 	/**
@@ -92,6 +110,24 @@ public class UserDataProvider {
 		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
 		jobDataImpl.setJobType(DataType.CMDJOB);
 		return jobDataImpl;
+	}
+
+	/**
+	 * flow based interval jobs
+	 * @return
+	 */
+	public @Bean @Scope("singleton") IntervalJobData flowIntervalJob() {
+		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
+		jobDataImpl.setJobType(DataType.FLOWJOB);
+		return jobDataImpl;
+	}
+
+	/**
+	 * workflow configs
+	 * @return
+	 */
+	public @Bean @Scope("singleton") IWorkflowData workflowConfigs() {
+		return new WorkflowDataImpl();
 	}
 	
 	/**
@@ -135,6 +171,9 @@ public class UserDataProvider {
 		case JOBLOG:
 			logger = SpringContextUtil.getBean("resources", "jobLogger", IJobLogger.class);
 			break;
+		case FLOWLOG:
+			logger = SpringContextUtil.getBean("resources", "flowLogger", IJobLogger.class);
+			break;
 		default:
 			throw new IllegalArgumentException(String.format("Invalid logger type %s", type));
 		}
@@ -152,6 +191,9 @@ public class UserDataProvider {
 		case CMDJOB:
 			jobData = SpringContextUtil.getBean("resources", "cmdIntervalJob", IntervalJobData.class);
 			break;
+		case FLOWJOB:
+			jobData = SpringContextUtil.getBean("resources", "flowIntervalJob", IntervalJobData.class);
+			break;
 		default:
 			throw new IllegalArgumentException(String.format("Invalid interval job type %s", type));
 		}
@@ -167,12 +209,21 @@ public class UserDataProvider {
 	}
 	
 	/**
+	 * get workflow dao
+	 * @return
+	 */
+	public static IWorkflowData getWorkflowConfigs() {
+		return SpringContextUtil.getBean("resources", IWorkflowData.class);
+	}
+	
+	/**
 	 * reload all configs
 	 * @throws IOException
 	 */
 	public static void reloadAllConfigs() throws IOException {
 		getNodeGroupOfType(DataType.NODEGROUP).load();
 		getCommandConfigs().load();
+		getWorkflowConfigs().load();
 	}
 
 }

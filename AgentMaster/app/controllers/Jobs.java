@@ -30,12 +30,15 @@ import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
 import resources.command.ICommand;
 import resources.command.ICommandData;
+import resources.job.BaseIntervalJob;
 import resources.job.CmdIntervalJobImpl;
+import resources.job.FlowIntervalJobImpl;
 import resources.job.IntervalJob;
 import resources.job.IntervalJobData;
 import resources.log.IJobLogger;
-import resources.log.JobLog;
-import resources.log.JobLog.UserCommand;
+import resources.log.BaseLog;
+import resources.log.BaseLog.UserCommand;
+import resources.log.ILog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
 
@@ -65,9 +68,21 @@ public class Jobs extends Controller {
 				jobDetail.put("status", job.isEnabled() ? "Enabled" : "Disabled");
 				jobDetail.put("statustoggle", job.isEnabled() ? "Disable" : "Enable");
 				jobDetail.put("type", DataType.CMDJOB.name());
+				jobDetail.put("typeLabel", DataType.CMDJOB.getLabel());
 				jobDetails.add(jobDetail);
 			}
-			// List<>
+			
+			for (IntervalJob job : UserDataProvider.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs()) {
+				HashMap<String, String> jobDetail = new HashMap<String, String>();
+				jobDetail.put("name", job.getName());
+				jobDetail.put("interval", String.format("Every %s min", job.getIntervalInMinute()));
+				jobDetail.put("description", job.getDescription());
+				jobDetail.put("status", job.isEnabled() ? "Enabled" : "Disabled");
+				jobDetail.put("statustoggle", job.isEnabled() ? "Disable" : "Enable");
+				jobDetail.put("type", DataType.FLOWJOB.name());
+				jobDetail.put("typeLabel", DataType.FLOWJOB.getLabel());
+				jobDetails.add(jobDetail);
+			}
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
 
@@ -138,33 +153,24 @@ public class Jobs extends Controller {
 	/**
 	 * create job wizard
 	 */
-	public static void wizard() {
+	public static void wizard(String logType, String logId) {
 
 		String page = "wizard";
 		String topnav = "jobs";
 
 		try {
 			
-			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
-			List<Map<String, String>> cmdsMeta = new ArrayList<Map<String,String>>();
-			for (String cmd : cmds.keySet()) {
-				HashMap<String, String> meta = new HashMap<String, String>();
-				meta.put("agentCommandType", cmd);
-				cmdsMeta.add(meta);
-			}
+			DataType dType = DataType.valueOf(logType.toUpperCase());
+			ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(logId);
+			HashMap<String, String> meta = new HashMap<String, String>();
+			meta.put("logType", logType);
+			meta.put("logId", logId);
+			meta.put("ng", log.getNodeGroup().getName());
+			meta.put("cmdType", log.getCommandType().name());
+			meta.put("cmdKey", log.getCommandKey());
+			meta.put("userData", JsonUtil.encode(log.getUserData()));
 			
-			Map<String, INodeGroup> ngsMap = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
-			ArrayList<Map<String, String>> ngs = new ArrayList<Map<String, String>>();
-			for (String v : ngsMap.keySet()) {
-				Map<String, String> kvp = new HashMap<String, String>(1);
-				kvp.put("nodeGroupType", v);
-				ngs.add(kvp);
-			}
-			String nodeGroupSourceMetadataListJsonArray = JsonUtil.encode(ngs);
-			
-			String agentCommandMetadataListJsonArray = JsonUtil.encode(cmdsMeta);
-
-			render(page, topnav, nodeGroupSourceMetadataListJsonArray, agentCommandMetadataListJsonArray);
+			render(page, topnav, meta);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,51 +181,44 @@ public class Jobs extends Controller {
 
 	/**
 	 * save job from wizard
-	 * @param nodeGroup
 	 * @param command
 	 * @param exeOptions
 	 * @param jobOptions
 	 */
-	public static void saveJob(
-			String nodeGroup, String command, 
-			Map<String, String> exeOptions, Map<String, String> jobOptions) 
+	public static void saveJob(String dataType, String logId, Map<String, String> jobOptions) 
 	{
 		try {
-			long exeInitDelayMs = Long.parseLong(getOptionValue(exeOptions, "exe_initde", "0")) * 1000L;
-			long exeTimoutMs = Long.parseLong(getOptionValue(exeOptions, "exe_initde", "0")) * 1000L;
-			int exeRetry = Integer.parseInt(getOptionValue(exeOptions, "exe_rede", "0"));
-			long retryDelayMs = Long.parseLong(getOptionValue(exeOptions, "exe_rede", "0")) * 1000L;
-			ExecuteOption executeOption = new ExecuteOption(exeInitDelayMs, exeTimoutMs, exeRetry, retryDelayMs);
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			DataType jType = null;
+			ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(logId);
+			BaseIntervalJob job = null;
 			
-			long monIntervalMs = Integer.parseInt(getOptionValue(exeOptions, "mon_int", "1")) * 1000L;
-			long monInitDelayMs = Long.parseLong(getOptionValue(exeOptions, "mon_initde", "0")) * 1000L;
-			long monTimoutMs = Long.parseLong(getOptionValue(exeOptions, "mon_initde", "0")) * 1000L;
-			int monRetry = Integer.parseInt(getOptionValue(exeOptions, "mon_rede", "0"));
-			long monRetryDelayMs = Long.parseLong(getOptionValue(exeOptions, "mon_rede", "0")) * 1000L;
-			MonitorOption monitorOption = new MonitorOption(monInitDelayMs, monIntervalMs, monTimoutMs, monRetry, monRetryDelayMs);
-					
-			Strategy strategy = Strategy.valueOf(getOptionValue(exeOptions, "thrStrategy", "UNLIMITED"));
-			int maxRate = Integer.parseInt(getOptionValue(exeOptions, "thr_rate", "1000"));
-			BatchOption batchOption = new BatchOption(maxRate, strategy);
+			switch (dType) {
+			case CMDLOG:
+				CmdIntervalJobImpl cjob = new CmdIntervalJobImpl();
+				job = cjob;
+				jType = DataType.CMDJOB;
+				break;
+			case FLOWLOG:
+				FlowIntervalJobImpl fjob = new FlowIntervalJobImpl();
+				job = fjob;
+				jType = DataType.FLOWJOB;
+				break;
+			}
 			
-			HashMap<String, String> varValues = JsonUtil.decode(getOptionValue(exeOptions, "var_values", "{}"), HashMap.class);
-			
-			CmdIntervalJobImpl job = new CmdIntervalJobImpl();
-			job.setBatchOption(batchOption);
-			job.setCmdName(command);
-			job.setExecuteOption(executeOption);
-			job.setMonitorOption(monitorOption);
-			job.setNodeGroupName(nodeGroup);
-			job.addTemplateValue(varValues);
+			job.setCmdName(log.getCommandKey());
+			job.setNodeGroupName(log.getNodeGroup().getName());
+			job.setUserData(log.getUserData());
+
 			job.setName(jobOptions.get("job_name"));
-			int intervalInMinute = Integer.parseInt(getOptionValue(jobOptions, "job_interval", "0")) * 5;
+			int intervalInMinute = Integer.parseInt(getOptionValue(jobOptions, "job_interval", "1")) * 5;
 			job.setIntervalInMinute(intervalInMinute);
 			job.setEnabled("enable".equalsIgnoreCase(getOptionValue(jobOptions, "job_status", "disable")));
 			
-			UserDataProvider.getIntervalJobOfType(DataType.CMDJOB).save(job);
+			UserDataProvider.getIntervalJobOfType(jType).save(job);
 			
 		} catch (Exception e) {
-			error(	"Error occured in runCmdOnNodeGroup: " + e.getLocalizedMessage()
+			error(	"Error occured in saveJob: " + e.getLocalizedMessage()
 					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
 		}
 

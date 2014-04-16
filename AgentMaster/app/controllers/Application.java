@@ -19,6 +19,8 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
+import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -41,66 +43,38 @@ import models.utils.VarUtils;
  */
 public class Application extends Controller {
 
-	public static void index() {
-
-		AgentDataProvider adp = AgentDataProvider.getInstance();
-
-		int totalNodeCountInDataMapInProgress = adp
-				.getTotalNodeCountInDataMapInProgress();
-		int totalNodeCountInDataMapValid = adp
-				.getTotalNodeCountInDataMapValid();
-		
-		int totalNodeGroupCountInAdhocNodeGroup = adp
-				.getTotalNodeGroupCountForAdhocNodegroups();
-		
-		int totalNodeCountInNodeGroupMetadatas = adp
-				.getTotalNodeCountInNodeGroupMetadatas();
-		
-		int totalCommandCountInAgentCommandMetadatas = adp
-				.getTotalCommandCountInAgentCommandMetadatas();
-		
-		int runningJobCount = ActorConfig.runningJobCount.get();
-		MonitorProvider mp= MonitorProvider.getInstance();
-		PerformUsage performaUsage = mp.currentJvmPerformUsage;
-		DiskUsage diskUsage = mp.currentDiskUsage;
-    	
-
+	public static void index() 
+	{
 		HashMap<String, String> metricMap = new HashMap<String, String>();
+		
+		try {
+			metricMap.put("totalNodeCount",
+					Integer.toString(UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getNodeCount()));
+			metricMap.put("totalCmdCount",
+					Integer.toString(UserDataProvider.getCommandConfigs().getAllCommands().size()));
+			metricMap.put("totalWfCount",
+					Integer.toString(UserDataProvider.getWorkflowConfigs().getAllFlows().size()));
+			metricMap.put("totalJobCount",
+					Integer.toString(UserDataProvider.getIntervalJobOfType(DataType.CMDJOB).getAllJobs().size()
+					+ UserDataProvider.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs().size()));
 
-		String lastRefreshDataValid = DateUtils
-				.getDateTimeStrSdsm(adp.lastRefreshDataValid);
-		String lastRefreshDataInProgress = DateUtils
-				.getDateTimeStrSdsm(adp.lastRefreshDataInProgress);
+			int runningJobCount = ActorConfig.runningJobCount.get();
+			MonitorProvider mp = MonitorProvider.getInstance();
+			PerformUsage performaUsage = mp.currentJvmPerformUsage;
+			DiskUsage diskUsage = mp.currentDiskUsage;
 
-		// new 20131202
-		
-		metricMap.put("totalNodeGroupCountInAdhocNodeGroup",
-				Integer.toString(totalNodeGroupCountInAdhocNodeGroup));
-		
-		metricMap.put("totalNodeCountInDataMapInProgress",
-				Integer.toString(totalNodeCountInDataMapInProgress));
-		metricMap.put("totalNodeCountInDataMapValid",
-				Integer.toString(totalNodeCountInDataMapValid));
-		
-		metricMap.put("totalNodeCountInNodeGroupMetadatas",
-				Integer.toString(totalNodeCountInNodeGroupMetadatas));
-		metricMap.put("totalCommandCountInAgentCommandMetadatas",
-				Integer.toString(totalCommandCountInAgentCommandMetadatas));
-		
-		metricMap.put("lastRefreshDataValid", lastRefreshDataValid);
-		metricMap.put("lastRefreshDataInProgress", lastRefreshDataInProgress);
-		metricMap.put("runningJobCount", Integer.toString(runningJobCount));
-		
-		String runCronJobStr = Boolean.toString(ConfUtils.runCronJob);
-		
-		
-		String localHostName = ConfUtils.localHostName;
-		metricMap.put("runCronJob", runCronJobStr );
-		
-		
-		metricMap.put("localHostName", localHostName );
-		String hostName = localHostName;
-		render(metricMap, hostName, performaUsage, diskUsage);
+			metricMap.put("runningJobCount", Integer.toString(runningJobCount));
+
+			String runCronJobStr = Boolean.toString(ConfUtils.runCronJob);
+			String localHostName = ConfUtils.localHostName;
+			metricMap.put("runCronJob", runCronJobStr);
+
+			metricMap.put("localHostName", localHostName);
+			String hostName = localHostName;
+			render(metricMap, hostName, performaUsage, diskUsage);
+		} catch (Exception e) {
+			error(e);
+		}
 	}// end func.
 	
     public static void whatsnew() {

@@ -34,6 +34,7 @@ public class TaskResourceProvider {
 	 * global context to keep all agent auth key (pki based)
 	 * @return
 	 */
+	public static final String AGENT_AUTHKEY_BEAN = "agentAuthKeyContext";
 	public @Bean @Scope("singleton") IGlobalContext agentAuthKeyContext() {
 		
 		return new IGlobalContext() {
@@ -67,6 +68,11 @@ public class TaskResourceProvider {
 		
 	}
 	
+	/**
+	 * agent processor for sync requ
+	 * @return
+	 */
+	public static final String AGENT_PROCESSOR = "agentProcessor";
 	public @Bean @Scope("singleton") IHttpProcessor agentProcessor() {
 		
 		final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
@@ -116,6 +122,7 @@ public class TaskResourceProvider {
 	 * this handles agent polling and agent pki authentication
 	 * @return
 	 */
+	public static final String AGENT_POLL_PROCESSOR = "agentPollProcessor";
 	public @Bean @Scope("singleton") IHttpPollProcessor agentPollProcessor() {
 
 		final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";

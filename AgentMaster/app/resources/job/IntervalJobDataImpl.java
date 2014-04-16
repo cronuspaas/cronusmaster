@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
-import resources.log.JobLog;
+import resources.log.BaseLog;
 
 public class IntervalJobDataImpl implements IntervalJobData {
 

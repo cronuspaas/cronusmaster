@@ -14,5 +14,10 @@
         },
         "customHandler": "logTaskEventHandler"
     },
-   "aggRegexs": null
+   "aggRegexs": null,
+   "userData": {
+      "dataType": "JOBLOG",
+      "retainFactor": "name",
+      "numToKeep": "1"
+   }
 }

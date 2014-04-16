@@ -24,6 +24,8 @@ import resources.IUserDataDao.DataType;
  */
 public class NodeGroupDataImpl implements INodeGroupData {
 
+	private int nodeCount;
+	
 	@Autowired(required = true)
 	private IUserDataDao userConfigs;
 
@@ -70,6 +72,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	public void load() throws IOException {
 
 		HashMap<String, INodeGroup> nodeGroups = new HashMap<String, INodeGroup>();
+		int nodeCount = 0;
 		
 		List<String> ngNames = userConfigs.listNames(dataType);
 		for (String ngName : ngNames) {
@@ -87,6 +90,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 			NodeGroupImpl nodeGroupImpl = new NodeGroupImpl(ngName);
 			nodeGroupImpl.setType(DataType.NODEGROUP.name());
 			nodeGroupImpl.addNodesToList(tmpNodeList);
+			nodeCount += tmpNodeList.size();
 			nodeGroups.put(ngName, nodeGroupImpl);
 		}
 
@@ -94,6 +98,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 				+ nodeGroups.size() + " at " + DateUtils.getNowDateTimeStr());
 
 		this.nodeGroups = nodeGroups;
+		this.nodeCount = nodeCount;
 	}
 
 	@Override
@@ -104,6 +109,11 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	@Override
 	public void setUserDataDao(IUserDataDao userConfigs) {
 		this.userConfigs = userConfigs;
+	}
+
+	@Override
+	public int getNodeCount() {
+		return nodeCount;
 	}
 
 }

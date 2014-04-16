@@ -20,6 +20,7 @@
 					<th>TimeStamp</th>
 					<th>Download</th>
 					<th>Aggregation</th>
+					<th>Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -42,6 +43,10 @@
 					<td>   
 						<a target=_blank href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
 						<i class="fa fa-list fa-lg"></i></a> 
+					</td>  
+					<td>   
+						<a target=_self href="/logs/delete?type=${logObj.type}&name=${logObj.name}" >
+						<i class="fa fa-trash-o fa-lg"></i></a> 
 					</td>  
 					
 				</tr>

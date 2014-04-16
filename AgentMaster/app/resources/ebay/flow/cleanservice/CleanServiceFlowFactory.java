@@ -7,11 +7,8 @@ import java.util.Set;
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
-import org.lightj.session.exception.FlowExecutionException;
-import org.lightj.session.step.IAroundExecution;
 import org.lightj.session.step.IFlowStep;
 import org.lightj.session.step.StepBuilder;
-import org.lightj.session.step.StepCallbackHandler;
 import org.lightj.session.step.TaskFactoryStepExecution.IFlowContextTaskFactory;
 import org.lightj.session.step.TaskFactoryStepExecution.TaskInFlow;
 import org.lightj.task.BatchOption;
@@ -62,9 +59,9 @@ public class CleanServiceFlowFactory {
 					UrlTemplate checkService = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:12020/services/serviceName", "host", "serviceName"));
 					checkService.addHeader("content-type", "application/json");
 					req.setSyncTaskOptions("httpClient", checkService, new ExecuteOption(0, 0, 2, 0), "agentProcessor");
-					req.setHosts(context.getUserInputs().agentHosts);
+					req.setHosts(context.getGoodHosts());
 					req.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(
-							"serviceName", context.getUserInputs().serviceName));
+							"serviceName", context.getServiceName()));
 					ExecutableTask task = HttpTaskBuilder.buildTask(req);
 					
 					// populate hosts that need deactivation
@@ -84,7 +81,7 @@ public class CleanServiceFlowFactory {
 									}
 								}
 								else {
-									ctx.addFailedAgentHost(result.getResultDetail("host"));
+									ctx.addFailedHost(result.getResultDetail("host"));
 								}
 							} catch (Exception e) {
 								throw new RuntimeException(e);
@@ -99,7 +96,7 @@ public class CleanServiceFlowFactory {
 						
 					};
 					
-					taskInFlow = new TaskInFlow<CleanServiceFlowContext>(task, null, handler);
+					taskInFlow = new TaskInFlow<CleanServiceFlowContext>(null, handler, task);
 					
 					break;
 				case 1:
@@ -112,7 +109,7 @@ public class CleanServiceFlowFactory {
 					UrlTemplate pollReq = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:12020/status/uuid", "host", "uuid"));
 					req2.setAsyncPollTaskOption("httpClient", deactivateReq, new ExecuteOption(0, 0, 3, 0), pollReq, new MonitorOption(0, 5*1000L, 120*1000L, 3, 0), "agentPollProcessor");
 					req2.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(
-							"serviceName", context.getUserInputs().serviceName));
+							"serviceName", context.getServiceName()));
 					req2.setHosts(((HashSet<String>)context.getFromScrapbook("hostNeedDeactivate")).toArray(new String[0]));
 					// set global context
 					req2.setGlobalContext("agentAuthKeyContext");
@@ -125,11 +122,11 @@ public class CleanServiceFlowFactory {
 								if (result.getStatus() == TaskResultEnum.Success) {
 									AgentStatus agentStatus = JsonUtil.decode(result.<SimpleHttpResponse>getRawResult().getResponseBody(), AgentStatus.class);
 									if (agentStatus.progress != 100) {
-										ctx.addFailedAgentHost(result.getResultDetail("host"));
+										ctx.addFailedHost(result.getResultDetail("host"));
 									}
 								}
 								else {
-									ctx.addFailedAgentHost(result.getResultDetail("host"));
+									ctx.addFailedHost(result.getResultDetail("host"));
 								}
 							} catch (Exception e) {
 								throw new RuntimeException(e);
@@ -142,7 +139,7 @@ public class CleanServiceFlowFactory {
 						}
 					};
 					
-					taskInFlow = new TaskInFlow<CleanServiceFlowContext>(task2, null, handler2);
+					taskInFlow = new TaskInFlow<CleanServiceFlowContext>(null, handler2, task2);
 					
 					break;
 				default:
@@ -159,72 +156,54 @@ public class CleanServiceFlowFactory {
 	@Scope("prototype")
 	public static IFlowStep cleanServiceStep() {
 		
-		ITaskEventHandler<CleanServiceFlowContext> myHandler = new SimpleTaskEventHandler<CleanServiceFlowContext>() {
+		final ITaskEventHandler<CleanServiceFlowContext> myHandler = new SimpleTaskEventHandler<CleanServiceFlowContext>() {
 			@Override
 			public void executeOnResult(CleanServiceFlowContext ctx, Task task, TaskResult result) {
 				try {
 					if (result.getStatus() == TaskResultEnum.Success) {
 						AgentStatus agentStatus = JsonUtil.decode(result.<SimpleHttpResponse>getRawResult().getResponseBody(), AgentStatus.class);
 						if (agentStatus.progress != 100) {
-							ctx.addFailedAgentHost(result.getResultDetail("host"));
+							ctx.addFailedHost(result.getResultDetail("host"));
 						}
 					}
 					else {
-						ctx.addFailedAgentHost(result.getResultDetail("host"));
+						ctx.addFailedHost(result.getResultDetail("host"));
 					}
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
 		};
-		StepCallbackHandler callbackHandler = new StepCallbackHandler<CleanServiceFlowContext>().setDelegateHandler(myHandler);
 
 		final String reqUrl = UrlTemplate.encodeAllVariables("https://host:12020/services/serviceName", "host", "serviceName");
 		final String pollUrl = UrlTemplate.encodeAllVariables("https://host:12020/status/uuid", "host", "uuid");
-		final String taskNameInContext = "cleanServiceTask";
-		final String batchOptionNameInContext = "cleanServiceTaskBatchOption";
 		
-		return new StepBuilder().executeTasksInContext(
-				taskNameInContext, 
-				batchOptionNameInContext, 
-				new IAroundExecution<CleanServiceFlowContext>() 
-		{
+		return new StepBuilder().executeTasks(new IFlowContextTaskFactory<CleanServiceFlowContext>() {
 
-					@Override
-					public void preExecute(CleanServiceFlowContext ctx)
-							throws FlowExecutionException 
-					{
-						try {
-							// create http task req
-							HttpTaskRequest taskReq = new HttpTaskRequest();
-							// set async poll req
-							UrlTemplate reqTemplate = new UrlTemplate(reqUrl, HttpMethod.DELETE, null);
-							reqTemplate.addHeader("content-type", "application/json").addHeader("Authorization", "Basic <agentAuthKey>");
-							UrlTemplate pollTemplate = new UrlTemplate(pollUrl);
-							taskReq.setAsyncPollTaskOption("httpClient", reqTemplate, new ExecuteOption(0,0,3,0), pollTemplate, new MonitorOption(0, 5*1000L, 120*1000L, 3, 0), "agentPollProcessor");
-							// host template
-							taskReq.setHosts(ctx.getGoodHosts());
-							// set template values
-							taskReq.setTemplateValuesForAllHosts(new HostTemplateValues()
-										.addNewTemplateValue("serviceName", ctx.getUserInputs().serviceName));
-							// set global context
-							taskReq.setGlobalContext("agentAuthKeyContext");
-							// build real task
-							ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
-							// add task to session context to be run
-							ctx.addToScrapbook(taskNameInContext, task);
-							ctx.addToScrapbook(batchOptionNameInContext, new BatchOption(0, Strategy.UNLIMITED));
-						} catch (Exception e) {
-							throw new FlowExecutionException(e);
-						}
-					}
+			@Override
+			public TaskInFlow<CleanServiceFlowContext> createTaskInFlow(
+					CleanServiceFlowContext context, int sequence) 
+			{
+				HttpTaskRequest taskReq = new HttpTaskRequest();
+				// set async poll req
+				UrlTemplate reqTemplate = new UrlTemplate(reqUrl, HttpMethod.DELETE, null);
+				reqTemplate.addHeader("content-type", "application/json").addHeader("Authorization", "Basic <agentAuthKey>");
+				UrlTemplate pollTemplate = new UrlTemplate(pollUrl);
+				taskReq.setAsyncPollTaskOption("httpClient", reqTemplate, new ExecuteOption(0,0,3,0), pollTemplate, new MonitorOption(0, 5, 120, 3, 0), "agentPollProcessor");
+				// host template
+				taskReq.setHosts(context.getGoodHosts());
+				// set template values
+				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues()
+							.addNewTemplateValue("serviceName", context.getServiceName()));
+				// set global context
+				taskReq.setGlobalContext("agentAuthKeyContext");
+				// build real task
+				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
 
-					@Override
-					public void postExecute(CleanServiceFlowContext ctx)
-							throws FlowExecutionException {
-					}
+				return new TaskInFlow<CleanServiceFlowContext>(new BatchOption(0, Strategy.UNLIMITED), myHandler, task);
+			}
 			
-		}).onResult(callbackHandler).getFlowStep();
+		}).getFlowStep();
 				
 	}
 

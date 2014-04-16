@@ -17,29 +17,15 @@ limitations under the License.
 */
 package controllers;
 
-import java.net.URLDecoder;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import models.data.AgentCommandMetadata;
 import models.data.JsonResult;
-import models.data.RawDataSourceType;
-import models.data.providers.AgentCommadProviderHelperAggregation;
-import models.data.providers.AgentCommandProvider;
-import models.data.providers.AgentCommandProviderHelperInternalFlow;
-import models.data.providers.AgentConfigProviderHelper;
-import models.data.providers.AgentDataProvider;
-import models.data.providers.CommandProviderSingleServerHelper;
-import models.data.providers.NodeGroupProvider;
-import models.rest.beans.requests.RequestCommandWithNodeSpecficReplaceMap;
-import models.rest.beans.requests.RequestCommandWithReplaceMap;
-import models.utils.AgentUtils;
 import models.utils.DateUtils;
-import models.utils.MyHttpUtils;
-import models.utils.VarUtils;
 
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
@@ -55,18 +41,20 @@ import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
-import resources.command.ICommand;
-import resources.command.ICommandData;
-import resources.log.JobLog;
-import resources.log.JobLog.UserCommand;
-import resources.nodegroup.INodeGroup;
-import resources.nodegroup.INodeGroupData;
 import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
-
-import com.google.gson.Gson;
+import resources.command.ICommand;
+import resources.command.ICommandData;
+import resources.log.BaseLog;
+import resources.log.BaseLog.UserCommand;
+import resources.log.CmdLog;
+import resources.nodegroup.INodeGroup;
+import resources.nodegroup.INodeGroupData;
 
 /**
  * 
@@ -100,6 +88,7 @@ public class Commands extends Controller {
 				values.put("headers", headers.toString());
 				values.put("body", req.getBody());
 				values.put("variables", StringUtil.join(req.getVariableNames(), ","));
+				values.put("userData", JsonUtil.encode(cmd.getUserData()));
 				StringBuffer parameters = new StringBuffer();
 				if (req.getParameters() != null) {
 					for (Entry<String, String> param : req.getParameters().entrySet()) {
@@ -122,21 +111,12 @@ public class Commands extends Controller {
 	/**
 	 * command wizard
 	 */
-	public static void wizard() {
+	public static void wizard(String cmdName) {
 
 		String page = "wizard";
 		String topnav = "commands";
 
 		try {
-			
-			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
-			List<Map<String, String>> cmdsMeta = new ArrayList<Map<String,String>>();
-			for (String cmdName : cmds.keySet()) {
-				HashMap<String, String> meta = new HashMap<String, String>();
-				meta.put("agentCommandType", cmdName);
-				cmdsMeta.add(meta);
-			}
-			
 			Map<String, INodeGroup> ngsMap = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
 			ArrayList<Map<String, String>> ngs = new ArrayList<Map<String, String>>();
 			for (String v : ngsMap.keySet()) {
@@ -146,9 +126,7 @@ public class Commands extends Controller {
 			}
 			String nodeGroupSourceMetadataListJsonArray = JsonUtil.encode(ngs);
 			
-			String agentCommandMetadataListJsonArray = JsonUtil.encode(cmdsMeta);
-
-			render(page, topnav, nodeGroupSourceMetadataListJsonArray, agentCommandMetadataListJsonArray);
+			render(page, topnav, nodeGroupSourceMetadataListJsonArray, cmdName);
 		} catch (Throwable t) {
 
 			t.printStackTrace();
@@ -159,6 +137,54 @@ public class Commands extends Controller {
 
 	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
 		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
+	}
+	
+	/**
+	 * options for a command
+	 * @param cmdName
+	 */
+	public static void getOptions(String cmdName) {
+		
+		try {
+			ICommand cmd = UserDataProvider.getCommandConfigs().getCommandByName(cmdName);
+			ArrayList<Map<String, String>> result = new ArrayList<Map<String,String>>();
+			
+			HttpTaskRequest req = cmd.createCopy();
+			ExecuteOption eo = req.getExecutionOption()==null ? new ExecuteOption() : req.getExecutionOption();
+			result.add(createResultItem("exe_initde", Long.toString(eo.getInitDelaySec())));
+			result.add(createResultItem("exe_to", Long.toString(eo.getTimeOutSec())));
+			result.add(createResultItem("exe_retry", Long.toString(eo.getMaxRetry())));
+			result.add(createResultItem("exe_rede", Long.toString(eo.getRetryDelaySec())));
+
+			result.add(createResultItem("mon_disabled", Boolean.toString(HttpTaskRequest.TaskType.async.name().equals(req.getTaskType()))));
+			MonitorOption mo = req.getMonitorOption()==null ? new MonitorOption() : req.getMonitorOption();
+			result.add(createResultItem("mon_int", Long.toString(mo.getIntervalSec())));
+			result.add(createResultItem("mon_initde", Long.toString(mo.getInitDelaySec())));
+			result.add(createResultItem("mon_to", Long.toString(mo.getTimeOutSec())));
+			result.add(createResultItem("mon_retry", Long.toString(mo.getMaxRetry())));
+			result.add(createResultItem("mon_rede", Long.toString(mo.getRetryDelaySec())));
+			
+			BatchOption bo = req.getBatchOption()==null ? new BatchOption(0, Strategy.UNLIMITED) : req.getBatchOption();
+			result.add(createResultItem("thrStrategy", bo.getStrategy().name()));
+			result.add(createResultItem("thr_rate", Integer.toString(bo.getConcurrentRate())));
+			if (cmd.getUserData() != null) {
+				result.add(createResultItem("var_values", JsonUtil.encode(cmd.getUserData())));
+			}
+			renderJSON(result);
+			
+		} catch (Throwable t) {
+
+			t.printStackTrace();
+			renderJSON(new JsonResult("Error occured in wizard"));
+		}
+		
+	}
+	
+	private static Map<String, String> createResultItem(String key, String value) {
+		HashMap<String, String> item = new HashMap<String, String>();
+		item.put("id", key);
+		item.put("value", value);
+		return item;
 	}
 	
 	
@@ -175,50 +201,25 @@ public class Commands extends Controller {
 		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
 		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
 		try {
+			
+			// build task
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
-			HttpTaskRequest reqTemplate = cmd.createCopy();
-
-			long exeInitDelayMs = Long.parseLong(getOptionValue(options, "exe_initde", "0")) * 1000L;
-			long exeTimoutMs = Long.parseLong(getOptionValue(options, "exe_initde", "0")) * 1000L;
-			int exeRetry = Integer.parseInt(getOptionValue(options, "exe_rede", "0"));
-			long retryDelayMs = Long.parseLong(getOptionValue(options, "exe_rede", "0")) * 1000L;
-			ExecuteOption exeOption = new ExecuteOption(exeInitDelayMs, exeTimoutMs, exeRetry, retryDelayMs);
-			
-			long monIntervalMs = Integer.parseInt(getOptionValue(options, "mon_int", "1")) * 1000L;
-			long monInitDelayMs = Long.parseLong(getOptionValue(options, "mon_initde", "0")) * 1000L;
-			long monTimoutMs = Long.parseLong(getOptionValue(options, "mon_initde", "0")) * 1000L;
-			int monRetry = Integer.parseInt(getOptionValue(options, "mon_rede", "0"));
-			long monRetryDelayMs = Long.parseLong(getOptionValue(options, "mon_rede", "0")) * 1000L;
-			MonitorOption monOption = new MonitorOption(monInitDelayMs, monIntervalMs, monTimoutMs, monRetry, monRetryDelayMs);
-					
-			Strategy strategy = Strategy.valueOf(getOptionValue(options, "thrStrategy", "UNLIMITED"));
-			int maxRate = Integer.parseInt(getOptionValue(options, "thr_rate", "1000"));
-			BatchOption batchOption = new BatchOption(maxRate, strategy);
-			
-			HashMap<Object, Object> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), HashMap.class);
-			HashMap<String, String> values = new HashMap<String, String>();
-			for (Entry<Object, Object> entry : varValues.entrySet()) {
-				values.put(entry.getKey().toString(), entry.getValue().toString());
-			}
-			
-			reqTemplate.setExecutionOption(exeOption);
-			reqTemplate.setMonitorOption(monOption);
-			
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
-			String[] hosts = ng.getNodeList().toArray(new String[0]);
-			reqTemplate.setHosts(hosts);
-			reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
+			HttpTaskRequest reqTemplate = createTaskByRequest(ng, cmd, options);
 			
-			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
-			JobLog jobLog = new JobLog();
+			// prepare log
+			CmdLog jobLog = new CmdLog();
+			jobLog.setUserData(options);
 			UserCommand userCommand = new UserCommand();
 			userCommand.cmd = cmd;
-			userCommand.nodeGroup = ng;
+			jobLog.setNodeGroup(ng);
 			jobLog.setUserCommand(userCommand);
 			
+			// fire task
+			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog));
-			new StandaloneTaskExecutor(batchOption, listener, reqTask).execute();
+			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 			
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -228,4 +229,51 @@ public class Commands extends Controller {
 
 	}
 	
+	/**
+	 * build http request from user request
+	 * @param ng
+	 * @param cmd
+	 * @param options
+	 * @return
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	public static HttpTaskRequest createTaskByRequest(INodeGroup ng, ICommand cmd, Map<String, String> options) throws IOException 
+	{
+		HttpTaskRequest reqTemplate = cmd.createCopy();
+
+		long exeInitDelaySec = Long.parseLong(getOptionValue(options, "exe_initde", "0"));
+		long exeTimoutSec = Long.parseLong(getOptionValue(options, "exe_to", "0"));
+		int exeRetry = Integer.parseInt(getOptionValue(options, "exe_retry", "0"));
+		long retryDelaySec = Long.parseLong(getOptionValue(options, "exe_rede", "0"));
+		ExecuteOption exeOption = new ExecuteOption(exeInitDelaySec, exeTimoutSec, exeRetry, retryDelaySec);
+		
+		long monIntervalSec = Integer.parseInt(getOptionValue(options, "mon_int", "1"));
+		long monInitDelaySec = Long.parseLong(getOptionValue(options, "mon_initde", "0"));
+		long monTimoutSec = Long.parseLong(getOptionValue(options, "mon_to", "0"));
+		int monRetry = Integer.parseInt(getOptionValue(options, "mon_retry", "0"));
+		long monRetryDelaySec = Long.parseLong(getOptionValue(options, "mon_rede", "0"));
+		MonitorOption monOption = new MonitorOption(monInitDelaySec, monIntervalSec, monTimoutSec, monRetry, monRetryDelaySec);
+				
+		Strategy strategy = Strategy.valueOf(getOptionValue(options, "thrStrategy", "UNLIMITED"));
+		int maxRate = Integer.parseInt(getOptionValue(options, "thr_rate", "1000"));
+		BatchOption batchOption = new BatchOption(maxRate, strategy);
+		reqTemplate.setBatchOption(batchOption);
+		
+		HashMap<Object, Object> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), HashMap.class);
+		HashMap<String, String> values = new HashMap<String, String>();
+		for (Entry<Object, Object> entry : varValues.entrySet()) {
+			values.put(entry.getKey().toString(), entry.getValue().toString());
+		}
+		
+		reqTemplate.setExecutionOption(exeOption);
+		reqTemplate.setMonitorOption(monOption);
+		
+		String[] hosts = ng.getNodeList().toArray(new String[0]);
+		reqTemplate.setHosts(hosts);
+		reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
+		return reqTemplate;
+	}
+
 }

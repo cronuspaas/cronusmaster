@@ -8,63 +8,88 @@ import java.util.Map;
 import java.util.Set;
 
 import org.lightj.session.CtxProp;
+import org.lightj.session.CtxProp.CtxSaveType;
 import org.lightj.session.FlowContext;
 import org.lightj.session.CtxProp.CtxDbType;
 import org.lightj.session.exception.FlowExecutionException;
+import org.lightj.task.BatchOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 import resources.IUserInputs;
 
 @SuppressWarnings("rawtypes")
-public class DeployManifestFlowContext extends FlowContext implements IUserInputs<DeployManifestUserInput> {
+public class DeployManifestFlowContext extends FlowContext {
 	
-	@CtxProp(dbType=CtxDbType.BLOB)
-	private DeployManifestUserInput userInputs;
+	@CtxProp(isUserData=true, sampleUserDataValue="10.10.10.10", saveType=CtxSaveType.NoSave)
+	private String[] hosts;
+	@CtxProp(isUserData=true, sampleUserDataValue="myservice", saveType=CtxSaveType.NoSave)
+	private String serviceName;
+	@CtxProp(isUserData=true, sampleUserDataValue="manifest-1.0.0", saveType=CtxSaveType.NoSave)
+	private String manifestName;
+	@CtxProp(isUserData=true, sampleUserDataValue="http://somerepo:port/manifest-1.0.0.all.cronus", saveType=CtxSaveType.NoSave)
+	private String[] manifestPkgs;
+	@CtxProp(isUserData=true, sampleUserDataValue="UNLIMITED,0", saveType=CtxSaveType.NoSave)
+	private BatchOption batchOption;
+
+	
+	// user data
+	public String[] getHosts() {
+		return hosts;
+	}
+	public void setHosts(String[] hosts) {
+		this.hosts = hosts;
+	}
+	public String getServiceName() {
+		return serviceName;
+	}
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+	public String getManifestName() {
+		return manifestName;
+	}
+	public void setManifestName(String manifestName) {
+		this.manifestName = manifestName;
+	}
+	public String[] getManifestPkgs() {
+		return manifestPkgs;
+	}
+	public void setManifestPkgs(String[] manifestPkgs) {
+		this.manifestPkgs = manifestPkgs;
+	}
+	public BatchOption getBatchOption() {
+		return batchOption;
+	}
+	public void setBatchOption(BatchOption batchOption) {
+		this.batchOption = batchOption;
+	}
+	// end user data
 	
 	/** any agent failed in between */
 	@CtxProp(dbType=CtxDbType.BLOB)
-	private HashSet<String> failedAgentHosts = new HashSet<String>();
+	private HashSet<String> failedHosts = new HashSet<String>();
 	
-	public void setFailedAgentHosts(HashSet<String> failedAgentHosts) {
-		this.failedAgentHosts = failedAgentHosts;
+	public void setFailedHosts(HashSet<String> failedAgentHosts) {
+		this.failedHosts = failedAgentHosts;
 	}
-	public void addFailedAgentHost(String host) {
-		failedAgentHosts.add(host);
+	public void addFailedHost(String host) {
+		failedHosts.add(host);
 	}
-	public HashSet<String> getFailedAgentHosts() {
-		return failedAgentHosts;
+	public HashSet<String> getFailedHosts() {
+		return failedHosts;
 	}
 	
-	public DeployManifestUserInput getUserInputs() {
-		return userInputs;
-	}
-	public void setUserInputs(DeployManifestUserInput userInput) {
-		this.userInputs = userInput;
-	}
-
-	public String[] getAllHosts() {
-		if (userInputs.agentHosts==null) {
-			userInputs.populateAgentHosts();
-		}
-		return userInputs.agentHosts;			
-	}
-
 	public String[] getGoodHosts() {
 		// host template
 		List<String> goodHosts = new ArrayList<String>();
-		for (String host : this.getAllHosts()) {
-			if (!this.getFailedAgentHosts().contains(host)) {
+		for (String host : this.getHosts()) {
+			if (!this.getFailedHosts().contains(host)) {
 				goodHosts.add(host);
 			}
 		}
 		return goodHosts.toArray(new String[0]);
 	}
 
-	public DeployManifestUserInput getSampleUserInputs() {
-		return new DeployManifestUserInput(
-				"existing node group", 
-				"service_name", 
-				"manifest_name", 
-				new String[] {"manifest_pkg"});
-	}
 }

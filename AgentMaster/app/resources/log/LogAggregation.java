@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.lightj.util.StringUtil;
 
-import resources.log.JobLog.CommandResponse;
+import resources.log.BaseLog.CommandResponse;
 
 public class LogAggregation {
 	

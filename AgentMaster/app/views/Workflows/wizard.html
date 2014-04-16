@@ -3,11 +3,11 @@
 
 
 <div class="container">
-	#{include 'Commands/commandsnav.html'/}
+	#{include 'Workflows/workflowsnav.html'/}
 
 
  <div class="span6">
-	<button id="open-wizard" class="btn btn-primary">Command Wizard</button>
+	<button id="open-wizard" class="btn btn-primary">Workflow Wizard</button>
  </div>
   
 	<div class="wizard" id="wizard-commands">
@@ -56,61 +56,21 @@
     				<div class="tabbable tabs-left">
     					<ul class="nav nav-tabs">
 							<li class="active" value="tab4"><a href="#tab4" data-toggle="tab">User Inputs</a></li>
-							<li value="tab1"><a href="#tab1" data-toggle="tab">Execution</a></li>
-							<li id="montab" value="tab2"><a href="#tab2" data-toggle="tab">Polling</a></li>
 							<li value="tab3"><a href="#tab3" data-toggle="tab">Throttling</a></li>
     					</ul>
     					<div class="tab-content">
 							<div class="tab-pane active" id="tab4">
-								<p>Variables in command: something</p>
+								<p>Variables in workflow: </p>
 								<textarea class="input-large" id="var_values" placeholder='{"key": "value"}' name="var_values" rows="5"></textarea>
 							</div>
-							<div class="tab-pane" id="tab1">
-							    <div class="row">
-								<label class="span2" for="exe_initde">Initial Delay Second</label><input id="exe_initde" class="span1" type="text" placeholder="initial delay sec">
-							    </div>
-							    <div class="row">
-								<label class="span2" for="exe_to">Timeout Second</label><input id="exe_to" class="span1" type="text" placeholder="timeout sec">
-							    </div>
-							    <div class="row">
-								<label class="span2" for="exe_retry">Max Retry</label><input id="exe_retry" class="span1" type="text" placeholder="max retry">
-							    </div>
-							    <div class="row">
-								<label class="span2" for="exe_rede">Retry Delay Second</label><input id="exe_rede" class="span1" type="text" placeholder="retry delay sec">
-							    </div>						
-							</div>
-							<div class="tab-pane" id="tab2">
-							    <div class="row">
-								<label class="span2" for="mon_int">Poll Interval Second</label><input id="mon_int" class="span1" type="text" placeholder="poll interval sec">
-							    </div>						
-							    <div class="row">
-								<label class="span2" for="mon_initde">Initial Delay Second</label><input id="mon_initde" class="span1" type="text" placeholder="initial delay sec">
-							    </div>						
-							    <div class="row">
-								<label class="span2" for="mon_to">Timeout Second</label><input id="mon_to" class="span1 type="text" placeholder="timeout sec">
-							    </div>						
-							    <div class="row">
-								<label class="span2" for="mon_retry">Max Retry</label><input id="mon_retry" class="span1" type="text" placeholder="max retry">
-							    </div>						
-							    <div class="row">
-								<label class="span2" for="mon_rede">Retry Delay Second</label><input id="mon_rede" class="span1" type="text" placeholder="retry delay sec">
-							    </div>						
-							</div>
 							<div class="tab-pane" id="tab3" style="height:150px;">
-							    <div class="row">
-								<label class="span2" for="thrStrategy">Throttle Strategy</label>
 								<select data-placeholder="Throttling Strategy" style="width:350px;" class="chzn-select" id="thrStrategy" >
 		    					    <option value=""></option>
 		    					    <option value="UNLIMITED">UNLIMITED</option>
 		    			        	<option value="MAX_CONCURRENT_RATE_SLIDING">MAX_CONCURRENT_RATE_SLIDING</option>
 		            			</select>
-							    </div>						
-							    <div class="row">
-								<label class="span2" for="thr_rate">Throttle Rate</label>
-								<input id="thr_rate" class="input-small" type="text" placeholder="max rate">
-							    </div>						
 		            			<br/>
-								
+								<input id="thr_rate" class="input-small" type="text" placeholder="max rate">
 							</div>
     					</div>
     				</div>					
@@ -122,9 +82,9 @@
 
 				<div class="wizard-input-section">
 					<p>Now will (1) generate requests, (2) insert data if needed (3) send request to target node group.
-					Responses normally take 10 seconds for 1000 nodes, less than 75 seconds for 20,000 nodes. Speed also depends on the timeout setting defined in application.conf. Please wait.  
+					Responses normally take 10 seconds for 1000 nodes, less than 75 seconds for 20,000 nodes. Speed also depends on the throttle setting. Please wait.  
 					</p>
-					<p><a href="/logs" target="_blank" >Check response logs</a></p>
+					<p><a href="/logs/wflogs" target="_blank" >Check response logs</a></p>
 				</div>
 			</div>
 
@@ -156,8 +116,8 @@
 
 				<div class="btn-toolbar" id="click_btngroup">
 				<a class="btn btn-success create-another-server">Send another request</a>
-				<a class="btn btn-success im-done" href="/commands" target="_self">Done</a>
-				<a class="btn btn-success" href="/logs" target="_blank" >Response logs</a>
+				<a class="btn btn-success im-done" href="/workflows">Done</a>
+				<a class="btn btn-success" href="/logs/wflogs" target="_blank" >Response logs</a>
 				</div>
 			</div>
 
@@ -231,38 +191,27 @@ function fqdn_or_ip(el) {
 }
 
 $(function() {
-	// load command meta
-	var url = "/commands/getOptions/${cmdName}";
-	$.ajax({
-		dataType: "json",
-		url: url,
-	    success: function(json) {
-	    	$.each(json, function(idx, obj) {
-	    		$('#'+obj.id).val(obj.value);
-	    		if (obj.id=='mon_disabled' && obj.value=='true') {
-	    			$('#montab').hide();	    			
-	    		} 
-			});	    	
-		}
-	});
-
 	$.fn.wizard.logging = true;
 
 	var wizard = $("#wizard-commands").wizard();
 
 	$(".chzn-select").chosen();
-	console.log("!!!outside loop: + ${nodeGroupSourceMetadataListJsonArray}"  )
+	console.log("!!!outside loop: + ${nodeGroupMetas}"  )
+	 
+	var nodeGroupMeta = "${nodeGroupMetas}";
+	var nodeGroupMetaNew = nodeGroupMeta.replace(/&quot;/g, '\"');
+	//console.log("!!!outside loop nodeGroupMetaNew:" + nodeGroupMetaNew  )
 	
-	// populate nodegroup options 
-	var nodeGroupSourceMetadataListJsonArrayOld = "${nodeGroupSourceMetadataListJsonArray}";
-	var nodeGroupSourceMetadataListJsonArrayNew = nodeGroupSourceMetadataListJsonArrayOld.replace(/&quot;/g, '\"');
-	//console.log("!!!outside loop nodeGroupSourceMetadataListJsonArrayNew:" + nodeGroupSourceMetadataListJsonArrayNew  )
-	
-	$($.parseJSON(nodeGroupSourceMetadataListJsonArrayNew)).map(function () {
+	var workflowType = "${wfName}";
+	var wkUserDataOld = "${wfUserData}";
+	var wkUserDataNew = wkUserDataOld.replace(/&quot;/g, '\"');
+	$("#var_values").val(wkUserDataNew);
+
+	$($.parseJSON(nodeGroupMetaNew)).map(function () {
 	    console.log("!!!inside loop: " + this.nodeGroupType)
 		return $('<option>').val(this.nodeGroupType).text(this.nodeGroupType);
-	}).appendTo('#target_nodes');		 
-
+	}).appendTo('#target_nodes');	
+	
 	$("#target_nodes").trigger("liszt:updated");
 	 
 	wizard.el.find(".wizard-ns-select").change(function() {
@@ -282,30 +231,18 @@ $(function() {
 	wizard.cards["dcn_send_requests"].on("validated", function(card) {
 		
 		var nodeGroupType = $("#target_nodes").val()
-		
 	});
 
 	wizard.on("submit", function(wizard) {
 		var dataType = $("#ngp_button").hasClass('active') ? "NODEGROUP" : "ADHOCNODEGROUP";
 		var nodeGroupType = $("#ngp_button").hasClass('active') ? $("#target_nodes").val() : $("#nodeListFromText").val();
-		var exeOptions = $("#exe_initde").val() + " ," + $("#exe_to").val() + " ," + $("#exe_retry").val() + " ," + $("#exe_rede").val() + " ";
-		var monOptions = $("#mon_int").val() + "," + $("#mon_initde").val() + "," + $("#mon_to").val() + "," + $("#mon_retry").val() + "," + $("#mon_rede").val();
 		var thrOptions = $("#thrStrategy").val() + "," + $("#thr_rate").val();
 		var varValues = $("#var_values").val();
 		var submitData = {
 			"dataType": dataType,
 			"nodeGroupType": nodeGroupType,
-			"agentCommandType": "${cmdName}",
+			"workflowType": workflowType,
 			"options": {
-				"exe_initde": $("#exe_initde").val(),
-				"exe_to": $("#exe_to").val(),
-				"exe_retry": $("#exe_retry").val(),
-				"exe_rede": $("#exe_rede").val(),
-				"mon_int": $("#mon_int").val(),
-				"mon_initde": $("#mon_initde").val(),
-				"mon_to": $("#mon_to").val(),
-				"mon_retry": $("#mon_retry").val(),
-				"mon_rede": $("#mon_rede").val(),
 				"thrStrategy": $("#thrStrategy").val(),
 				"thr_rate": $("#thr_rate").val(),
 				"var_values": $("#var_values").val()
@@ -313,7 +250,7 @@ $(function() {
 		};
 		
 	    $.ajax({
-	        url: "/commands/runCmdOnNodeGroup",
+	        url: "/workflows/runWfOnNodeGroup",
 	        type: "POST",
 	        data: submitData,
 	        timeout: 1800000,

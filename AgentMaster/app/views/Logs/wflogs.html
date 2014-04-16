@@ -14,11 +14,10 @@
 			<thead>
 				<tr>
 					<th>No.</th>
-					<th>Command</th>
+					<th>Workflow</th>
 					<th>NodeGroup</th>
 					<th>TimeStamp</th>
 					<th>Download</th>
-					<th>Aggregation</th>
 					<th>Make Recurring Job</th>
 					<th>Delete</th>
 				</tr>
@@ -28,7 +27,7 @@
 				<tr>
 					<td>${logObj_index}</td>
 					<td>
-						<a target=_blank href="/config/viewConfigItem/command/${logObj.command}" >${logObj.command}</a> 
+						<a target=_blank href="/config/viewConfigItem/workflow/${logObj.command}" >${logObj.command}</a> 
 					</td>
 					<td>
 					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a> 
@@ -37,10 +36,6 @@
 					<td>   
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
-					<td>   
-						<a target=_self href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
-						<i class="fa fa-list fa-lg"></i></a> 
-					</td>  
 					<td>   
 						<a target=_blank href="/jobs/wizard?logType=${logObj.type}&logId=${logObj.name}" >
 						<i class="fa fa-calendar fa-lg"></i></a> 
@@ -57,8 +52,8 @@
 
 	</div>
 
-
 #{include 'tags/refresh.html'/}
+
 </div>
 
 	#{include 'Application/footer.html'/}

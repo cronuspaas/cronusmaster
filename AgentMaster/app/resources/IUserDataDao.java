@@ -5,9 +5,12 @@ import java.util.List;
 
 import resources.command.CommandImpl;
 import resources.job.CmdIntervalJobImpl;
-import resources.log.JobLog;
+import resources.job.FlowIntervalJobImpl;
+import resources.log.FlowLog;
+import resources.log.BaseLog;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.NodeGroupImpl;
+import resources.workflow.WorkflowMetaImpl;
 
 /**
  * manage persistence and CRUD of user configs
@@ -24,31 +27,34 @@ public interface IUserDataDao {
 	 * @author binyu
 	 *
 	 */
-	public enum DataType {
-		NODEGROUP("user_data/predefined_nodegroups", false, NodeGroupImpl.class), 
-		AGGREGATION("conf", true, Object.class), 
-		COMMAND("user_data/commands", false, CommandImpl.class), 
-		ADHOCNODEGROUP("user_data/adhoc_nodegroups", false, AdhocNodeGroupDataImpl.class), 
-		CMDLOG("user_data/cmd_logs", false, JobLog.class),
-		JOBLOG("user_data/job_logs", false, JobLog.class),
-		CMDJOB("user_data/cmd_jobs", false, CmdIntervalJobImpl.class);
+	public enum DataType 
+	{
+		NODEGROUP("Predefined NodeGroup", "user_data/predefined_nodegroups", NodeGroupImpl.class), 
+		COMMAND("Command", "user_data/commands", CommandImpl.class), 
+		WORKFLOW("Workflow", "user_data/workflows", WorkflowMetaImpl.class),
+		ADHOCNODEGROUP("Adhoc NodeGroup", "user_data/adhoc_nodegroups", AdhocNodeGroupDataImpl.class), 
+		JOBLOG("Job Logs", "user_data/job_logs", BaseLog.class),
+		FLOWLOG("Workflow Logs", "user_data/flow_logs", FlowLog.class),
+		CMDLOG("Command Logs", "user_data/cmd_logs", BaseLog.class),
+		CMDJOB("Command Job", "user_data/cmd_jobs", CmdIntervalJobImpl.class),
+		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class);
 		
 		private final String path;
-		private final boolean isFile;
 		private final Class doKlass;
-		DataType(String path, boolean isFile, Class doKlass) {
+		private final String label;
+		DataType(String label, String path, Class doKlass) {
+			this.label = label;
 			this.path = path;
-			this.isFile = isFile;
 			this.doKlass = doKlass;
-		}
-		public boolean isFile() {
-			return isFile;
 		}
 		public String getPath() {
 			return path;
 		}
 		public Class getDoKlass() {
 			return doKlass;
+		}
+		public String getLabel() {
+			return label;
 		}
 	};
 

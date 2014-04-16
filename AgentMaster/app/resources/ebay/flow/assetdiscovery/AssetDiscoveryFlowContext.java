@@ -1,6 +1,5 @@
 package resources.ebay.flow.assetdiscovery;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,47 +9,88 @@ import java.util.Set;
 
 import org.lightj.session.CtxProp;
 import org.lightj.session.CtxProp.CtxDbType;
+import org.lightj.session.CtxProp.CtxSaveType;
 import org.lightj.session.FlowContext;
-
-import resources.IUserDataDao.DataType;
-import resources.IUserInputs;
-import resources.UserDataProvider;
-import resources.ebay.flow.assetdiscovery.AssetDiscoveryFlowContext.AssetDiscoveryUserInput;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.lightj.task.BatchOption;
 
 @SuppressWarnings("rawtypes")
-public class AssetDiscoveryFlowContext extends FlowContext implements IUserInputs<AssetDiscoveryUserInput> {
+public class AssetDiscoveryFlowContext extends FlowContext {
 	
-	public static String[] AgentParameters = new String[] {"scriptLocation", "scriptName"};
-	
+	@CtxProp(isUserData=true, sampleUserDataValue="10.10.10.10", saveType=CtxSaveType.NoSave)
+	public String[] hosts;
+	@CtxProp(isUserData=true, sampleUserDataValue="http://host:port/somescript", saveType=CtxSaveType.NoSave)
+	public String scriptLocation;
+	@CtxProp(isUserData=true, sampleUserDataValue="fact.sh", saveType=CtxSaveType.NoSave)
+	public String scriptName;
+	@CtxProp(isUserData=true, sampleUserDataValue="UNLIMITED,0", saveType=CtxSaveType.NoSave)
+	private BatchOption batchOption;
+	@CtxProp(isUserData=true, sampleUserDataValue="10.10.10.10", saveType=CtxSaveType.NoSave)
+	private String iaasHost;
+
+	/** any agent failed in between */
 	@CtxProp(dbType=CtxDbType.BLOB)
-	private AssetDiscoveryUserInput userInputs;
+	private Set<String> failedHosts = new HashSet<String>();
 	
 	private List<Map<String, String>> iaasParams = new ArrayList<Map<String,String>>();
 	
 	/** agent executeScript uuid, use to at step 2 to retrieve discover os output */
 	private final HashMap<String, String> agentUuidMap = new HashMap<String, String>();
 	
-	/** any agent failed in between */
-	@CtxProp(dbType=CtxDbType.BLOB)
-	private Set<String> failedAgentHosts = new HashSet<String>();
-	
-	public void setFailedAgentHosts(Set<String> failedAgentHosts) {
-		this.failedAgentHosts = failedAgentHosts;
+	// USER DATA
+	public String[] getHosts() {
+		return hosts;
 	}
-	public String[] getAgentHosts() {
-		if (userInputs.agentHosts==null) {
-			userInputs.populateAgentHosts();
-		}
-		return userInputs.agentHosts;			
+	public void setHosts(String[] hosts) {
+		this.hosts = hosts;
 	}
-	public String[] getAgentParams() {
-		return new String[] {"scriptLocation", userInputs.scriptLocation, "scriptName", userInputs.scriptName};
+	public String getScriptLocation() {
+		return scriptLocation;
+	}
+	public void setScriptLocation(String scriptLocation) {
+		this.scriptLocation = scriptLocation;
+	}
+	public String getScriptName() {
+		return scriptName;
+	}
+	public void setScriptName(String scriptName) {
+		this.scriptName = scriptName;
+	}
+	public BatchOption getBatchOption() {
+		return batchOption;
+	}
+	public void setBatchOption(BatchOption batchOption) {
+		this.batchOption = batchOption;
+	}
+	public void setIaasHost(String iaasHost) {
+		this.iaasHost = iaasHost;
 	}
 	public String getIaasHost() {
-		return userInputs.iaasHost;
+		return iaasHost;
 	}
+	// END USER DATA
+	
+
+	public void setFailedHosts(Set<String> failedAgentHosts) {
+		this.failedHosts = failedAgentHosts;
+	}
+	public void addFailedHost(String host) {
+		failedHosts.add(host);
+	}
+	public Set<String> getFailedHosts() {
+		return failedHosts;
+	}
+	public String[] getGoodHosts() {
+		// host template
+		List<String> goodHosts = new ArrayList<String>();
+		for (String host : this.getHosts()) {
+			if (!this.getFailedHosts().contains(host)) {
+				goodHosts.add(host);
+			}
+		}
+		return goodHosts.toArray(new String[0]);
+	}
+
+
 	public List<Map<String, String>> getIaasParams() {
 		return iaasParams;
 	}
@@ -67,61 +107,4 @@ public class AssetDiscoveryFlowContext extends FlowContext implements IUserInput
 	public HashMap<String, String> getAgentUuidMap() {
 		return agentUuidMap;
 	}
-	public void addFailedAgentHost(String host) {
-		failedAgentHosts.add(host);
-	}
-	public Set<String> getFailedAgentHosts() {
-		return failedAgentHosts;
-	}
-	
-	@Override
-	public AssetDiscoveryUserInput getUserInputs() {
-		return userInputs;
-	}
-	@Override
-	public void setUserInputs(AssetDiscoveryUserInput userInput) {
-		this.userInputs = userInput;
-	}
-	@Override
-	public AssetDiscoveryUserInput getSampleUserInputs() {
-		return new AssetDiscoveryUserInput(
-				"existing node group", 
-				"http://cronus-srepo.vip.ebay.com/packages/discover_os_info.py", 
-				"discover_os_info.py", 
-				"cmiaas.vip.ebay.com");
-	}
-	/**
-	 * user input
-	 * @author biyu
-	 *
-	 */
-	public static class AssetDiscoveryUserInput {
-		/** original agent requests */
-		@JsonIgnore
-		public String[] agentHosts;
-		public String agentNodeGroup;
-		public String scriptLocation;
-		public String scriptName;
-	
-		/** request to iaas */
-		public String iaasHost;
-		
-		public AssetDiscoveryUserInput() {}
-		public AssetDiscoveryUserInput(String agentNodeGroup, String scriptLocation, String scriptName, String iaasHost) {
-			this.agentNodeGroup = agentNodeGroup;
-			this.scriptLocation = scriptLocation;
-			this.scriptName = scriptName;
-			this.iaasHost = iaasHost;
-		}
-		void populateAgentHosts() {
-			if (agentHosts == null && agentNodeGroup != null) {
-				try {
-					agentHosts = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getNodeGroupByName(agentNodeGroup).getNodeList().toArray(new String[0]);
-				} catch (IOException e) {
-					agentHosts = new String[] {};
-				}
-			}
-		}
-	}
-
 }
