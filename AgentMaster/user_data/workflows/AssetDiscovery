@@ -1,0 +1,1 @@
+{"flowName":"AssetDiscovery","flowType":"Predefined","flowClass":"AssetDiscoveryFlow","flowDescription":"run asset discovery","userData":{"scriptLocation":"http://host:port/somescript","iaasHost":"10.10.10.10","scriptName":"fact.sh","hosts":"10.10.10.10","batchOption":"UNLIMITED,0"}}

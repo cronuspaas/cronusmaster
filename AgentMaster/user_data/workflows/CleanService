@@ -1,0 +1,1 @@
+{"flowName":"CleanService","flowType":"Predefined","flowClass":"CleanServiceFlow","flowDescription":"delete and clean service","userData":{"serviceName":"myservice","hosts":"10.10.10.10","batchOption":"UNLIMITED,0"}}
