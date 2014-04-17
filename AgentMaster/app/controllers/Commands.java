@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import models.data.JsonResult;
-import models.utils.DateUtils;
 
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
@@ -41,20 +39,22 @@ import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
 import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
-import resources.log.BaseLog;
 import resources.log.BaseLog.UserCommand;
 import resources.log.CmdLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
+import resources.utils.DataUtil;
+import resources.utils.DateUtils;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * 
@@ -130,15 +130,11 @@ public class Commands extends Controller {
 		} catch (Throwable t) {
 
 			t.printStackTrace();
-			renderJSON(new JsonResult("Error occured in wizard"));
+			renderJSON(DataUtil.jsonResult("Error occured in wizard"));
 		}
 
 	}
 
-	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
-		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
-	}
-	
 	/**
 	 * options for a command
 	 * @param cmdName
@@ -168,14 +164,14 @@ public class Commands extends Controller {
 			result.add(createResultItem("thrStrategy", bo.getStrategy().name()));
 			result.add(createResultItem("thr_rate", Integer.toString(bo.getConcurrentRate())));
 			if (cmd.getUserData() != null) {
-				result.add(createResultItem("var_values", JsonUtil.encode(cmd.getUserData())));
+				result.add(createResultItem("var_values", JsonUtil.encodePretty(cmd.getUserData())));
 			}
 			renderJSON(result);
 			
 		} catch (Throwable t) {
 
 			t.printStackTrace();
-			renderJSON(new JsonResult("Error occured in wizard"));
+			renderJSON(DataUtil.jsonResult("Error occured in wizard"));
 		}
 		
 	}
@@ -209,7 +205,8 @@ public class Commands extends Controller {
 			
 			// prepare log
 			CmdLog jobLog = new CmdLog();
-			jobLog.setUserData(options);
+			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
+			jobLog.setUserData(optionCleanup);
 			UserCommand userCommand = new UserCommand();
 			userCommand.cmd = cmd;
 			jobLog.setNodeGroup(ng);
@@ -243,32 +240,41 @@ public class Commands extends Controller {
 	{
 		HttpTaskRequest reqTemplate = cmd.createCopy();
 
-		long exeInitDelaySec = Long.parseLong(getOptionValue(options, "exe_initde", "0"));
-		long exeTimoutSec = Long.parseLong(getOptionValue(options, "exe_to", "0"));
-		int exeRetry = Integer.parseInt(getOptionValue(options, "exe_retry", "0"));
-		long retryDelaySec = Long.parseLong(getOptionValue(options, "exe_rede", "0"));
+		long exeInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_initde", "0"));
+		long exeTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "exe_to", "0"));
+		int exeRetry = Integer.parseInt(DataUtil.getOptionValue(options, "exe_retry", "0"));
+		long retryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_rede", "0"));
 		ExecuteOption exeOption = new ExecuteOption(exeInitDelaySec, exeTimoutSec, exeRetry, retryDelaySec);
+		reqTemplate.setExecutionOption(exeOption);
 		
-		long monIntervalSec = Integer.parseInt(getOptionValue(options, "mon_int", "1"));
-		long monInitDelaySec = Long.parseLong(getOptionValue(options, "mon_initde", "0"));
-		long monTimoutSec = Long.parseLong(getOptionValue(options, "mon_to", "0"));
-		int monRetry = Integer.parseInt(getOptionValue(options, "mon_retry", "0"));
-		long monRetryDelaySec = Long.parseLong(getOptionValue(options, "mon_rede", "0"));
-		MonitorOption monOption = new MonitorOption(monInitDelaySec, monIntervalSec, monTimoutSec, monRetry, monRetryDelaySec);
+		if (StringUtil.equalIgnoreCase(HttpTaskRequest.TaskType.asyncpoll.name(), reqTemplate.getTaskType())) {
+			long monIntervalSec = Integer.parseInt(DataUtil.getOptionValue(options, "mon_int", "1"));
+			long monInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_initde", "0"));
+			long monTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "mon_to", "0"));
+			int monRetry = Integer.parseInt(DataUtil.getOptionValue(options, "mon_retry", "0"));
+			long monRetryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_rede", "0"));
+			MonitorOption monOption = new MonitorOption(monInitDelaySec, monIntervalSec, monTimoutSec, monRetry, monRetryDelaySec);
+			reqTemplate.setMonitorOption(monOption);
+		}
+		else {
+			for (String option : new String[] {"mon_int", "mon_initde", "mon_to", "mon_retry", "mon_rede"}) {
+				options.remove(option);
+			}
+		}
 				
-		Strategy strategy = Strategy.valueOf(getOptionValue(options, "thrStrategy", "UNLIMITED"));
-		int maxRate = Integer.parseInt(getOptionValue(options, "thr_rate", "1000"));
+		Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
+		int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
 		BatchOption batchOption = new BatchOption(maxRate, strategy);
 		reqTemplate.setBatchOption(batchOption);
 		
-		HashMap<Object, Object> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), HashMap.class);
-		HashMap<String, String> values = new HashMap<String, String>();
-		for (Entry<Object, Object> entry : varValues.entrySet()) {
-			values.put(entry.getKey().toString(), entry.getValue().toString());
-		}
+		HashMap<String, String> varValues = JsonUtil.decode(
+				DataUtil.getOptionValue(options, "var_values", "{}"), 
+				new TypeReference<HashMap<String, String>>(){});
 		
-		reqTemplate.setExecutionOption(exeOption);
-		reqTemplate.setMonitorOption(monOption);
+		HashMap<String, String> values = new HashMap<String, String>();
+		for (Entry<String, String> entry : varValues.entrySet()) {
+			values.put(entry.getKey(), entry.getValue());
+		}
 		
 		String[] hosts = ng.getNodeList().toArray(new String[0]);
 		reqTemplate.setHosts(hosts);

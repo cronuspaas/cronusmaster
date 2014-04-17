@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.utils.DateUtils;
 
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
@@ -37,6 +36,8 @@ import resources.log.BaseLog.UserCommand;
 import resources.log.JobLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
+import resources.utils.DataUtil;
+import resources.utils.DateUtils;
 
 /**
  * run command on a node group with an interval
@@ -61,6 +62,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 
 			// builg log 
 			JobLog jobLog = new JobLog();
+			jobLog.setUserData(DataUtil.removeNullAndZero(userData));
 			UserCommand userCommand = new UserCommand();
 			userCommand.cmd = cmd;
 			jobLog.setNodeGroup(ng);

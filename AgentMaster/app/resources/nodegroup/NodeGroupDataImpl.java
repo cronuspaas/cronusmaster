@@ -7,14 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.utils.DateUtils;
-import models.utils.LogUtils;
 
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.utils.DateUtils;
 
 /**
  * node group configs impl
@@ -94,7 +93,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 			nodeGroups.put(ngName, nodeGroupImpl);
 		}
 
-		LogUtils.printLogNormal("Completed NodeGroup loading with node group count: "
+		play.Logger.info("Completed NodeGroup loading with node group count: "
 				+ nodeGroups.size() + " at " + DateUtils.getNowDateTimeStr());
 
 		this.nodeGroups = nodeGroups;

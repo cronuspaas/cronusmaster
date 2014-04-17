@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import models.utils.VarUtils;
 
 import org.apache.commons.codec.binary.Base64;
 import org.lightj.task.IGlobalContext;
@@ -24,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import resources.security.SecurityUtil;
+import resources.utils.VarUtils;
 
 import com.ning.http.client.Response;
 

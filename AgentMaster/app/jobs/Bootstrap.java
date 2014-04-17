@@ -20,9 +20,6 @@ package jobs;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 
-import models.data.providers.AgentDataProvider;
-import models.monitor.MonitorProvider;
-
 import org.lightj.RuntimeContext;
 import org.lightj.example.dal.LocalDatabaseEnum;
 import org.lightj.initialization.BaseModule;
@@ -47,11 +44,6 @@ import com.typesafe.config.ConfigFactory;
 public class Bootstrap extends Job {
 
     public void doJob() {
-       //do stuff
-        MonitorProvider mp= MonitorProvider.getInstance();
-        mp.getJVMMemoryUsage();
-        mp.getFreeDiskspace();
-
         RuntimeContext.setClusterUuid("restcommander", "prod", "all", Long.toString(System.currentTimeMillis()));
     	
 		Config conf = ConfigFactory.load("actorconfig");

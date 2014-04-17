@@ -191,6 +191,23 @@ function fqdn_or_ip(el) {
 }
 
 $(function() {
+	// load command meta
+	var url = "/workflows/getOptions/${wfName}";
+	$.ajax({
+		dataType: "json",
+		url: url,
+	    success: function(json) {
+	    	$.each(json, function(idx, obj) {
+	    		if (obj.id=='thrStrategy') {
+	    			$('#thrStrategy option[value="' + obj.value + '"]').prop('selected', true);
+	    		}
+	    		else {
+	    			$('#'+obj.id).val(obj.value);
+	    		}	    		
+			});	    	
+		}
+	});
+
 	$.fn.wizard.logging = true;
 
 	var wizard = $("#wizard-commands").wizard();
@@ -203,9 +220,6 @@ $(function() {
 	//console.log("!!!outside loop nodeGroupMetaNew:" + nodeGroupMetaNew  )
 	
 	var workflowType = "${wfName}";
-	var wkUserDataOld = "${wfUserData}";
-	var wkUserDataNew = wkUserDataOld.replace(/&quot;/g, '\"');
-	$("#var_values").val(wkUserDataNew);
 
 	$($.parseJSON(nodeGroupMetaNew)).map(function () {
 	    console.log("!!!inside loop: " + this.nodeGroupType)

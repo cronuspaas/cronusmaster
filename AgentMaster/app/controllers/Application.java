@@ -17,24 +17,11 @@ limitations under the License.
 */
 package controllers;
 
-import play.*;
-import play.mvc.*;
+import java.util.HashMap;
+
+import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
 import resources.UserDataProvider;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import models.*;
-import models.asynchttp.actors.ActorConfig;
-import models.data.NodeGroupSourceMetadata;
-import models.data.providers.AgentDataProvider;
-import models.monitor.MonitorProvider;
-import models.monitor.MonitorProvider.DiskUsage;
-import models.monitor.MonitorProvider.PerformUsage;
-import models.utils.ConfUtils;
-import models.utils.DateUtils;
-import models.utils.VarUtils;
 
 /**
  * 
@@ -58,20 +45,8 @@ public class Application extends Controller {
 					Integer.toString(UserDataProvider.getIntervalJobOfType(DataType.CMDJOB).getAllJobs().size()
 					+ UserDataProvider.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs().size()));
 
-			int runningJobCount = ActorConfig.runningJobCount.get();
-			MonitorProvider mp = MonitorProvider.getInstance();
-			PerformUsage performaUsage = mp.currentJvmPerformUsage;
-			DiskUsage diskUsage = mp.currentDiskUsage;
-
-			metricMap.put("runningJobCount", Integer.toString(runningJobCount));
-
-			String runCronJobStr = Boolean.toString(ConfUtils.runCronJob);
-			String localHostName = ConfUtils.localHostName;
-			metricMap.put("runCronJob", runCronJobStr);
-
-			metricMap.put("localHostName", localHostName);
-			String hostName = localHostName;
-			render(metricMap, hostName, performaUsage, diskUsage);
+			render(metricMap);
+			
 		} catch (Exception e) {
 			error(e);
 		}

@@ -3,10 +3,7 @@ package resources;
 import java.io.IOException;
 import java.util.Map;
 
-import models.utils.LogUtils;
-
 import org.lightj.session.FlowContext;
-import org.lightj.task.ITaskEventHandler;
 import org.lightj.task.SimpleTaskEventHandler;
 import org.lightj.task.Task;
 import org.lightj.task.TaskResult;
@@ -15,16 +12,15 @@ import org.lightj.task.asynchttp.IHttpPollProcessor;
 import org.lightj.task.asynchttp.SimpleHttpResponse;
 import org.lightj.task.asynchttp.SimpleHttpTask;
 import org.lightj.task.asynchttp.UrlRequest;
-import org.lightj.util.SpringContextUtil;
 import org.lightj.util.StringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import resources.IUserDataDao.DataType;
-import resources.log.IJobLogger;
 import resources.log.BaseLog;
 import resources.log.BaseLog.CommandResponse;
+import resources.log.IJobLogger;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
@@ -64,7 +60,7 @@ public class TaskResourcesProvider {
 			try {
 				logger.saveLog(jobLog);
 			} catch (IOException e) {
-				LogUtils.printLogError(e.getMessage());
+				play.Logger.error(e.getMessage());
 			}
 			return super.executeOnCompleted(ctx, results);
 		}

@@ -238,10 +238,15 @@ $(function() {
 		url: url,
 	    success: function(json) {
 	    	$.each(json, function(idx, obj) {
-	    		$('#'+obj.id).val(obj.value);
 	    		if (obj.id=='mon_disabled' && obj.value=='true') {
 	    			$('#montab').hide();	    			
 	    		} 
+	    		else if (obj.id=='thrStrategy') {
+	    			$('#thrStrategy option[value="' + obj.value + '"]').prop('selected', true);
+	    		}
+	    		else {
+	    			$('#'+obj.id).val(obj.value);
+	    		}	    		
 			});	    	
 		}
 	});

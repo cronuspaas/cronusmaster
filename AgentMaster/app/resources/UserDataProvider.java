@@ -2,8 +2,6 @@ package resources;
 
 import java.io.IOException;
 
-import models.utils.VarUtils.CONFIG_FILE_TYPE;
-
 import org.lightj.util.SpringContextUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 import resources.IUserDataDao.DataType;
 import resources.command.CommandDataImpl;
 import resources.command.ICommandData;
-import resources.job.CmdIntervalJobImpl;
 import resources.job.IntervalJobData;
 import resources.job.IntervalJobDataImpl;
 import resources.log.CmdLog;
@@ -23,12 +20,8 @@ import resources.log.LoggerImpl;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.INodeGroupData;
 import resources.nodegroup.NodeGroupDataImpl;
-import resources.nodegroup.INodeGroupData.NodeGroupType;
 import resources.workflow.IWorkflowData;
 import resources.workflow.WorkflowDataImpl;
-
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfigBean;
 
 @Configuration
 public class UserDataProvider {

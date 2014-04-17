@@ -19,7 +19,9 @@ POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
 
 # workflows
 GET		/workflows								Workflows.index
-POST	/runWfOnNodeGroup							Workflows.runWfOnNodeGroup
+GET		/workflows/getOptions/{wfName}			Workflows.getOptions
+POST	/workflows/runWfOnNodeGroup				Workflows.runWfOnNodeGroup
+
 
 # Manage configs
 GET     /config                                       Config.index

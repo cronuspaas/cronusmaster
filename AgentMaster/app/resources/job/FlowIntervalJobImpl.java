@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.utils.DateUtils;
 
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
@@ -41,6 +40,8 @@ import resources.log.BaseLog.UserWorkflow;
 import resources.log.JobLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
+import resources.utils.DataUtil;
+import resources.utils.DateUtils;
 import resources.workflow.IWorkflowMeta;
 
 /**
@@ -65,7 +66,7 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 
 			// create the log
 			FlowLog flowLog = new FlowLog();
-			flowLog.setUserData(userData);
+			flowLog.setUserData(DataUtil.removeNullAndZero(userData));
 			UserWorkflow userWorkflow = new UserWorkflow();
 			userWorkflow.workflow = workflow;
 			flowLog.setNodeGroup(ng);

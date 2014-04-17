@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import models.utils.DateUtils;
 
+import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.session.FlowEvent;
 import org.lightj.session.FlowSession;
 import org.lightj.session.FlowSessionFactory;
@@ -33,6 +33,8 @@ import org.lightj.session.IFlowEventListener;
 import org.lightj.session.step.IFlowStep;
 import org.lightj.session.step.StepTransition;
 import org.lightj.task.BatchOption;
+import org.lightj.task.ExecuteOption;
+import org.lightj.task.MonitorOption;
 import org.lightj.task.BatchOption.Strategy;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
@@ -40,10 +42,13 @@ import org.lightj.util.StringUtil;
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
 import resources.UserDataProvider;
+import resources.command.ICommand;
 import resources.log.BaseLog.UserWorkflow;
 import resources.log.FlowLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
+import resources.utils.DataUtil;
+import resources.utils.DateUtils;
 import resources.workflow.IWorkflowMeta;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -114,13 +119,8 @@ public class Workflows extends Controller {
 			String nodeGroupMetas = JsonUtil.encode(ngs);
 			
 			String wfName = workflow.getFlowName();
-			HashMap<String, String> userData = new HashMap<String, String>();
-			userData.putAll(workflow.getUserData());
-			userData.remove("hosts");
-			userData.remove("batchOption");
-			String wfUserData = JsonUtil.encode(userData);
 			
-			render(page, topnav, nodeGroupMetas, wfName, wfUserData);
+			render(page, topnav, nodeGroupMetas, wfName);
 			
 		} catch (Exception t) {
 
@@ -130,10 +130,32 @@ public class Workflows extends Controller {
 
 	}
 	
-	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
-		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
+	/**
+	 * options for a command
+	 * @param wfName
+	 */
+	public static void getOptions(String wfName) {
+		
+		try {
+			IWorkflowMeta wf = UserDataProvider.getWorkflowConfigs().getFlowByName(wfName);
+			ArrayList<Map<String, String>> result = new ArrayList<Map<String,String>>();
+			
+			if (wf.getUserData() != null) {
+				HashMap<String, String> userData = new HashMap<String, String>(wf.getUserData());
+				userData.remove("batchOption");
+				userData.remove("hosts");
+				result.add(DataUtil.createResultItem("var_values", JsonUtil.encodePretty(userData)));
+			}
+			renderJSON(result);
+			
+		} catch (Throwable t) {
+
+			t.printStackTrace();
+			renderJSON(DataUtil.jsonResult("Error occured in wizard"));
+		}
+		
 	}
-	
+
 	/**
 	 * run workflow on node group
 	 * @param dataType
@@ -153,7 +175,8 @@ public class Workflows extends Controller {
 			
 			// create the log
 			FlowLog flowLog = new FlowLog();
-			flowLog.setUserData(options);
+			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
+			flowLog.setUserData(optionCleanup);
 			UserWorkflow userWorkflow = new UserWorkflow();
 			userWorkflow.workflow = workflow;
 			flowLog.setNodeGroup(ng);
@@ -182,7 +205,9 @@ public class Workflows extends Controller {
 	 */
 	public static FlowSession createFlowByRequest(INodeGroup ng, IWorkflowMeta workflow, Map<String, String> options) throws IOException 
 	{
-		HashMap<String, String> varValues = JsonUtil.decode(getOptionValue(options, "var_values", "{}"), new TypeReference<HashMap<String, String>>(){});
+		HashMap<String, String> varValues = JsonUtil.decode(
+				DataUtil.getOptionValue(options, "var_values", "{}"), 
+				new TypeReference<HashMap<String, String>>(){});
 		HashMap<String, Object> values = new HashMap<String, Object>();
 		for (Entry<String, String> entry : varValues.entrySet()) {
 			String svalue = entry.getValue();
@@ -201,8 +226,8 @@ public class Workflows extends Controller {
 			values.put(entry.getKey().toString(), value);
 		}
 		
-		Strategy strategy = Strategy.valueOf(getOptionValue(options, "thrStrategy", "UNLIMITED"));
-		int maxRate = Integer.parseInt(getOptionValue(options, "thr_rate", "1000"));
+		Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
+		int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
 		values.put("batchOption", new BatchOption(maxRate, strategy));
 		
 		String[] hosts = ng.getNodeList().toArray(new String[0]);

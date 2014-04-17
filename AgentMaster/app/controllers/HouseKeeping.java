@@ -6,17 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import models.asynchttp.actors.ActorConfig;
-import models.utils.ConfUtils;
-import models.utils.DateUtils;
-
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
 import resources.UserDataProvider;
-import resources.log.IJobLogger;
 import resources.log.BaseLog;
+import resources.log.IJobLogger;
 
 /**
  * housekeeping
@@ -70,34 +66,5 @@ public class HouseKeeping extends Controller {
 		}
 
 	}// end func
-
-
-	/**
-	 * 20130718 add
-	 * 
-	 * @param runCronJob
-	 */
-	public static void setRunCronJob(boolean runCronJob) {
-
-		ConfUtils.setRunCronJob(runCronJob);
-		renderText("Set runCronJob as " + runCronJob + " at time: "
-				+ DateUtils.getNowDateTimeStrSdsm());
-	}
-	
-	/**
-	 * gc
-	 */
-	public static void runGC() {
-
-		try {
-			ActorConfig.runGCWhenNoJobRunning();
-			renderJSON( "Success in RunGC at " + DateUtils.getNowDateTimeStrSdsm());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in RunGC");
-		}
-
-	}
-	
 
 }

@@ -1,46 +1,25 @@
 package controllers;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.data.JsonResult;
-import models.utils.DateUtils;
 
-import org.lightj.example.task.HttpTaskBuilder;
-import org.lightj.example.task.HttpTaskRequest;
-import org.lightj.task.BatchOption;
-import org.lightj.task.ExecutableTask;
-import org.lightj.task.ExecuteOption;
-import org.lightj.task.MonitorOption;
-import org.lightj.task.StandaloneTaskExecutor;
-import org.lightj.task.StandaloneTaskListener;
-import org.lightj.task.BatchOption.Strategy;
-import org.lightj.util.DateUtil;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.TaskResourcesProvider;
-import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
-import resources.command.ICommand;
-import resources.command.ICommandData;
+import resources.UserDataProvider;
 import resources.job.BaseIntervalJob;
 import resources.job.CmdIntervalJobImpl;
 import resources.job.FlowIntervalJobImpl;
 import resources.job.IntervalJob;
 import resources.job.IntervalJobData;
-import resources.log.IJobLogger;
-import resources.log.BaseLog;
-import resources.log.BaseLog.UserCommand;
 import resources.log.ILog;
-import resources.nodegroup.INodeGroup;
-import resources.nodegroup.INodeGroupData;
+import resources.utils.DataUtil;
+import resources.utils.DateUtils;
 
 public class Jobs extends Controller {
 
@@ -168,7 +147,7 @@ public class Jobs extends Controller {
 			meta.put("ng", log.getNodeGroup().getName());
 			meta.put("cmdType", log.getCommandType().name());
 			meta.put("cmdKey", log.getCommandKey());
-			meta.put("userData", JsonUtil.encode(log.getUserData()));
+			meta.put("userData", JsonUtil.encodePretty(log.getUserData()));
 			
 			render(page, topnav, meta);
 
@@ -211,9 +190,9 @@ public class Jobs extends Controller {
 			job.setUserData(log.getUserData());
 
 			job.setName(jobOptions.get("job_name"));
-			int intervalInMinute = Integer.parseInt(getOptionValue(jobOptions, "job_interval", "1")) * 5;
+			int intervalInMinute = Integer.parseInt(DataUtil.getOptionValue(jobOptions, "job_interval", "1")) * 5;
 			job.setIntervalInMinute(intervalInMinute);
-			job.setEnabled("enable".equalsIgnoreCase(getOptionValue(jobOptions, "job_status", "disable")));
+			job.setEnabled("enable".equalsIgnoreCase(DataUtil.getOptionValue(jobOptions, "job_status", "disable")));
 			
 			UserDataProvider.getIntervalJobOfType(jType).save(job);
 			
@@ -222,10 +201,6 @@ public class Jobs extends Controller {
 					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
 		}
 
-	}
-
-	private static String getOptionValue(Map<String, String> options, String key, String defVal) {
-		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
 	}
 
 }

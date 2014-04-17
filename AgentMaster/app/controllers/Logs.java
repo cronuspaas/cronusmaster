@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import models.utils.DateUtils;
-import models.utils.FileIoUtils;
 
 import org.lightj.util.StringUtil;
 
@@ -41,6 +39,8 @@ import resources.log.ILog;
 import resources.log.JobLog;
 import resources.log.LogAggregation;
 import resources.log.LogAggregation.LogAggregationItem;
+import resources.utils.DateUtils;
+import resources.utils.FileIoUtils;
 
 /**
  * 

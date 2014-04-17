@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import models.utils.DateUtils;
 
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.ExecuteOption;
@@ -39,6 +38,7 @@ import play.mvc.Controller;
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
 import resources.command.CommandImpl;
+import resources.utils.DateUtils;
 import resources.UserDataProvider;
 
 /**

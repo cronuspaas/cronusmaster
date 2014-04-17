@@ -13,8 +13,8 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.binary.Base64;
 
-import models.utils.VarUtils;
 import play.libs.Crypto;
+import resources.utils.VarUtils;
 
 /**
  * 
@@ -58,9 +58,7 @@ public class SecurityUtil {
 	 */
 	public static String decryptPki(String encryptedDateStr, String crtLocation) {
 
-		String funcName = "decryptPki" + "()";
-		
-		String descryptedDataStr = VarUtils.NA;
+		String descryptedDataStr = null;
 		try {
 
 			// String encryptedDateStr =
@@ -72,7 +70,6 @@ public class SecurityUtil {
 			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			VarUtils.printSysErrWithTimeAndOptionalReason(funcName, t.getLocalizedMessage());
 		}
 		
 		return descryptedDataStr;
@@ -126,7 +123,7 @@ public class SecurityUtil {
 	public static String decryptData(byte[] data, String crtLocation) throws IOException {
 		byte[] descryptedData = null;
 
-		String descryptedDataStr = VarUtils.NA;
+		String descryptedDataStr = null;
 		try {
 			PrivateKey privateKey = getPrivateKeyPkcs8(crtLocation);
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -135,10 +132,6 @@ public class SecurityUtil {
 			
 			descryptedDataStr = new String(descryptedData);
 			
-			if(VarUtils.IN_DEBUG){
-				System.out.println("Decrypted Data: " + descryptedDataStr);
-			}
-
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
