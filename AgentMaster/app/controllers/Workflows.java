@@ -197,24 +197,12 @@ public class Workflows extends Controller {
 		HashMap<String, String> varValues = JsonUtil.decode(
 				DataUtil.getOptionValue(options, "var_values", "{}"), 
 				new TypeReference<HashMap<String, String>>(){});
+		
 		HashMap<String, Object> values = new HashMap<String, Object>();
 		for (Entry<String, String> entry : varValues.entrySet()) {
-			String svalue = entry.getValue();
-			Object value = null;
-			if (svalue.startsWith("[") && svalue.endsWith("]")) {
-				// string array
-				value = JsonUtil.decode(svalue, String[].class);
-			}
-			else if (svalue.startsWith("{") && svalue.endsWith("}")) {
-				// string map 
-				value = JsonUtil.decode(svalue, new TypeReference<HashMap<String, String>>(){});
-			}
-			else {
-				value = svalue;
-			}
-			values.put(entry.getKey().toString(), value);
+			DataUtil.decode(entry.getKey(), entry.getValue(), values);
 		}
-		
+
 		Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
 		int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
 		values.put("batchOption", new BatchOption(maxRate, strategy));
