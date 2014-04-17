@@ -24,25 +24,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-import org.lightj.example.task.HttpTaskRequest;
-import org.lightj.session.FlowEvent;
 import org.lightj.session.FlowSession;
 import org.lightj.session.FlowSessionFactory;
-import org.lightj.session.IFlowEventListener;
-import org.lightj.session.step.IFlowStep;
-import org.lightj.session.step.StepTransition;
 import org.lightj.task.BatchOption;
-import org.lightj.task.ExecuteOption;
-import org.lightj.task.MonitorOption;
 import org.lightj.task.BatchOption.Strategy;
 import org.lightj.util.JsonUtil;
-import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
+import resources.TaskResourcesProvider.LogFlowEventListener;
 import resources.UserDataProvider;
-import resources.command.ICommand;
 import resources.log.BaseLog.UserWorkflow;
 import resources.log.FlowLog;
 import resources.nodegroup.INodeGroup;
@@ -51,9 +42,7 @@ import resources.utils.DataUtil;
 import resources.utils.DateUtils;
 import resources.workflow.IWorkflowMeta;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * 
@@ -183,7 +172,7 @@ public class Workflows extends Controller {
 			flowLog.setUserWorkflow(userWorkflow);
 
 			// save and run flow
-			flow.addEventListener(new FlowEventListener(flowLog));
+			flow.addEventListener(new LogFlowEventListener(flowLog));
 			flow.save();
 			flow.runFlow();
 			
@@ -239,41 +228,5 @@ public class Workflows extends Controller {
 	}
 	
 	
-	/**
-	 * log flow execution log at flow stop
-	 * @author biyu
-	 *
-	 */
-	public static class FlowEventListener implements IFlowEventListener {
-		
-		FlowLog flowLog;
-		public FlowEventListener(FlowLog flowLog) {
-			this.flowLog = flowLog;
-		}
-
-		@Override
-		public void handleStepEvent(FlowEvent event, FlowSession session,
-				IFlowStep flowStep, StepTransition stepTransition) {
-		}
-
-		@Override
-		public void handleFlowEvent(FlowEvent event, FlowSession session,
-				String msg) {
-			if (event == FlowEvent.stop) {
-				flowLog.getUserWorkflow().jobInfo = session.getFlowInfo();
-				try {
-					UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG).saveLog(flowLog);
-				} catch (IOException e) {
-					play.Logger.error(e, "fail to save log");
-				}
-			}
-		}
-
-		@Override
-		public void handleError(Throwable t, FlowSession session) {
-		}
-		
-	}
-
 
 }

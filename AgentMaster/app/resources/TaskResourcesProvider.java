@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.lightj.session.FlowContext;
+import org.lightj.session.FlowEvent;
+import org.lightj.session.FlowSession;
+import org.lightj.session.IFlowEventListener;
+import org.lightj.session.step.IFlowStep;
+import org.lightj.session.step.StepTransition;
 import org.lightj.task.SimpleTaskEventHandler;
 import org.lightj.task.Task;
 import org.lightj.task.TaskResult;
@@ -19,6 +24,7 @@ import org.springframework.context.annotation.Scope;
 
 import resources.IUserDataDao.DataType;
 import resources.log.BaseLog;
+import resources.log.FlowLog;
 import resources.log.BaseLog.CommandResponse;
 import resources.log.IJobLogger;
 
@@ -29,6 +35,42 @@ import com.ning.http.client.Response;
 @Configuration
 public class TaskResourcesProvider {
 	
+	/**
+	 * log flow execution log at flow stop
+	 * @author biyu
+	 *
+	 */
+	public static class LogFlowEventListener implements IFlowEventListener {
+		
+		FlowLog flowLog;
+		public LogFlowEventListener(FlowLog flowLog) {
+			this.flowLog = flowLog;
+		}
+
+		@Override
+		public void handleStepEvent(FlowEvent event, FlowSession session,
+				IFlowStep flowStep, StepTransition stepTransition) {
+		}
+
+		@Override
+		public void handleFlowEvent(FlowEvent event, FlowSession session,
+				String msg) {
+			if (event == FlowEvent.stop) {
+				flowLog.getUserWorkflow().jobInfo = session.getFlowInfo();
+				try {
+					UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG).saveLog(flowLog);
+				} catch (IOException e) {
+					play.Logger.error(e, "fail to save log");
+				}
+			}
+		}
+
+		@Override
+		public void handleError(Throwable t, FlowSession session) {
+		}
+		
+	}
+
 	public static final class LogTaskEventHandler extends SimpleTaskEventHandler<FlowContext> {
 		
 		private final BaseLog jobLog;

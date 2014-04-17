@@ -201,7 +201,8 @@ public class Commands extends Controller {
 			// build task
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
-			HttpTaskRequest reqTemplate = createTaskByRequest(ng, cmd, options);
+			String[] hosts = ng.getNodeList().toArray(new String[0]);
+			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options);
 			
 			// prepare log
 			CmdLog jobLog = new CmdLog();
@@ -236,7 +237,7 @@ public class Commands extends Controller {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	public static HttpTaskRequest createTaskByRequest(INodeGroup ng, ICommand cmd, Map<String, String> options) throws IOException 
+	public static HttpTaskRequest createTaskByRequest(String[] hosts, ICommand cmd, Map<String, String> options) throws IOException 
 	{
 		HttpTaskRequest reqTemplate = cmd.createCopy();
 
@@ -276,7 +277,6 @@ public class Commands extends Controller {
 			values.put(entry.getKey(), entry.getValue());
 		}
 		
-		String[] hosts = ng.getNodeList().toArray(new String[0]);
 		reqTemplate.setHosts(hosts);
 		reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
 		return reqTemplate;

@@ -1,48 +1,20 @@
 package resources.job;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
-import org.lightj.example.task.HostTemplateValues;
-import org.lightj.example.task.HttpTaskBuilder;
-import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.session.FlowSession;
-import org.lightj.task.BatchOption;
-import org.lightj.task.ExecutableTask;
-import org.lightj.task.ExecuteOption;
-import org.lightj.task.MonitorOption;
-import org.lightj.task.StandaloneTaskExecutor;
-import org.lightj.task.StandaloneTaskListener;
-import org.lightj.task.BatchOption.Strategy;
-import org.lightj.util.JsonUtil;
-import org.lightj.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import controllers.Workflows;
-import controllers.Workflows.FlowEventListener;
-
 import resources.IUserDataDao.DataType;
-import resources.TaskResourcesProvider;
+import resources.TaskResourcesProvider.LogFlowEventListener;
 import resources.UserDataProvider;
-import resources.command.ICommand;
-import resources.command.ICommandData;
-import resources.log.BaseLog;
-import resources.log.FlowLog;
-import resources.log.BaseLog.UserCommand;
 import resources.log.BaseLog.UserWorkflow;
-import resources.log.JobLog;
+import resources.log.FlowLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
 import resources.utils.DataUtil;
 import resources.utils.DateUtils;
 import resources.workflow.IWorkflowMeta;
+import controllers.Workflows;
 
 /**
  * run command on a node group with an interval
@@ -73,7 +45,7 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 			flowLog.setUserWorkflow(userWorkflow);
 
 			// save and run flow
-			flow.addEventListener(new FlowEventListener(flowLog));
+			flow.addEventListener(new LogFlowEventListener(flowLog));
 			flow.save();
 			flow.runFlow();
 			
