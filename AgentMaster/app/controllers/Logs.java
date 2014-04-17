@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
@@ -39,9 +38,9 @@ import resources.log.ILog;
 import resources.log.JobLog;
 import resources.log.LogAggregation;
 import resources.log.LogAggregation.LogAggregationItem;
+import resources.utils.DataUtil;
 import resources.utils.DateUtils;
 import resources.utils.FileIoUtils;
-import resources.utils.DataUtil.JsonResult;
 
 /**
  * 
@@ -194,7 +193,7 @@ public class Logs extends Controller {
 			renderJSON(fileContent);
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderJSON(new JsonResult("Error occured in index of logs"));
+			renderJSON(DataUtil.jsonResult("Error occured in index of logs"));
 		}
 
 	}

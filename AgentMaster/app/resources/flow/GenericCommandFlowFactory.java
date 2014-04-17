@@ -1,11 +1,8 @@
 package resources.flow;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.session.exception.FlowExecutionException;
@@ -13,31 +10,20 @@ import org.lightj.session.step.IFlowStep;
 import org.lightj.session.step.StepBuilder;
 import org.lightj.session.step.TaskFactoryStepExecution.IFlowContextTaskFactory;
 import org.lightj.session.step.TaskFactoryStepExecution.TaskInFlow;
-import org.lightj.task.BatchOption;
-import org.lightj.task.BatchOption.Strategy;
 import org.lightj.task.ExecutableTask;
-import org.lightj.task.ExecuteOption;
 import org.lightj.task.ITaskEventHandler;
-import org.lightj.task.MonitorOption;
 import org.lightj.task.NoopTask;
 import org.lightj.task.SimpleTaskEventHandler;
 import org.lightj.task.Task;
 import org.lightj.task.TaskResult;
 import org.lightj.task.TaskResultEnum;
-import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
-import org.lightj.task.asynchttp.SimpleHttpResponse;
-import org.lightj.task.asynchttp.UrlTemplate;
-import org.lightj.util.JsonUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import controllers.Commands;
-
 import resources.UserDataProvider;
 import resources.command.ICommand;
-import resources.ebay.TaskResourceProvider.AgentStatus;
-import resources.nodegroup.INodeGroup;
+import controllers.Commands;
 
 @SuppressWarnings("rawtypes")
 @Configuration
