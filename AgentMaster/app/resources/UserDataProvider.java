@@ -1,13 +1,17 @@
 package resources;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 
 import models.utils.VarUtils.CONFIG_FILE_TYPE;
 
 import org.lightj.util.SpringContextUtil;
+import org.lightj.util.StringUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import play.Play;
 
 import resources.IUserDataDao.DataType;
 import resources.command.CommandDataImpl;
@@ -33,7 +37,18 @@ public class UserDataProvider {
 	 * @return
 	 */
 	public @Bean(name="userConfigs") @Scope("singleton") IUserDataDao userConfigs() {
-		return new FileUserDataDaoImpl();
+		String userDataDaoType = new Play().configuration.getProperty("agentmaster.userDataDao").toString();
+		if (StringUtil.equalIgnoreCase("file", userDataDaoType)) {
+			return new FileUserDataDaoImpl();
+		} else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
+			DataType.NODEGROUP.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.nodeGroup.uuid"));
+			DataType.COMMAND.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.command.uuid"));
+			DataType.CMDJOB.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.job.uuid"));
+			DataType.CMDLOG.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.cmdLog.uuid"));
+			DataType.JOBLOG.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.jobLog.uuid"));
+			return new S3UserDataDaoImpl();
+		}
+		throw new RuntimeException("undefined user data dao type " + userDataDaoType);
 	}
 	
 	/**
