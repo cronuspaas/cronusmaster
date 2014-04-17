@@ -41,6 +41,7 @@ import resources.log.LogAggregation;
 import resources.log.LogAggregation.LogAggregationItem;
 import resources.utils.DateUtils;
 import resources.utils.FileIoUtils;
+import resources.utils.DataUtil.JsonResult;
 
 /**
  * 
@@ -190,10 +191,10 @@ public class Logs extends Controller {
 			DataType dtype = DataType.valueOf(type);
 			String fileContent = UserDataProvider.getUserDataDao().readData(dtype, name);
 			
-			renderText(fileContent);
+			renderJSON(fileContent);
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderText("Error occured in index of logs");
+			renderJSON(new JsonResult("Error occured in index of logs"));
 		}
 
 	}
@@ -260,6 +261,23 @@ public class Logs extends Controller {
 
 	}// end func
 
+	/**
+	 * file content
+	 * @param filePath
+	 */
+	public static void getFileContent(String filePath) {
+
+		try {
+
+			String fileContent = FileIoUtils.readFileToString(filePath);
+			renderText(fileContent);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			renderText("Error occured in getFileContent of logs"
+					+ DateUtils.getNowDateTimeStrSdsm());
+		}
+
+	}
 
 	/**
 	 * aggregate result

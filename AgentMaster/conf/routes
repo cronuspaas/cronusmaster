@@ -49,7 +49,7 @@ GET     /logs/download                                      Logs.download
 GET     /logs/exploreFiles                                  Logs.exploreFiles
 GET		/logs/aggregate										Logs.aggregate
 GET     /logs/delete                                        Logs.delete
-
+GET     /logs/fileContent                                   Logs.getFileContent
 
 # jobs page
 GET		/jobs										Jobs.index

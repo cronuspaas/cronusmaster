@@ -14,11 +14,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-*/
+ */
 package resources.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import play.vfs.VirtualFile;
 
@@ -59,8 +62,7 @@ public class FileIoUtils {
 								+ DateUtils.getNowDateTimeStrSdsm());
 			}
 
-			play.Logger.info("Under folder: " + folderName
-					+ ",  File/dir count is " + virtualFileList.size());
+			play.Logger.info("Under folder: " + folderName + ",  File/dir count is " + virtualFileList.size());
 
 			for (int i = 0; i < virtualFileList.size(); i++) {
 
@@ -79,6 +81,34 @@ public class FileIoUtils {
 		}
 	}// end func.
 
+	/**
+	 * 20130927 Fixed Memory Leak. Dont use line by line, just use apache
+	 * commons io!! so simple and easy!
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public static String readFileToString(String filePath) {
+
+		String fileContentString = null;
+
+		try {
+
+			VirtualFile vf = VirtualFile.fromRelativePath(filePath);
+			File realFile = vf.getRealFile();
+			fileContentString = FileUtils.readFileToString(realFile);
+
+		} catch (java.io.FileNotFoundException e) {
+			play.Logger.error("File Not Found exception.", e);
+			fileContentString = "File Not Found exception. This file may have been removed. " + filePath;
+		} catch (Throwable e) {
+			play.Logger.error("Error in readConfigFile.", e.getLocalizedMessage());
+			e.printStackTrace();
+			fileContentString = "File Not Found exception. This file may have been removed. " + filePath;
+		}
+		return fileContentString.toString();
+
+	} // end func.
 
 }// end class
 
