@@ -9,13 +9,19 @@ GET		/whatsold								Application.whatsold
 GET		/introVideo								Application.introVideo
 GET		/jsonedit								Application.jsonedit
 
-
 #commands 
 GET     /commands                        		Commands.index
 GET     /commands/common                        Commands.commonCommands
 GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
 GET     /commands/wizard                        Commands.wizard
+GET     /commands/getOptions/{cmdName}			Commands.getOptions
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
+
+# workflows
+GET		/workflows								Workflows.index
+GET		/workflows/getOptions/{wfName}			Workflows.getOptions
+POST	/workflows/runWfOnNodeGroup				Workflows.runWfOnNodeGroup
+
 
 # Manage configs
 GET     /config                                       Config.index
@@ -38,9 +44,12 @@ POST     /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
 GET     /logs                                       Logs.index
 GET     /logs/cmdlogs                                       Logs.cmdLogs
 GET     /logs/joblogs                                       Logs.jobLogs
+GET     /logs/wflogs                                        Logs.wfLogs
 GET     /logs/download                                      Logs.download
 GET     /logs/exploreFiles                                  Logs.exploreFiles
 GET		/logs/aggregate										Logs.aggregate
+GET     /logs/delete                                        Logs.delete
+
 
 # jobs page
 GET		/jobs										Jobs.index

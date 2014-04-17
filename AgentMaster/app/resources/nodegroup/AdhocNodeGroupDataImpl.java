@@ -6,13 +6,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import models.utils.DateUtils;
 
 import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.utils.DateUtils;
 
 public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	
@@ -46,7 +46,7 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 		if (nodeGroup == null) {
 			nodeGroup = new NodeGroupImpl();
 			nodeGroup.setType(DataType.ADHOCNODEGROUP.name());
-			nodeGroup.setName(String.format("AdhocNodeGroup-%s", DateUtils.getNowDateTimeStrSdsm()));
+			nodeGroup.setName(String.format("NG-%s", DateUtils.getNowDateTimeStrSdsm()));
 			nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
 			save(nodeGroup.getName(), JsonUtil.encode(nodeGroup));
 		}
@@ -63,6 +63,11 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	@Override
 	public void load() throws IOException {
 		// noop
+	}
+
+	@Override
+	public int getNodeCount() {
+		return 0;
 	}
 
 }

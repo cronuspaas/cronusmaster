@@ -1,0 +1,20 @@
+<!-- agents top nav -->
+
+<!--<h1><font color="red">Agent tab is under maintenance.</font></h1> -->
+<ul class="nav nav-tabs">
+
+<li #{if (page == "index")} class="active" #{/if}><a href="/workflows"><i class="fa fa-search"></i> Summary</a></li>
+<li #{if (page == "wflogs")} class="active" #{/if}><a href="/logs/wflogs"><i class="fa fa-search"></i> Workflow Logs</a></li>
+
+</ul>
+<div class="row">
+
+</div>	
+
+
+<script type="text/javascript">
+displayList=function(mylist) {
+	var mylistNew = mylist.replace(/,/g, "<br/>");
+	document.write(mylistNew);
+}
+</script>

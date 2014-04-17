@@ -16,11 +16,9 @@
 					<th>No.</th>
 					<th>Name</th>
 					<th>URL</th>
-					<th>httpMethod</th>
-					<th>Headers</th>
-					<th>Parameters</th>
-					<th>Body</th>
-					<th>Variables</th>
+					<th>Method</th>
+					<th>User Data</th>
+					<th>Run</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -36,10 +34,11 @@
 					getHttpMethodLabel("${obj.httpMethod}");
 					</script>
 					</td>
-					<td><script type="text/javascript">displayList("${obj.headers}");</script></td>
-					<td><script type="text/javascript">displayList("${obj.parameters}");</script></td>
-					<td>${obj.body}</td>
-					<td><script type="text/javascript">displayList("${obj.variables}");</script></td>
+					<td>${obj.userData}</td>
+					<td>
+					<a href="/commands/wizard?cmdName=${obj.name}" target=_self>
+					<i class="fa fa-magic fa-lg"></i></a>
+					</td>
 				</tr>
 				#{/list}
 			</tbody>

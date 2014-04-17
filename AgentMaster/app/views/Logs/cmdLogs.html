@@ -19,6 +19,8 @@
 					<th>TimeStamp</th>
 					<th>Download</th>
 					<th>Aggregation</th>
+					<th>Make Recurring Job</th>
+					<th>Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -36,8 +38,16 @@
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
 					<td>   
-						<a target=_blank href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
+						<a target=_self href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
 						<i class="fa fa-list fa-lg"></i></a> 
+					</td>  
+					<td>   
+						<a target=_self href="/jobs/wizard?logType=${logObj.type}&logId=${logObj.name}" >
+						<i class="fa fa-calendar fa-lg"></i></a> 
+					</td>  
+					<td>   
+						<a target=_self href="/logs/delete?type=${logObj.type}&name=${logObj.name}" >
+						<i class="fa fa-trash-o fa-lg"></i></a> 
 					</td>  
 					
 				</tr>

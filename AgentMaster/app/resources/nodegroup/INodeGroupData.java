@@ -15,10 +15,6 @@ import resources.IUserData;
  */
 public interface INodeGroupData extends IUserData {
 	
-	public static final String NODEGROUP_NAME_TAG = "```NODEGROUP_NAME";
-	public static final String NODEGROUP_LIST_START_TAG = "```NODEGROUP_START";
-	public static final String NODEGROUP_LIST_END_TAG = "```NODEGROUP_END";
-	
 	public enum NodeGroupType {
 		predefined, adhoc
 	}
@@ -48,4 +44,7 @@ public interface INodeGroupData extends IUserData {
 	 */
 	public void load() throws IOException;
 	
+	
+	/** total node count */
+	public int getNodeCount();
 }

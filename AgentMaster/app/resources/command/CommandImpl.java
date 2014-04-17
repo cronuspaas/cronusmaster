@@ -1,5 +1,6 @@
 package resources.command;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,9 @@ public class CommandImpl implements ICommand {
 
 	/** list of aggregation regex */
 	private List<String> aggRegexs;
+
+	/** user inputs */
+	private Map<String, String> userData = new HashMap<String, String>();
 	
 	public List<String> getAggRegexs() {
 		return aggRegexs;
@@ -54,6 +58,21 @@ public class CommandImpl implements ICommand {
 	
 	public void setHttpTaskRequest(HttpTaskRequest httpTaskRequest) {
 		this.httpTaskRequest = httpTaskRequest;
+	}
+
+	@Override
+	public void setUserData(Map<String, String> userData) {
+		this.userData = userData;
+	}
+
+	@Override
+	public Map<String, String> getUserData() {
+		return userData;
+	}
+	
+	public CommandImpl addUserData(String key, String value) {
+		userData.put(key, value);
+		return this;
 	}
 
 }

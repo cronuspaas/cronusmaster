@@ -25,23 +25,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import models.data.LogFile;
-import models.data.LogFileGeneric;
-import models.data.providers.LogProvider;
-import models.utils.DateUtils;
-import models.utils.FileIoUtils;
-import models.utils.VarUtils;
 
-import org.lightj.util.DateUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
+import resources.log.BaseLog;
+import resources.log.CmdLog;
+import resources.log.FlowLog;
 import resources.log.IJobLogger;
+import resources.log.ILog;
 import resources.log.JobLog;
 import resources.log.LogAggregation;
 import resources.log.LogAggregation.LogAggregationItem;
+import resources.utils.DateUtils;
+import resources.utils.FileIoUtils;
 
 /**
  * 
@@ -54,7 +53,7 @@ public class Logs extends Controller {
 	 * show logs
 	 * @param date
 	 */
-	public static void cmdLogs(String date) {
+	public static void cmdLogs() {
 
 		String page = "cmdlogs";
 		String topnav = "logs";
@@ -66,7 +65,7 @@ public class Logs extends Controller {
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
 			for (String logName : logs) {
-				Map<String, String> logMeta = JobLog.getLogMetaFromName(logName);
+				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
 				log.put("name", logName);
@@ -85,7 +84,7 @@ public class Logs extends Controller {
 					
 				}});
 
-			render(page, topnav, logFiles, date, lastRefreshed);
+			render(page, topnav, logFiles, lastRefreshed);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
@@ -93,7 +92,11 @@ public class Logs extends Controller {
 
 	}
 
-	public static void jobLogs(String date) {
+	/**
+	 * job logs
+	 * @param date
+	 */
+	public static void jobLogs() {
 
 		String page = "joblogs";
 		String topnav = "logs";
@@ -105,7 +108,7 @@ public class Logs extends Controller {
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
 			for (String logName : logs) {
-				Map<String, String> logMeta = JobLog.getLogMetaFromName(logName);
+				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
 				log.put("name", logName);
@@ -124,7 +127,7 @@ public class Logs extends Controller {
 					
 				}});
 
-			render(page, topnav, logFiles, date, lastRefreshed);
+			render(page, topnav, logFiles, lastRefreshed);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
@@ -132,53 +135,54 @@ public class Logs extends Controller {
 
 	}
 
-	public static void adhocLog(String date) {
+	/**
+	 * job logs
+	 * @param date
+	 */
+	public static void wfLogs() {
 
-		String page = "adhoc";
+		String page = "wflogs";
 		String topnav = "logs";
 
 		try {
-			LogProvider lp = LogProvider.getInstance();
-			List<LogFile> logFiles = lp
-					.getLogFilesInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_WITH_SLASH);
-
-			if (date == null) {
-				date = DateUtils.getTodaysDateStr();
+			
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			List<String> logs = logger.listLogs();
+			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+			
+			for (String logName : logs) {
+				Map<String, String> logMeta = FlowLog.getLogMetaFromName(logName);
+				HashMap<String, String> log = new HashMap<String, String>();
+				log.putAll(logMeta);
+				log.put("name", logName);
+				log.put("type", DataType.FLOWLOG.name());
+				logFiles.add(log);
 			}
+			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
 
-			render(page, topnav, logFiles, date, lastRefreshed);
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
+					
+				}});
+
+			render(page, topnav, logFiles, lastRefreshed);
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderJSON("Error occured in adhocLog of logs");
+			renderJSON("Error occured in index of logs");
 		}
+
 	}
 
-	public static void noneStandardLog(String date) {
-
-		String page = "noneStandard";
-		String topnav = "logs";
-
-		try {
-			LogProvider lp = LogProvider.getInstance();
-			List<LogFileGeneric> logFileGenerics = lp
-					.getLogFileGenericsInFolder(VarUtils.LOG_FOLDER_NAME_NONESTARDARD_WITH_SLASH);
-
-			if (date == null) {
-				date = DateUtils.getTodaysDateStr();
-			}
-
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-
-			render(page, topnav, logFileGenerics, date, lastRefreshed);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in noneStandardLog of logs");
-		}
-	}
-
-
+	/**
+	 * download log file
+	 * @param type
+	 * @param name
+	 */
 	public static void download(String type, String name) {
 
 		try {
@@ -194,20 +198,38 @@ public class Logs extends Controller {
 
 	}
 
-	public static void getFileContent(String filePath) {
+	/**
+	 * delete log file
+	 * @param type
+	 * @param name
+	 */
+	public static void delete(String type, String name) {
 
 		try {
-
-			String fileContent = FileIoUtils.readFileToString(filePath);
-			renderText(fileContent);
+			
+			DataType dtype = DataType.valueOf(type.toUpperCase());
+			UserDataProvider.getUserDataDao().deleteData(dtype, name);
+			String redirectTarget = null;
+			switch(dtype) {
+			case CMDLOG:
+				redirectTarget = "Logs.cmdLogs";
+				break;
+			case JOBLOG:
+				redirectTarget = "Logs.jobLogs";
+				break;
+			case FLOWLOG:
+				redirectTarget = "Logs.wfLogs";
+				break;
+			}
+			redirect(redirectTarget);
+			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderText("Error occured in getFileContent of logs"
-					+ DateUtils.getNowDateTimeStrSdsm());
+			renderJSON(t);
 		}
 
 	}
-
+	
 	/**
 	 * Generic display any files.
 	 * 
@@ -254,12 +276,30 @@ public class Logs extends Controller {
 		
 		try {
 			DataType type = DataType.valueOf(logType.toUpperCase());
-			JobLog log = UserDataProvider.getJobLoggerOfType(type).readLog(logId);
-			String agentCommandType = log.getUserCommand().cmd.getName();
-			String nodeGroupType = log.getUserCommand().nodeGroup.getName();
-			String dataType = log.getUserCommand().nodeGroup.getType();
-			List<String> regExs = log.getUserCommand().cmd.getAggRegexs();
-			LogAggregation logAggregation = log.aggregate(aggField, aggRegEx);
+			ILog alog = UserDataProvider.getJobLoggerOfType(type).readLog(logId);
+			String agentCommandType = null;
+			String nodeGroupType = null;
+			String dataType = null;
+			List<String> regExs = null;
+			LogAggregation logAggregation = null;
+			
+			if (alog instanceof CmdLog) {
+				CmdLog log = (CmdLog) alog;
+				agentCommandType = log.getUserCommand().cmd.getName();
+				nodeGroupType = log.getNodeGroup().getName();
+				dataType = log.getNodeGroup().getType();
+				regExs = log.getUserCommand().cmd.getAggRegexs();
+				logAggregation = log.aggregate(aggField, aggRegEx);
+			}
+			else if (alog instanceof JobLog)  {
+				JobLog log = (JobLog) alog;
+				agentCommandType = log.getUserCommand().cmd.getName();
+				nodeGroupType = log.getNodeGroup().getName();
+				dataType = log.getNodeGroup().getType();
+				regExs = log.getUserCommand().cmd.getAggRegexs();
+				logAggregation = log.aggregate(aggField, aggRegEx);
+			}
+			
 			ArrayList<Map<String, String>> aggList = new ArrayList<Map<String,String>>();
 			for (Entry<String, LogAggregationItem> aggEntry : logAggregation.getAggregations().entrySet()) {
 				Map<String, String> agg = new HashMap<String, String>();

@@ -7,14 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.utils.DateUtils;
-import models.utils.LogUtils;
 
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.utils.DateUtils;
 
 /**
  * node group configs impl
@@ -24,6 +23,8 @@ import resources.IUserDataDao.DataType;
  */
 public class NodeGroupDataImpl implements INodeGroupData {
 
+	private int nodeCount;
+	
 	@Autowired(required = true)
 	private IUserDataDao userConfigs;
 
@@ -70,6 +71,7 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	public void load() throws IOException {
 
 		HashMap<String, INodeGroup> nodeGroups = new HashMap<String, INodeGroup>();
+		int nodeCount = 0;
 		
 		List<String> ngNames = userConfigs.listNames(dataType);
 		for (String ngName : ngNames) {
@@ -87,13 +89,15 @@ public class NodeGroupDataImpl implements INodeGroupData {
 			NodeGroupImpl nodeGroupImpl = new NodeGroupImpl(ngName);
 			nodeGroupImpl.setType(DataType.NODEGROUP.name());
 			nodeGroupImpl.addNodesToList(tmpNodeList);
+			nodeCount += tmpNodeList.size();
 			nodeGroups.put(ngName, nodeGroupImpl);
 		}
 
-		LogUtils.printLogNormal("Completed NodeGroup loading with node group count: "
+		play.Logger.info("Completed NodeGroup loading with node group count: "
 				+ nodeGroups.size() + " at " + DateUtils.getNowDateTimeStr());
 
 		this.nodeGroups = nodeGroups;
+		this.nodeCount = nodeCount;
 	}
 
 	@Override
@@ -104,6 +108,11 @@ public class NodeGroupDataImpl implements INodeGroupData {
 	@Override
 	public void setUserDataDao(IUserDataDao userConfigs) {
 		this.userConfigs = userConfigs;
+	}
+
+	@Override
+	public int getNodeCount() {
+		return nodeCount;
 	}
 
 }

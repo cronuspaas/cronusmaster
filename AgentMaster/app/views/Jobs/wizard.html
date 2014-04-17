@@ -13,86 +13,28 @@
 	<div class="wizard" id="wizard-jobs">
 			<h1>Create REST Job</h1>
 
-			<div class="wizard-card" data-cardname="name">
-				<h3>Select Target Nodes</h3>
-				<div id="ng_predefined" class="wizard-input-section">
-					<p>
-						<strong>
-						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/nodeGroups">here</a>. 
-						</strong>
-					</p>
-
-					<select data-placeholder="Target nodes" style="width:350px;" class="chzn-select" id="target_nodes" >
-		                <option value=""></option>
-		            </select>
-				</div>
-			</div>
-
-			<div class="wizard-card" data-onload="" data-cardname="dcn_select_requests">
-				<h3>Select Command</h3>
-
-				<div class="wizard-input-section">
-					<p>
-						<strong>
-						CAUTION: Please VERIFY the command you selected <a target="_blank" href="/commands">here</a>. 
-						</strong>
-						<br/>
-						Select the REST command on the target nodes.
-					</p>
-
-					<select data-placeholder="Commands" style="width:350px;" class="chzn-select" id="commands" >
-		                <option value=""></option>
-
-		            </select>
-
-				</div>
-			</div>
-
 			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_requests">
-				<h3>Customize Command</h3>
+				<h3>Review Job Summary</h3>
 
 				<div class="wizard-input-section">
 					<p>
 						<strong>
-						Now customize the command for variable replacements, execution, polling, and throttling settings 
+						Now review the job details for command, target, and user data 
 						</strong>
+					    <div class="row">
+						<label class="span2">Node Group:</label>${meta.ng}
+					    </div>
+					    <div class="row">
+						<label class="span2">Command Type:</label>${meta.cmdType}
+					    </div>
+					    <div class="row">
+						<label class="span2">Command Key:</label>${meta.cmdKey}
+					    </div>
+					    <div class="row">
+						<label class="span2">User Data: </label>
+						<textarea class="input-large" disabled name="var_values" rows="5">${meta.userData}</textarea>
+					    </div>
 					</p>
-    				<div class="tabbable tabs-left">
-    					<ul class="nav nav-tabs">
-							<li class="active"><a href="#tab1" data-toggle="tab">Execution</a></li>
-							<li><a href="#tab2" data-toggle="tab">Polling</a></li>
-							<li><a href="#tab3" data-toggle="tab">Throttling</a></li>
-							<li><a href="#tab4" data-toggle="tab">Variable</a></li>
-    					</ul>
-    					<div class="tab-content">
-							<div class="tab-pane active" id="tab1">
-								<input id="exe_initde" class="input-small" type="text" placeholder="initial delay sec"><br/>
-								<input id="exe_to" class="input-small" type="text" placeholder="timeout sec"><br/>
-								<input id="exe_retry" class="input-small" type="text" placeholder="max retry"><br/>
-								<input id="exe_rede" class="input-small" type="text" placeholder="retry delay sec"><br/>
-							</div>
-							<div class="tab-pane" id="tab2">
-								<input id="mon_int" class="input-small" type="text" placeholder="poll interval sec"><br/>
-								<input id="mon_initde" class="input-small" type="text" placeholder="initial delay sec"><br/>
-								<input id="mon_to" class="input-small" type="text" placeholder="timeout sec"><br/>
-								<input id="mon_retry" class="input-small" type="text" placeholder="max retry"><br/>
-								<input id="mon_rede" class="input-small" type="text" placeholder="retry delay sec"><br/>
-							</div>
-							<div class="tab-pane" id="tab3" style="height:150px;">
-								<select data-placeholder="Throttling Strategy" style="width:350px;" class="chzn-select" id="thrStrategy" >
-		    					    <option value=""></option>
-		    					    <option value="UNLIMITED">UNLIMITED</option>
-		    			        	<option value="MAX_CONCURRENT_RATE_SLIDING">MAX_CONCURRENT_RATE_SLIDING</option>
-		            			</select>
-		            			<br/>
-								<input id="thr_rate" class="input-small" type="text" placeholder="max rate">
-							</div>
-							<div class="tab-pane" id="tab4">
-								<p>Variables in command: something</p>
-								<textarea class="input-large" id="var_values" placeholder='{"key": "value"}' name="var_values" rows="5"></textarea>
-							</div>
-    					</div>
-    				</div>					
 				</div>
 			</div>
 
@@ -101,26 +43,25 @@
 
 				<div class="wizard-input-section">
 					<p>
-						Select the options to save as job.
+						<strong>
+						Select options (job name, interval, intitial state) to save the job.
+						</strong>
 					</p>
 					
-					<input id="job_name" class="input-large" type="text" placeholder="Unique job name" required><br/>
-					<input id="job_interval" class="input-large" type="text" placeholder="Recurring interval increment of 5 min"> X 5 MINUTE<br/>
-					<label class="checkbox">
+				    <div class="row">
+					<label class="span1" for="job_name">Job Name:</label>
+					<input id="job_name" class="input-small" type="text" placeholder="Unique job name" required>
+				    </div>
+				    <div class="row">
+					<label class="span1" for="job_interval">Job Name:</label>
+					<input id="job_interval" class="input-small" type="text" placeholder="Recurring interval increment of 5 min"> X 5 MINUTE
+				    </div>
+				    <div class="row">
+					<label class="span5" class="checkbox">
 						<input id="job_status" type="checkbox" value="enable">
 						Enable this job to run at the recurring interval
 					</label>
-				</div>
-			</div>
-
-			<div class="wizard-card" data-cardname="dcn_send_requests">
-				<h3>Send Requests</h3>
-
-				<div class="wizard-input-section">
-					<p>Now will (1) generate requests, (2) insert data if needed (3) send request to target node group.
-					Responses normally take 10 seconds for 1000 nodes, less than 75 seconds for 20,000 nodes. Speed also depends on the timeout setting defined in application.conf. Please wait.  
-					</p>
-					<p><a href="/logs" target="_blank" >Check response logs</a></p>
+				    </div>
 				</div>
 			</div>
 
@@ -152,8 +93,7 @@
 
 				<div class="btn-toolbar" id="click_btngroup">
 				<a class="btn btn-success create-another-server">Make Change</a>
-				<a class="btn btn-success im-done">Create Job</a>
-				<a class="btn btn-success"href="/logs" target="_blank" >Response logs</a>
+				<a class="btn btn-success"href="/jobs" target="_self" >Done</a>
 				</div>
 			</div>
 
@@ -170,31 +110,6 @@ $(function() {
 
 	var wizard = $("#wizard-jobs").wizard();
 
-	$(".chzn-select").chosen();
-	// console.log("!!!outside loop: + ${nodeGroupSourceMetadataListJsonArray}"  )
-	 
-	var nodeGroupSourceMetadataListJsonArrayOld = "${nodeGroupSourceMetadataListJsonArray}";
-	var nodeGroupSourceMetadataListJsonArrayNew = nodeGroupSourceMetadataListJsonArrayOld.replace(/&quot;/g, '\"');
-	//console.log("!!!outside loop nodeGroupSourceMetadataListJsonArrayNew:" + nodeGroupSourceMetadataListJsonArrayNew  )
-	
-	var agentCommandMetadataListJsonArrayOld = "${agentCommandMetadataListJsonArray}";
-	var agentCommandMetadataListJsonArrayNew = agentCommandMetadataListJsonArrayOld.replace(/&quot;/g, '\"');
-	
-
-	 $($.parseJSON(nodeGroupSourceMetadataListJsonArrayNew)).map(function () {
-	    console.log("!!!inside loop: " + this.nodeGroupType)
-		return $('<option>').val(this.nodeGroupType).text(this.nodeGroupType);
-	}).appendTo('#target_nodes');		 
-
-	 $("#target_nodes").trigger("liszt:updated");
-	 
-	 $($.parseJSON(agentCommandMetadataListJsonArrayNew)).map(function () {
-		    console.log("!!!inside loop: " + this.nodeGroupType)
-			return $('<option>').val(this.agentCommandType).text(this.agentCommandType);
-		}).appendTo('#commands');		 
-
-		 $("#commands").trigger("liszt:updated");
-	
 	wizard.el.find(".wizard-ns-select").change(function() {
 		wizard.el.find(".wizard-ns-detail").show();
 	});
@@ -204,29 +119,8 @@ $(function() {
 		wizard.getCard(this).toggleAlert(null, noOption);
 	});
 
-	wizard.cards["name"].on("validated", function(card) {
-		var hostname = card.el.find("#new-server-fqdn").val();
-	});
-	
-	
 	wizard.on("submit", function(wizard) {
 		var submitData = {
-			"nodeGroup": $("#target_nodes").val(),
-			"command": $("#commands").val(),
-			"exeOptions": {
-				"exe_initde": $("#exe_initde").val(),
-				"exe_to": $("#exe_to").val(),
-				"exe_retry": $("#exe_retry").val(),
-				"exe_rede": $("#exe_rede").val(),
-				"mon_int": $("#mon_int").val(),
-				"mon_initde": $("#mon_initde").val(),
-				"mon_to": $("#mon_to").val(),
-				"mon_retry": $("#mon_retry").val(),
-				"mon_rede": $("#mon_rede").val(),
-				"thrStrategy": $("#thrStrategy").val(),
-				"thr_rate": $("#thr_rate").val(),
-				"var_values": $("#var_values").val()
-			},
 			"jobOptions": {
 				"job_name": $("#job_name").val(),
 				"job_interval": $("#job_interval").val(),
@@ -235,7 +129,7 @@ $(function() {
 		};
 		
 	    $.ajax({
-	        url: "/jobs/saveJob",
+	        url: "/jobs/saveJob?dataType=${meta.logType}&logId=${meta.logId}",
 	        type: "POST",
 	        data: submitData,
 	        timeout: 1800000,

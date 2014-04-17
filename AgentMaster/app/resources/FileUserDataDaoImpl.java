@@ -10,12 +10,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import models.utils.DateUtils;
 
 import org.apache.commons.io.FileUtils;
 
 import play.Logger;
 import play.vfs.VirtualFile;
+import resources.utils.DateUtils;
 
 /**
  * file based {IUserConfigsDao}
@@ -67,8 +67,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		StringBuilder sb = new StringBuilder();
 
 		// in test
-		String configFileLocation = String.format("%s/%s", type.getPath(), type.isFile() ? 
-							type.toString().toLowerCase() : name);								
+		String configFileLocation = String.format("%s/%s", type.getPath(), name);								
 		BufferedReader reader = null;
 		try {
 
@@ -80,7 +79,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 				sb.append(line).append("\n");
 			}
 
-			models.utils.LogUtils.printLogNormal("Completed readConfigFile with size: "
+			play.Logger.info("Completed readConfigFile with size: "
 					+ sb.toString().length() / 1024.0 + " KB at "
 					+ DateUtils.getNowDateTimeStr());
 
@@ -110,7 +109,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	{
 
 		if (dataType == null) {
-			models.utils.LogUtils.printLogError("ERROR reading config: configFile is empty.");
+			play.Logger.error("ERROR reading config: configFile is empty.");
 		}
 
 		// in test
@@ -125,7 +124,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 			fw.write(configFileContent);
 
 			fw.close();
-			models.utils.LogUtils.printLogNormal("Completed saveConfigFile with size: "
+			play.Logger.info("Completed saveConfigFile with size: "
 					+ configFileContent.length() + " at "
 					+ DateUtils.getNowDateTimeStr());
 
@@ -156,7 +155,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		VirtualFile vf = VirtualFile.fromRelativePath(configFileLocation);
 
 		vf.getRealFile().delete();
-		models.utils.LogUtils.printLogNormal("Deleted file : "
+		play.Logger.info("Deleted file : "
 					+ type + "/" + fileName + " at "
 					+ DateUtils.getNowDateTimeStr());
 
@@ -170,7 +169,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	 */
 	private String getFilePath(DataType cat, String fileName) {
 		String filePath = null;
-		filePath = String.format("%s/%s", cat.getPath(), cat.isFile() ? cat.name().toLowerCase() : fileName);
+		filePath = String.format("%s/%s", cat.getPath(), fileName);
 		return filePath;
 	}
 
