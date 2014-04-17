@@ -202,7 +202,12 @@ public class Commands extends Controller {
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
 			String[] hosts = ng.getNodeList().toArray(new String[0]);
-			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options);
+
+			HashMap<String, String> userData = JsonUtil.decode(
+					DataUtil.getOptionValue(options, "var_values", "{}"), 
+					new TypeReference<HashMap<String, String>>(){});
+
+			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
 			
 			// prepare log
 			CmdLog jobLog = new CmdLog();
@@ -237,7 +242,11 @@ public class Commands extends Controller {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	public static HttpTaskRequest createTaskByRequest(String[] hosts, ICommand cmd, Map<String, String> options) throws IOException 
+	public static HttpTaskRequest createTaskByRequest(
+			String[] hosts, 
+			ICommand cmd, 
+			Map<String, String> options, 
+			Map<String, String> userData) throws IOException 
 	{
 		HttpTaskRequest reqTemplate = cmd.createCopy();
 
@@ -268,12 +277,8 @@ public class Commands extends Controller {
 		BatchOption batchOption = new BatchOption(maxRate, strategy);
 		reqTemplate.setBatchOption(batchOption);
 		
-		HashMap<String, String> varValues = JsonUtil.decode(
-				DataUtil.getOptionValue(options, "var_values", "{}"), 
-				new TypeReference<HashMap<String, String>>(){});
-		
 		HashMap<String, String> values = new HashMap<String, String>();
-		for (Entry<String, String> entry : varValues.entrySet()) {
+		for (Entry<String, String> entry : userData.entrySet()) {
 			values.put(entry.getKey(), entry.getValue());
 		}
 		

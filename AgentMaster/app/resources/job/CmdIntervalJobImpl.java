@@ -59,7 +59,12 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			ICommand cmd = cmdData.getCommandByName(cmdName);
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupName);
 			String[] hosts = ng.getNodeList().toArray(new String[0]);
-			HttpTaskRequest reqTemplate = Commands.createTaskByRequest(hosts, cmd, userData); 
+
+			HashMap<String, String> realUserData = JsonUtil.decode(
+					DataUtil.getOptionValue(userData, "var_values", "{}"), 
+					new TypeReference<HashMap<String, String>>(){});
+			
+			HttpTaskRequest reqTemplate = Commands.createTaskByRequest(hosts, cmd, userData, realUserData); 
 
 			// builg log 
 			JobLog jobLog = new JobLog();
