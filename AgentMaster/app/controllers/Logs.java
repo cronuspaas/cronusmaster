@@ -302,18 +302,18 @@ public class Logs extends Controller {
 			
 			if (alog instanceof CmdLog) {
 				CmdLog log = (CmdLog) alog;
-				agentCommandType = log.getUserCommand().cmd.getName();
+				agentCommandType = log.getCommandKey();
 				nodeGroupType = log.getNodeGroup().getName();
 				dataType = log.getNodeGroup().getType();
-				regExs = log.getUserCommand().cmd.getAggRegexs();
+				regExs = UserDataProvider.getCommandConfigs().getCommandByName(log.getCommandKey()).getAggRegexs();
 				logAggregation = log.aggregate(aggField, aggRegEx);
 			}
 			else if (alog instanceof JobLog)  {
 				JobLog log = (JobLog) alog;
-				agentCommandType = log.getUserCommand().cmd.getName();
+				agentCommandType = log.getCommandKey();
 				nodeGroupType = log.getNodeGroup().getName();
 				dataType = log.getNodeGroup().getType();
-				regExs = log.getUserCommand().cmd.getAggRegexs();
+				regExs = UserDataProvider.getCommandConfigs().getCommandByName(log.getCommandKey()).getAggRegexs();
 				logAggregation = log.aggregate(aggField, aggRegEx);
 			}
 			

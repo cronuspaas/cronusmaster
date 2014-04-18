@@ -18,12 +18,13 @@
 					<div id="ng_class" class="btn-group" data-toggle="buttons-radio">
     					<button id="ngp_button" type="button" class="btn btn-primary">Predefined</button>
 					    <button id="nga_button" type="button" class="btn btn-primary">Adhoc</button>
+					    <button id="nge_button" type="button" class="btn btn-primary">Embedded in Cmd</button>
 					</div>
 				
 				<div id="ng_predefined" class="wizard-input-section" style="display: none;">
 					<p>
 						<strong>
-						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/nodeGroups">here</a>. 
+						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/config/showConfigs/nodegroup">here</a>. 
 						</strong>
 					</p>
 
@@ -42,6 +43,15 @@
 					<textarea class="input-xlarge" id="nodeListFromText" placeholder="host.phx.ebay.com" name="nodeListFromText" rows="5"></textarea>  
 				</div>
 				
+				<div id="ng_embed" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						Target nodes are defined in command itself. Please VERIFY the target nodes in command <a target="_blank" href="/config/showConfigs/command">here</a>.
+						</strong>
+					</p>
+
+				</div>
+
 			</div>
 
 			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_requests">
@@ -87,27 +97,26 @@
 								<label class="span2" for="mon_initde">Initial Delay Second</label><input id="mon_initde" class="span1" type="text" placeholder="initial delay sec">
 							    </div>						
 							    <div class="row">
-								<label class="span2" for="mon_to">Timeout Second</label><input id="mon_to" class="span1 type="text" placeholder="timeout sec">
-							    </div>						
-							    <div class="row">
 								<label class="span2" for="mon_retry">Max Retry</label><input id="mon_retry" class="span1" type="text" placeholder="max retry">
 							    </div>						
 							    <div class="row">
 								<label class="span2" for="mon_rede">Retry Delay Second</label><input id="mon_rede" class="span1" type="text" placeholder="retry delay sec">
+							    </div>						
+							    <div class="row">
+								<label class="span2" for="mon_to">Timeout Second</label><input id="mon_to" class="span1 type="text" placeholder="timeout sec">
 							    </div>						
 							</div>
 							<div class="tab-pane" id="tab3" style="height:150px;">
 							    <div class="row">
 								<label class="span2" for="thrStrategy">Throttle Strategy</label>
 								<select data-placeholder="Throttling Strategy" style="width:350px;" class="chzn-select" id="thrStrategy" >
-		    					    <option value=""></option>
 		    					    <option value="UNLIMITED">UNLIMITED</option>
 		    			        	<option value="MAX_CONCURRENT_RATE_SLIDING">MAX_CONCURRENT_RATE_SLIDING</option>
 		            			</select>
 							    </div>						
 							    <div class="row">
 								<label class="span2" for="thr_rate">Throttle Rate</label>
-								<input id="thr_rate" class="input-small" type="text" placeholder="max rate">
+								<input id="thr_rate" class="input-small" type="text" placeholder="0">
 							    </div>						
 		            			<br/>
 								
@@ -382,8 +391,9 @@ $(function() {
 
 $("#ngp_button").on('click',function(){
 
-  $('#ng_predefined').show();
   $('#ng_adhoc').hide();
+  $('#ng_embed').hide();
+  $('#ng_predefined').show();
 
 });
 
@@ -391,7 +401,16 @@ $("#ngp_button").on('click',function(){
 $("#nga_button").on('click',function(){
 
   $('#ng_predefined').hide();
+  $('#ng_embed').hide();
   $('#ng_adhoc').show();
+
+});
+
+$("#nge_button").on('click',function(){
+
+  $('#ng_predefined').hide();
+  $('#ng_adhoc').hide();
+  $('#ng_embed').show();
 
 });
 

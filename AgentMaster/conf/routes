@@ -31,7 +31,7 @@ GET     /config/aggregation                                     Config.getAggreg
 GET     /config/nodeGroup                                       Config.getNodeGroup
 GET     /config/reloadConfig/{dataType}							Config.reloadConfig
 GET		/config/showConfigs/{dataType}							Config.showConfigs
-GET     /config/editConfig/{dataType}/{configName}				Config.editConfig
+GET     /config/editConfig/{dataType}/{action}/{configName}				Config.editConfig
 GET     /config/deleteConfig/{dataType}/{configName}			Config.deleteConfig
 POST    /config/editConfigUpdate/{dataType}/{configName}		Config.editConfigUpdate
 
@@ -58,9 +58,6 @@ GET		/jobs/deleteJob										Jobs.deleteJob
 GET		/jobs/runJobNow										Jobs.runJobNow
 GET		/jobs/wizard										Jobs.wizard
 POST	/jobs/saveJob										Jobs.saveJob
-
-GET    /logconsole               LogConsole.index
-GET    /logconsoleAjax           LogConsole.indexAjax
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public

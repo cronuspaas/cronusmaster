@@ -37,7 +37,7 @@ public class CommandImpl implements ICommand {
 	 * do not use externally, use createCopy because ICommand is cached and shared (copy on write)
 	 * @return
 	 */
-	HttpTaskRequest getHttpTaskRequest() {
+	public HttpTaskRequest getHttpTaskRequest() {
 		return httpTaskRequest;
 	}
 
