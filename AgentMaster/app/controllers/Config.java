@@ -29,6 +29,7 @@ import org.lightj.task.ExecuteOption;
 import org.lightj.task.MonitorOption;
 import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.task.asynchttp.UrlTemplate;
+import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -110,8 +111,8 @@ public class Config extends Controller {
 	 * edit page
 	 * @param dataType
 	 */
-	static final String NEW_CONFIG_NAME = "newConfig";
-	public static void editConfig(String dataType, String configName) {
+	static final String NEW_CONFIG_NAME = "new";
+	public static void editConfig(String dataType, String action, String configName) {
 
 		String page = "editConfig";
 		String topnav = "config";
@@ -123,38 +124,42 @@ public class Config extends Controller {
 
 			String content = null;
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
-				if (dType == DataType.COMMAND) {
-					// this is for new configuration
-					final ObjectMapper mapper = new ObjectMapper();
-					mapper.setSerializationInclusion(Include.NON_NULL);
-					
-					CommandImpl command = new CommandImpl();
-					
-					HttpTaskRequest sampleReq = new HttpTaskRequest();
-					UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
-					sampleReq.setUrlTemplate(temp);
-					sampleReq.setPollTemplate(temp);
-					sampleReq.setTaskType("asyncpoll");
-					sampleReq.setHttpClientType("httpClient");
-					sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
-					sampleReq.setMonitorOption(new MonitorOption(10, 0));
-					sampleReq.setGlobalContext("globalContextLookup");
-					sampleReq.setResProcessorName("responseProcessor");
-					command.setHttpTaskRequest(sampleReq);
-					
-					command.addUserData("variableInHttpTemplate", "sample value");
-					command.setAggRegexs(Arrays.asList(new String[] {"regex for response aggregation"}));
-					
-					HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
-					cmdMap.put("httpTaskRequest", command.createCopy());
-					cmdMap.put("userData", command.getUserData());
-					cmdMap.put("aggRegexs", command.getAggRegexs());
-					
-					content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cmdMap);
+			if (StringUtil.equalIgnoreCase("create", action)) {
+				if (!StringUtil.equalIgnoreCase("new", configName)) {
+					IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+					content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
+					configName = "new";
 				}
-				else if (dType == DataType.NODEGROUP) {
-					content = "line separated hosts";
+				else {
+					if (dType == DataType.COMMAND) {
+						// this is for new configuration
+						CommandImpl command = new CommandImpl();
+						
+						HttpTaskRequest sampleReq = new HttpTaskRequest();
+						UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
+						sampleReq.setUrlTemplate(temp);
+						sampleReq.setPollTemplate(temp);
+						sampleReq.setTaskType("asyncpoll");
+						sampleReq.setHttpClientType("httpClient");
+						sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
+						sampleReq.setMonitorOption(new MonitorOption(10, 0));
+						sampleReq.setGlobalContext("globalContextLookup");
+						sampleReq.setResProcessorName("responseProcessor");
+						command.setHttpTaskRequest(sampleReq);
+						
+						command.addUserData("variableInHttpTemplate", "sample value");
+						command.setAggRegexs(Arrays.asList(new String[] {"regex for response aggregation"}));
+						
+						HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
+						cmdMap.put("httpTaskRequest", command.createCopy());
+						cmdMap.put("userData", command.getUserData());
+						cmdMap.put("aggRegexs", command.getAggRegexs());
+						
+						content = JsonUtil.encodePretty(cmdMap);
+					}
+					else if (dType == DataType.NODEGROUP) {
+						content = "line separated hosts";
+					}
 				}
 			}
 			else {

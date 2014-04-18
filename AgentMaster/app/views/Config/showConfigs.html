@@ -10,7 +10,7 @@
 </script>
 
 <h3 style="text-transform: uppercase">${dataType}</h3>		 
-<a target=_self href="/config/editConfig/${dataType}/newConfig" class="btn btn-small btn-primary">Create New</a> 
+<a target=_self href="/config/editConfig/${dataType}/create/new" class="btn btn-small btn-primary">Create New</a> 
 <a target=_self href="/config/reloadConfig/${dataType}" class="btn btn-small btn-primary">Reload</a>
 
 
@@ -23,6 +23,7 @@
 					<th>No.</th>
 					<th>Name</th>
 					<th>Edit</th>
+					<th>Copy</th>
 					<th>Delete</th>
 				</tr>
 			</thead>
@@ -34,8 +35,13 @@
 						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
 					</td>   
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/${obj}">
+						<a target=_self href="/config/editConfig/${dataType}/update/${obj}">
 						<i class="fa fa-wrench fa-lg"></i></a>	
+						</a>
+					</td>
+					<td>   
+						<a target=_self href="/config/editConfig/${dataType}/create/${obj}">
+						<i class="fa fa-copy fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>

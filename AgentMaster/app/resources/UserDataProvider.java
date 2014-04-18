@@ -58,7 +58,7 @@ public class UserDataProvider {
 	 * adhoc node group
 	 * @return
 	 */
-	public @Bean @Scope("prototype") INodeGroupData adhocNodeGroup() {
+	public @Bean @Scope("singleton") INodeGroupData adhocNodeGroup() {
 		return new AdhocNodeGroupDataImpl();
 	}
 	

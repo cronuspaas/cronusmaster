@@ -45,6 +45,7 @@ import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
 import resources.log.CmdLog;
+import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
 import resources.utils.DataUtil;
@@ -85,7 +86,7 @@ public class Commands extends Controller {
 				}
 				values.put("headers", headers.toString());
 				values.put("body", req.getBody());
-				values.put("variables", StringUtil.join(req.getVariableNames(), ","));
+				values.put("variables", StringUtil.join(req.getVariableNames(), ", "));
 				values.put("userData", JsonUtil.encode(cmd.getUserData()));
 				StringBuffer parameters = new StringBuffer();
 				if (req.getParameters() != null) {
@@ -198,8 +199,15 @@ public class Commands extends Controller {
 			
 			// build task
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
-			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
-			String[] hosts = ng.getNodeList().toArray(new String[0]);
+			String[] hosts = null;
+			INodeGroup ng = null;
+			if (!StringUtil.isNullOrEmpty(nodeGroupType)) {
+				ng = ngConfigs.getNodeGroupByName(nodeGroupType);
+				hosts = ng.getNodeList().toArray(new String[0]);
+			}
+			else {
+				ng = AdhocNodeGroupDataImpl.NG_EMPTY;
+			}
 
 			HashMap<String, String> userData = JsonUtil.decode(
 					DataUtil.getOptionValue(options, "var_values", "{}"), 
@@ -278,7 +286,9 @@ public class Commands extends Controller {
 			values.put(entry.getKey(), entry.getValue());
 		}
 		
-		reqTemplate.setHosts(hosts);
+		if (hosts != null) {
+			reqTemplate.setHosts(hosts);
+		}
 		reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
 		return reqTemplate;
 	}

@@ -1,15 +1,30 @@
- {
-  "name": "YAHOO_FINANCE",
-  "httpTaskRequest": {
-        "taskType": "async",
-        "httpClientType": "httpClient",
-        "urlTemplate": {
-            "body": null,
-            "url": "http://<host>/q?s=<symbol>&ql=1",
-            "method": "GET",
-            "hosts": ["finance.yahoo.com"]
-        }
+{
+  "name" : "YAHOO_FINANCE",
+  "httpTaskRequest" : {
+    "taskType" : "async",
+    "httpClientType" : "httpClient",
+    "executionOption" : null,
+    "urlTemplate" : {
+      "url" : "http://<host>/q?s=<symbol>&ql=1",
+      "method" : "GET",
+      "body" : null,
+      "headers" : {
+      },
+      "parameters" : {
+      }
+    },
+    "hostTemplateValues" : null,
+    "templateValuesForAllHosts" : null,
+    "hosts" : [ "finance.yahoo.com" ],
+    "monitorOption" : null,
+    "pollTemplate" : null,
+    "resProcessorName" : null,
+    "customHandler" : null,
+    "globalContext" : null,
+    "batchOption" : null
   },
-  "aggRegexs": null,
-  "userData": {"symbol": "ebay"}
- }
+  "aggRegexs" : null,
+  "userData" : {
+    "symbol" : "ebay"
+  }
+}

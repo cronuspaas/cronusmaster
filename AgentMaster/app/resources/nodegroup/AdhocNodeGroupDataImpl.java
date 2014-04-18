@@ -16,10 +16,13 @@ import resources.utils.DateUtils;
 
 public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	
+	public static final INodeGroup NG_EMPTY = new NodeGroupImpl("NG-EMPTY");
+	static {
+		NG_EMPTY.setType(DataType.ADHOCNODEGROUP.name());
+	}
+	
 	@Autowired(required=true)
 	private IUserDataDao userConfigs;
-
-	private NodeGroupImpl nodeGroup;
 
 	@Override
 	public IUserDataDao getUserDataDao() {
@@ -33,31 +36,22 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 
 	@Override
 	public Map<String, INodeGroup> getAllNodeGroups() throws IOException {
-		if (nodeGroup != null) {
-			HashMap<String, INodeGroup> ngs = new HashMap<String, INodeGroup>();
-			ngs.put(nodeGroup.getName(), nodeGroup);
-			return ngs;
-		}
 		return Collections.emptyMap();
 	}
 
 	@Override
 	public INodeGroup getNodeGroupByName(String name) throws IOException {
-		if (nodeGroup == null) {
-			nodeGroup = new NodeGroupImpl();
-			nodeGroup.setType(DataType.ADHOCNODEGROUP.name());
-			nodeGroup.setName(String.format("NG-%s", DateUtils.getNowDateTimeStrSdsm()));
-			nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
-			save(nodeGroup.getName(), JsonUtil.encode(nodeGroup));
-		}
+		NodeGroupImpl nodeGroup = new NodeGroupImpl();
+		nodeGroup.setType(DataType.ADHOCNODEGROUP.name());
+		nodeGroup.setName(String.format("NG-%s", DateUtils.getNowDateTimeStrSdsm()));
+		nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
+		save(nodeGroup.getName(), JsonUtil.encode(nodeGroup));
 		return nodeGroup;
 	}
 
 	@Override
 	public void save(String ngName, String configFileContent) throws IOException {
-		if (nodeGroup != null) {
-			userConfigs.saveData(DataType.ADHOCNODEGROUP, ngName, configFileContent);
-		}
+		userConfigs.saveData(DataType.ADHOCNODEGROUP, ngName, configFileContent);
 	}
 
 	@Override
