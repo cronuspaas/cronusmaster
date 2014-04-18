@@ -1,43 +1,30 @@
 package resources.job;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-
-import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
-import org.lightj.task.BatchOption;
 import org.lightj.task.ExecutableTask;
-import org.lightj.task.ExecuteOption;
-import org.lightj.task.MonitorOption;
 import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
-import org.lightj.task.BatchOption.Strategy;
 import org.lightj.util.JsonUtil;
-import org.lightj.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import controllers.Commands;
 
 import resources.IUserDataDao.DataType;
 import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
-import resources.log.BaseLog;
-import resources.log.BaseLog.UserCommand;
 import resources.log.JobLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
 import resources.utils.DataUtil;
 import resources.utils.DateUtils;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import controllers.Commands;
 
 /**
  * run command on a node group with an interval
@@ -69,11 +56,9 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			// builg log 
 			JobLog jobLog = new JobLog();
 			jobLog.setUserData(DataUtil.removeNullAndZero(userData));
-			UserCommand userCommand = new UserCommand();
-			userCommand.cmd = cmd;
+			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
-			userCommand.jobId = getName();
-			jobLog.setUserCommand(userCommand);
+			jobLog.setJobId(getName());
 			
 			// fire
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);

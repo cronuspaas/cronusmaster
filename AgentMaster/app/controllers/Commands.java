@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
@@ -45,7 +44,6 @@ import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
-import resources.log.BaseLog.UserCommand;
 import resources.log.CmdLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
@@ -213,10 +211,8 @@ public class Commands extends Controller {
 			CmdLog jobLog = new CmdLog();
 			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
 			jobLog.setUserData(optionCleanup);
-			UserCommand userCommand = new UserCommand();
-			userCommand.cmd = cmd;
+			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
-			jobLog.setUserCommand(userCommand);
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);

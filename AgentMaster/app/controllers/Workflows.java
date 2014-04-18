@@ -166,8 +166,8 @@ public class Workflows extends Controller {
 			FlowLog flowLog = new FlowLog();
 			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
 			flowLog.setUserData(optionCleanup);
+			flowLog.setCommandKey(workflow.getFlowName());
 			UserWorkflow userWorkflow = new UserWorkflow();
-			userWorkflow.workflow = workflow;
 			flowLog.setNodeGroup(ng);
 			flowLog.setUserWorkflow(userWorkflow);
 

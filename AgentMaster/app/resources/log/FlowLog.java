@@ -22,16 +22,12 @@ public class FlowLog extends BaseLog {
 	public void setUserWorkflow(UserWorkflow userWorkflow) {
 		this.userWorkflow = userWorkflow;
 	}
+
 	public String uuid() {
 		return String.format("%s~%s~%s~%s", 
 						timestamp,
 						nodeGroup.getType(),
 						nodeGroup.getName(), 
-						userWorkflow.workflow.getFlowName());
+						commandKey);
 	}
-	@Override
-	public String getCommandKey() {
-		return userWorkflow.workflow.getFlowName();
-	}
-
 }

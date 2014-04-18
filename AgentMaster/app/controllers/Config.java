@@ -139,14 +139,16 @@ public class Config extends Controller {
 					sampleReq.setHttpClientType("httpClient");
 					sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
 					sampleReq.setMonitorOption(new MonitorOption(10, 0));
+					sampleReq.setGlobalContext("globalContextLookup");
+					sampleReq.setResProcessorName("responseProcessor");
 					command.setHttpTaskRequest(sampleReq);
 					
-					command.addUserData("some variable", "value");
-					command.setAggRegexs(Arrays.asList(new String[] {"some regex"}));
+					command.addUserData("variableInHttpTemplate", "sample value");
+					command.setAggRegexs(Arrays.asList(new String[] {"regex for response aggregation"}));
 					
 					HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
-					cmdMap.put("userInputs", command.getUserData());
 					cmdMap.put("httpTaskRequest", command.createCopy());
+					cmdMap.put("userData", command.getUserData());
 					cmdMap.put("aggRegexs", command.getAggRegexs());
 					
 					content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cmdMap);
@@ -182,15 +184,23 @@ public class Config extends Controller {
 				renderJSON("configFile is NULL. Error occured in editConfig");
 			}
 			
-			
 			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
 				// new config
 				configName = configNameNew;
 			}
 
-			IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
-			userDataDao.saveData(DataType.valueOf(dataType.toUpperCase()), configName, content);
-
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			switch(dType) {
+			case COMMAND:
+				UserDataProvider.getCommandConfigs().save(configName, content);
+				break;
+			case NODEGROUP:
+				UserDataProvider.getNodeGroupOfType(dType).save(configName, content);
+				break;
+			default:
+				throw new RuntimeException("Invalid datatype " + dataType);
+			}
+			
 			String alert = "Config was successfully updated at " + DateUtils.getNowDateTimeStrSdsm();
 
 			// reload after

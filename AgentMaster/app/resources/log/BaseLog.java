@@ -44,6 +44,9 @@ public abstract class BaseLog implements ILog {
 	/** command type */
 	protected DataType commandType;
 	
+	/** command key, command id, workflow id etc. */
+	protected String commandKey;
+	
 	public BaseLog(DataType commandType) {
 		this.commandType = commandType;
 	}
@@ -79,8 +82,14 @@ public abstract class BaseLog implements ILog {
 	}
 	public DataType getCommandType() {
 		return commandType;
+	}	
+	public String getCommandKey() {
+		return commandKey;
 	}
-	
+	public void setCommandKey(String commandKey) {
+		this.commandKey = commandKey;
+	}
+
 	/**
 	 * aggregation
 	 * @param matchField
@@ -114,19 +123,6 @@ public abstract class BaseLog implements ILog {
 	}
 
 	/**
-	 * user command 
-	 * @author biyu
-	 *
-	 */
-	public static class UserCommand {
-		
-		@JsonDeserialize(as=CommandImpl.class)
-		public ICommand cmd;
-		public String jobId;
-		
-	}
-	
-	/**
 	 * command response
 	 * @author biyu
 	 *
@@ -153,8 +149,6 @@ public abstract class BaseLog implements ILog {
 	 */
 	public static class UserWorkflow {
 		
-		@JsonDeserialize(as=WorkflowMetaImpl.class)
-		public IWorkflowMeta workflow;
 		public FlowInfo jobInfo;
 		
 	}

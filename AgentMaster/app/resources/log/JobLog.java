@@ -1,21 +1,20 @@
 package resources.log;
 
 import resources.IUserDataDao.DataType;
-import resources.log.BaseLog.UserCommand;
 
 public class JobLog extends BaseLog {
 
-	protected UserCommand userCommand;
+	private String jobId;
 	
 	public JobLog() {
 		super(DataType.CMDJOB);
 	}
 	
-	public UserCommand getUserCommand() {
-		return userCommand;
+	public String getJobId() {
+		return jobId;
 	}
-	public void setUserCommand(UserCommand userCommand) {
-		this.userCommand = userCommand;
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
 	}
 
 	public String uuid() {
@@ -23,11 +22,7 @@ public class JobLog extends BaseLog {
 						timestamp,
 						nodeGroup.getType(),
 						nodeGroup.getName(), 
-						userCommand.cmd.getName(),
-						userCommand.jobId);
-	}
-	@Override
-	public String getCommandKey() {
-		return userCommand.jobId;
+						commandKey,
+						jobId);
 	}
 }

@@ -48,7 +48,7 @@ public class CommandDataImpl implements ICommandData {
 	public void save(String cmdName, String content) throws IOException {
 		CommandImpl commandImpl = JsonUtil.decode(content, CommandImpl.class);
 		commandImpl.setName(cmdName);
-		userDataDao.saveData(DataType.COMMAND, cmdName, JsonUtil.encode(commandImpl));
+		userDataDao.saveData(DataType.COMMAND, cmdName, JsonUtil.encodePretty(commandImpl));
 		load();
 	}
 

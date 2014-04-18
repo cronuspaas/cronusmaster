@@ -40,7 +40,7 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 			FlowLog flowLog = new FlowLog();
 			flowLog.setUserData(DataUtil.removeNullAndZero(userData));
 			UserWorkflow userWorkflow = new UserWorkflow();
-			userWorkflow.workflow = workflow;
+			flowLog.setCommandKey(workflow.getFlowName());
 			flowLog.setNodeGroup(ng);
 			flowLog.setUserWorkflow(userWorkflow);
 
