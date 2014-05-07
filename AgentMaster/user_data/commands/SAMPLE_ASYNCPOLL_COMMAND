@@ -12,7 +12,6 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/services/<serviceName>/action/restart",
       "method" : "POST",
-      "body" : null,
       "headers" : {
         "Authorization" : "Basic <agentAuthKey>",
         "content-type" : "application/json"
@@ -20,9 +19,6 @@
       "parameters" : {
       }
     },
-    "hostTemplateValues" : null,
-    "templateValuesForAllHosts" : null,
-    "hosts" : null,
     "monitorOption" : {
       "timeOutSec" : 0,
       "initDelaySec" : 0,
@@ -33,7 +29,6 @@
     "pollTemplate" : {
       "url" : "https://<host>:12020/status/<uuid>",
       "method" : "GET",
-      "body" : null,
       "headers" : {
         "content-type" : "application/json"
       },
@@ -41,9 +36,7 @@
       }
     },
     "resProcessorName" : "agentPollProcessor",
-    "customHandler" : null,
-    "globalContext" : "agentAuthKeyContext",
-    "batchOption" : null
+    "globalContext" : "agentAuthKeyContext"
   },
   "aggRegexs" : [ "status/(.*?)\"" ],
   "userData" : {

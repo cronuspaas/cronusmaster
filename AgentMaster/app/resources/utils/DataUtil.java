@@ -66,7 +66,7 @@ public class DataUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	private static Object decodeRecursive(String jsonVal) throws IOException 
+	public static Object decodeRecursive(String jsonVal) throws IOException 
 	{
 		Object value = null;
 		if (jsonVal.startsWith("[") && jsonVal.endsWith("]")) {

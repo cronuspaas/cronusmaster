@@ -7,6 +7,7 @@ import java.util.Map;
 import org.lightj.example.task.HttpTaskRequest;
 
 import resources.IUserData;
+import resources.IUserDataDao.DataType;
 
 /**
  * command configs
@@ -15,9 +16,7 @@ import resources.IUserData;
  */
 public interface INodeGroupData extends IUserData {
 	
-	public enum NodeGroupType {
-		predefined, adhoc
-	}
+	public static final INodeGroup NG_EMPTY = new NodeGroupImpl("NG-EMPTY", DataType.NODEGROUP.name(), null);
 
 	/**
 	 * get all commands back

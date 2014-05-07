@@ -1,5 +1,6 @@
 package resources.ebay.flow;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
 import org.lightj.RuntimeContext;
@@ -22,7 +23,9 @@ public class TestAgentFlows extends BaseTestCase {
 		DeployManifestFlow flow = FlowSessionFactory.getInstance().createSession(DeployManifestFlow.class);
 		flow.getSessionContext().setServiceName("perlserer");
 		flow.getSessionContext().setManifestName("perlserver-1.0.0");
-		flow.getSessionContext().setManifestPkgs(new String[]{"http://cronus-srepo.vip.ebay.com/packages/perlserver-1.0.0.unix.cronus"});
+		ArrayList<String> pkgs = new ArrayList<String>();
+		pkgs.add("http://cronus-srepo.vip.ebay.com/packages/perlserver-1.0.0.unix.cronus");
+		flow.getSessionContext().setManifestPkgs(pkgs);
 		flow.getSessionContext().setHosts(new String[] {"10.9.248.186"});
 		flow.save();
 		

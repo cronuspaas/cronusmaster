@@ -29,6 +29,7 @@ import org.lightj.session.FlowSessionFactory;
 import org.lightj.task.BatchOption;
 import org.lightj.task.BatchOption.Strategy;
 import org.lightj.util.JsonUtil;
+import org.lightj.util.MapListPrimitiveJsonParser;
 
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
@@ -194,20 +195,14 @@ public class Workflows extends Controller {
 	 */
 	public static FlowSession createFlowByRequest(INodeGroup ng, IWorkflowMeta workflow, Map<String, String> options) throws IOException 
 	{
-		HashMap<String, String> varValues = JsonUtil.decode(
-				DataUtil.getOptionValue(options, "var_values", "{}"), 
-				new TypeReference<HashMap<String, String>>(){});
+		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+		Map<String, Object> values = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
 		
-		HashMap<String, Object> values = new HashMap<String, Object>();
-		for (Entry<String, String> entry : varValues.entrySet()) {
-			DataUtil.decode(entry.getKey(), entry.getValue(), values);
-		}
-
 		Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
 		int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
 		values.put("batchOption", new BatchOption(maxRate, strategy));
 		
-		String[] hosts = ng.getNodeList().toArray(new String[0]);
+		String[] hosts = ng.getHosts();
 		values.put("hosts", hosts);
 		
 		FlowSession flow = FlowSessionFactory.getInstance().createSession(workflow.getFlowName());

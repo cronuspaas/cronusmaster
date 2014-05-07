@@ -29,7 +29,7 @@ public class DeployManifestFlowContext extends FlowContext {
 	@CtxProp(isUserData=true, sampleUserDataValue="manifest-1.0.0", saveType=CtxSaveType.NoSave)
 	private String manifestName;
 	@CtxProp(isUserData=true, sampleUserDataValue="http://somerepo:port/manifest-1.0.0.all.cronus", saveType=CtxSaveType.NoSave)
-	private String[] manifestPkgs;
+	private List<String> manifestPkgs;
 	@CtxProp(isUserData=true, sampleUserDataValue="UNLIMITED,0", saveType=CtxSaveType.NoSave)
 	private BatchOption batchOption;
 
@@ -53,10 +53,10 @@ public class DeployManifestFlowContext extends FlowContext {
 	public void setManifestName(String manifestName) {
 		this.manifestName = manifestName;
 	}
-	public String[] getManifestPkgs() {
+	public List<String> getManifestPkgs() {
 		return manifestPkgs;
 	}
-	public void setManifestPkgs(String[] manifestPkgs) {
+	public void setManifestPkgs(List<String> manifestPkgs) {
 		this.manifestPkgs = manifestPkgs;
 	}
 	public BatchOption getBatchOption() {

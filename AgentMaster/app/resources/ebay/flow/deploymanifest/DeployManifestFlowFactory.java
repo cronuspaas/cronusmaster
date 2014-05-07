@@ -163,7 +163,7 @@ public class DeployManifestFlowFactory {
 					taskReq.setHosts(context.getGoodHosts());
 					// set template values
 					HashMap<String, String[]> pkgNames = new HashMap<String, String[]>();
-					pkgNames.put("package", context.getManifestPkgs());
+					pkgNames.put("package", context.getManifestPkgs().toArray(new String[0]));
 					taskReq.setTemplateValuesForAllHosts(
 							new HostTemplateValues()
 								.addNewTemplateValue("serviceName", context.getServiceName())

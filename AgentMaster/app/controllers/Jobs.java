@@ -170,6 +170,9 @@ public class Jobs extends Controller {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			DataType jType = null;
 			ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(logId);
+			if (!StringUtil.equalIgnoreCase(log.getNodeGroup().getType(), DataType.NODEGROUP.name())) {
+				throw new RuntimeException("Only predefined nodegroup type is allowed for scheduled job");
+			}
 			BaseIntervalJob job = null;
 			
 			switch (dType) {
