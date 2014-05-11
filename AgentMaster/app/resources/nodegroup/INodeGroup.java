@@ -25,6 +25,12 @@ public interface INodeGroup {
 	public List<String> getNodeList();
 	
 	/**
+	 * get all nodes as an array
+	 * @return
+	 */
+	public String[] getHosts();
+	
+	/**
 	 * type of node group
 	 * @return
 	 */

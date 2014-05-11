@@ -20,6 +20,8 @@ public class GenericCommandFlow extends FlowSession<GenericCommandFlowContext> {
 	@Autowired(required=true)
 	private IFlowStep executeCommandStep;
 	
+	private IFlowStep checkItineraryStep;
+	
 	// method with the same name as in flow step enum, framework will use reflection to run each step
 	@FlowStepProperties(stepWeight=1, isFirstStep=true, stepIdx=10, onSuccess="checkItinerary", onElse="handleError")
 	public IFlowStep executeCommand() {
@@ -28,13 +30,16 @@ public class GenericCommandFlow extends FlowSession<GenericCommandFlowContext> {
 	
 	@FlowStepProperties(stepWeight=1, stepIdx=20, onException="handleError")
 	public IFlowStep checkItinerary() {
-		return new StepBuilder().execute(new SimpleStepExecution<GenericCommandFlowContext>() {
-			@Override
-			public StepTransition execute() throws FlowExecutionException {
-				return StepTransition.runToStep(sessionContext.hasMoreCommand() ? "executeCommand" : "stop"); 
-			}
+		if (checkItineraryStep == null) {
+			checkItineraryStep = new StepBuilder().execute(new SimpleStepExecution<GenericCommandFlowContext>() {
+				@Override
+				public StepTransition execute() throws FlowExecutionException {
+					return StepTransition.runToStep(sessionContext.hasMoreCommand() ? "executeCommand" : "stop"); 
+				}
 
-		}).getFlowStep();
+			}).getFlowStep();
+		}
+		return checkItineraryStep;
 	}
 	
 	@FlowStepProperties(stepWeight=1, stepIdx=40)

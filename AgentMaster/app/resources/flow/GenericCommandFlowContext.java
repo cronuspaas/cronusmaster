@@ -32,7 +32,7 @@ public class GenericCommandFlowContext extends FlowContext {
 	@CtxProp(isUserData=true, sampleUserDataValue="UNLIMITED,0", saveType=CtxSaveType.NoSave)
 	private BatchOption batchOption;
 	@CtxProp(isUserData=true, sampleUserDataValue="[\"command1\", \"command2\"]", saveType=CtxSaveType.NoSave)
-	private String[] commands;
+	private List<String> commands;
 	@CtxProp(isUserData=true, sampleUserDataValue="{\"command1\" : \"{key: value}\", \"command2\": \"{key: value}\"}", saveType=CtxSaveType.NoSave)
 	private Map<String, Map<String, String>> cmdUserData;
 	
@@ -51,10 +51,10 @@ public class GenericCommandFlowContext extends FlowContext {
 	public void setCmdUserData(Map<String, Map<String, String>> cmdUserData) {
 		this.cmdUserData = cmdUserData;
 	}
-	public String[] getCommands() {
+	public List<String> getCommands() {
 		return commands;
 	}
-	public void setCommands(String[] commands) {
+	public void setCommands(List<String> commands) {
 		this.commands = commands;
 	}
 	public BatchOption getBatchOption() {
@@ -95,10 +95,10 @@ public class GenericCommandFlowContext extends FlowContext {
 		this.curCmdIdx = curCmdIdx;
 	}
 	public boolean hasMoreCommand() {
-		return curCmdIdx < commands.length;
+		return curCmdIdx < commands.size();
 	}
 	public String getCurrentCommand() {
-		return commands[curCmdIdx];
+		return commands.get(curCmdIdx);
 	}
 	public Map<String, String> getCommandUserData(String cmdName) {
 		return cmdUserData.containsKey(cmdName) ? cmdUserData.get(cmdName) : new HashMap<String, String>();

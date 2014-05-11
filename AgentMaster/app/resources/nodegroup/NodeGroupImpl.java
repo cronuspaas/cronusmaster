@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class NodeGroupImpl implements INodeGroup {
 	
 	private String name;
@@ -13,6 +15,11 @@ public class NodeGroupImpl implements INodeGroup {
 	public NodeGroupImpl() {}
 	public NodeGroupImpl(String name) {
 		this.name = name;
+	}
+	public NodeGroupImpl(String name, String type, List<String> nodeList) {
+		this.name = name;
+		this.type = type;
+		this.nodeList = nodeList;
 	}
 	
 	public NodeGroupImpl addNodesToList(List<String> nodes) {
@@ -41,6 +48,11 @@ public class NodeGroupImpl implements INodeGroup {
 	@Override
 	public void setType(String ngType) {
 		this.type = ngType;
+	}
+	@JsonIgnore
+	@Override
+	public String[] getHosts() {
+		return (nodeList!=null && !nodeList.isEmpty()) ? nodeList.toArray(new String[0]) : null;
 	}
 
 }

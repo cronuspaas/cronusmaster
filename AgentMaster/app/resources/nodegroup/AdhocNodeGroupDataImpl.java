@@ -16,11 +16,6 @@ import resources.utils.DateUtils;
 
 public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	
-	public static final INodeGroup NG_EMPTY = new NodeGroupImpl("NG-EMPTY");
-	static {
-		NG_EMPTY.setType(DataType.ADHOCNODEGROUP.name());
-	}
-	
 	@Autowired(required=true)
 	private IUserDataDao userConfigs;
 

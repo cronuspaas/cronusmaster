@@ -203,13 +203,13 @@ public class Commands extends Controller {
 			INodeGroup ng = null;
 			if (!StringUtil.isNullOrEmpty(nodeGroupType)) {
 				ng = ngConfigs.getNodeGroupByName(nodeGroupType);
-				hosts = ng.getNodeList().toArray(new String[0]);
+				hosts = ng.getHosts();
 			}
 			else {
-				ng = AdhocNodeGroupDataImpl.NG_EMPTY;
+				ng = INodeGroupData.NG_EMPTY;
 			}
 
-			HashMap<String, String> userData = JsonUtil.decode(
+			Map<String, String> userData = JsonUtil.decode(
 					DataUtil.getOptionValue(options, "var_values", "{}"), 
 					new TypeReference<HashMap<String, String>>(){});
 
