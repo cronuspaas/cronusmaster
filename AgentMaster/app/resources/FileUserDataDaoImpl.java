@@ -12,6 +12,7 @@ import java.util.List;
 
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 
 import play.Logger;
 import play.vfs.VirtualFile;
@@ -38,7 +39,20 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		VirtualFile vf = VirtualFile.fromRelativePath(dataType.getPath());
 		File dir = vf.getRealFile();
 
-		Collection<File> files = FileUtils.listFiles(dir, null, false);
+		Collection<File> files = FileUtils.listFiles(dir, 
+				new IOFileFilter() {
+
+					@Override
+					public boolean accept(File arg0) {
+						return !arg0.getName().startsWith(".");
+					}
+
+					@Override
+					public boolean accept(File arg0, String arg1) {
+						return !arg1.startsWith(".");
+					}
+			
+		}, null);
 		List<String> fileNames = new ArrayList<String>();
 		for (File file : files) {
 			fileNames.add(file.getName());

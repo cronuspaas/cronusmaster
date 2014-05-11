@@ -55,7 +55,7 @@ public interface IUserDataDao {
 			return doKlass;
 		}
 		public String getUuid() {
-			return uuid;
+			return uuid==null ? name() : uuid;
 		}
 		public void setUuid(String uuid) {
 			this.uuid = uuid;

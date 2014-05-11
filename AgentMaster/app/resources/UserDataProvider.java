@@ -39,12 +39,17 @@ public class UserDataProvider {
 		if (StringUtil.equalIgnoreCase("file", userDataDaoType)) {
 			return new FileUserDataDaoImpl();
 		} else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
-			DataType.NODEGROUP.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.nodeGroup.uuid"));
-			DataType.COMMAND.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.command.uuid"));
-			DataType.CMDJOB.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.job.uuid"));
-			DataType.CMDLOG.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.cmdLog.uuid"));
-			DataType.JOBLOG.setUuid(new Play().configuration.getProperty("agentmaster.userDataDao.s3.jobLog.uuid"));
+			// set bucket uuid if it is different from enum name
+			for (DataType dt : DataType.values()) {
+				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.s3.%s.uuid", dt.name())));
+			}
 			return new S3UserDataDaoImpl();
+		} else if (StringUtil.equalIgnoreCase("openstack_swift", userDataDaoType)) {
+			// set container uuid if it is different from enum name
+			for (DataType dt : DataType.values()) {
+				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.swift.%s.uuid", dt.name())));
+			}
+			return new SwiftUserDataDaoImpl();
 		}
 		throw new RuntimeException("undefined user data dao type " + userDataDaoType);
 	}
