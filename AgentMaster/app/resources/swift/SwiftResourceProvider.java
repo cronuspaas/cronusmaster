@@ -16,7 +16,8 @@ import com.amazonaws.services.s3.AmazonS3;
  * @author binyu
  *
  */
-@Configuration
+// uncomment this to enable swift resource
+//@Configuration
 public class SwiftResourceProvider {
 
 	/*
@@ -35,7 +36,7 @@ public class SwiftResourceProvider {
 	static final String authenticationUrl = new Play().configuration.getProperty("agentmaster.userDataDao.swift.authenticationUrl");
 	
 	/**
-	 * s3 client
+	 * swift client
 	 * @return
 	 */
 	public @Bean @Scope("singleton") Account swiftClient() {
@@ -51,7 +52,7 @@ public class SwiftResourceProvider {
 	
 
 	/**
-	 * get s3 client
+	 * get swift client
 	 * @return
 	 */
 	public static Account getSwiftClient() {
