@@ -87,10 +87,10 @@ public class Config extends Controller {
 	 * show all configs of a type
 	 * @param dataType
 	 */
-	public static void showConfigs(String dataType, String alert) {
+	public static void showConfigs(String dataType, String alert, String nav) {
 		
 		String page = "showConfigs"+dataType.toLowerCase();
-		String topnav = "config";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
@@ -254,7 +254,7 @@ public class Config extends Controller {
 	 */
 	public static void index() {
 		
-		redirect("Config.showConfigs", "command");
+		redirect("Config.showConfigs", "nodegroup");
 
 	}
 

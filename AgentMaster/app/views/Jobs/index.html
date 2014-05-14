@@ -4,14 +4,12 @@
 
 #{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
 
-<div class="container">
-	#{include 'Jobs/jobsnav.html'/}
-
 <script type="text/javascript">	
 	getAlertAndWrite("${alert}");
 </script>
 
 <h3 style="text-transform: uppercase">Jobs Defined</h3>		 
+<h4>New job can be created by scheduling from an existing command or workflow execution log in the log section</h4>		 
 	<div  id="list-all-row">
 		<br/>
 			#{table-declare tableName:'list-all' /}

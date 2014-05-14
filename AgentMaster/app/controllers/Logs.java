@@ -53,10 +53,10 @@ public class Logs extends Controller {
 	 * show logs
 	 * @param date
 	 */
-	public static void cmdLogs() {
+	public static void cmdLogs(String nav) {
 
 		String page = "cmdlogs";
-		String topnav = "logs";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
 
 		try {
 			
@@ -96,10 +96,10 @@ public class Logs extends Controller {
 	 * job logs
 	 * @param date
 	 */
-	public static void jobLogs() {
+	public static void jobLogs(String nav) {
 
 		String page = "joblogs";
-		String topnav = "logs";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
 
 		try {
 			
@@ -139,10 +139,10 @@ public class Logs extends Controller {
 	 * job logs
 	 * @param date
 	 */
-	public static void wfLogs() {
+	public static void wfLogs(String nav) {
 
 		String page = "wflogs";
-		String topnav = "logs";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
 
 		try {
 			
