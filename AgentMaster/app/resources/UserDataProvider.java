@@ -38,13 +38,15 @@ public class UserDataProvider {
 		String userDataDaoType = new Play().configuration.getProperty("agentmaster.userDataDao").toString();
 		if (StringUtil.equalIgnoreCase("file", userDataDaoType)) {
 			return new FileUserDataDaoImpl();
-		} else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
+		} 
+		else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
 			// set bucket uuid if it is different from enum name
 			for (DataType dt : DataType.values()) {
 				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.s3.%s.uuid", dt.name())));
 			}
 			return new S3UserDataDaoImpl();
-		} else if (StringUtil.equalIgnoreCase("openstack_swift", userDataDaoType)) {
+		} 
+		else if (StringUtil.equalIgnoreCase("openstack_swift", userDataDaoType)) {
 			// set container uuid if it is different from enum name
 			for (DataType dt : DataType.values()) {
 				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.swift.%s.uuid", dt.name())));

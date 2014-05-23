@@ -14,10 +14,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 
 /**
  * aws resources
+ * to use the provide, uncomment the @Configuration annotation
+ * 
  * @author binyu
  *
  */
-@Configuration
+//@Configuration
 public class AwsResourceProvider {
 
 	static final String myAccessKeyID = new Play().configuration.getProperty("agentmaster.userDataDao.s3.myAccessKeyID");
