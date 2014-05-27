@@ -14,6 +14,7 @@
       <form class="form-horizontal" action="/config/editConfigUpdate/${dataType}/${configName}" method="post" >  
         <p><input id="textfield" class="input-large" type="text" placeholder="Name" name="configNameNew" #{if (configName != "new")} disabled value="${configName}" #{/if}></p>
        	<textarea class="field span6" id="textarea" rows="30" placeholder="Content" name="content">${content}</textarea>
+       	<input type="hidden" name="nav" value="${topnav}"/>
        	<br/><br/>
         <button type="submit" class="btn btn-primary">Save</button>  
         <a class="btn" href="javascript:void(0);" onclick="window.history.back();">Cancel</a>  

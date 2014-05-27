@@ -69,12 +69,12 @@ public class Config extends Controller {
 	 * reload all config
 	 * @param dataType
 	 */
-	public static void reloadConfig(String dataType) {
+	public static void reloadConfig(String dataType, String nav) {
 
 		try {
 			UserDataProvider.reloadAllConfigs();
 			String alert = "Successful reload config with type " + dataType;
-			redirect("Config.showConfigs", dataType, alert);
+			redirect("Config.showConfigs", dataType, alert, nav);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,10 +112,10 @@ public class Config extends Controller {
 	 * @param dataType
 	 */
 	static final String NEW_CONFIG_NAME = "new";
-	public static void editConfig(String dataType, String action, String configName) {
+	public static void editConfig(String dataType, String action, String configName, String nav) {
 
 		String page = "editConfig";
-		String topnav = "config";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
 			if (dataType == null) {
@@ -136,7 +136,7 @@ public class Config extends Controller {
 						CommandImpl command = new CommandImpl();
 						
 						HttpTaskRequest sampleReq = new HttpTaskRequest();
-						UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST, "body");
+						UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST);
 						sampleReq.setUrlTemplate(temp);
 						sampleReq.setPollTemplate(temp);
 						sampleReq.setTaskType("asyncpoll");
@@ -182,7 +182,9 @@ public class Config extends Controller {
 	 * @param dataType
 	 * @param content
 	 */
-	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content) {
+	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content, String nav) {
+
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
 			if (dataType == null) {
@@ -211,7 +213,7 @@ public class Config extends Controller {
 			// reload after
 			UserDataProvider.reloadAllConfigs();
 			
-			redirect("Config.showConfigs", dataType, alert);
+			redirect("Config.showConfigs", dataType, alert, topnav);
 
 		} catch (Exception e) {
 			e.printStackTrace();

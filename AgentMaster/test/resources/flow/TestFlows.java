@@ -18,8 +18,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import play.test.UnitTest;
 
-import resources.flow.agent.InstallAgentFlow;
-import resources.flow.agent.InstallAgentFlowContext;
+import resources.agent.flow.installagent.InstallAgentFlow;
+import resources.agent.flow.installagent.InstallAgentFlowContext;
 
 
 public class TestFlows extends UnitTest {

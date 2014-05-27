@@ -1,4 +1,4 @@
-package resources.flow.agent;
+package resources.agent.flow.installagent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,11 +58,6 @@ public class InstallAgentFlowFactory {
 				
 				try {
 					GroupTask<ExecutableTask> task = new GroupTask<ExecutableTask>() {
-
-						@Override
-						public ExecutableTask createTaskInstance() {
-							return null;
-						}
 
 						@Override
 						public List<ExecutableTask> getTasks() {

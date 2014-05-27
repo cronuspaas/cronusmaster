@@ -36,6 +36,7 @@ import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
 import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
+import org.lightj.util.MapListPrimitiveJsonParser;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
@@ -45,6 +46,7 @@ import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
 import resources.log.CmdLog;
+import resources.log.ILog;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
@@ -85,7 +87,9 @@ public class Commands extends Controller {
 					}
 				}
 				values.put("headers", headers.toString());
-				values.put("body", req.getBody());
+				if (req.getBody()!=null && !req.getBody().isEmpty()) {
+					values.put("body", JsonUtil.encode(req.getBody()));
+				}
 				values.put("variables", StringUtil.join(req.getVariableNames(), ", "));
 				values.put("userData", JsonUtil.encode(cmd.getUserData()));
 				StringBuffer parameters = new StringBuffer();
@@ -184,6 +188,64 @@ public class Commands extends Controller {
 	
 	
 	/**
+	 * rerun the same command from a cmd log
+	 * @param logType
+	 * @param logId
+	 */
+	public static void runCmdFromLog(String logType, String logId) {
+
+		try {
+			
+			DataType lType = DataType.valueOf(logType.toUpperCase());
+			ILog log = UserDataProvider.getJobLoggerOfType(lType).readLog(logId);
+			
+			String dataType = log.getNodeGroup().getType();
+			String nodeGroupType = log.getNodeGroup().getName();
+			String agentCommandType = log.getCommandKey();
+			Map<String, String> options = log.getUserData();
+			
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			ICommandData userConfigs = UserDataProvider.getCommandConfigs();
+			INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
+
+			// build task
+			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
+			String[] hosts = null;
+			INodeGroup ng = null;
+			if (!StringUtil.isNullOrEmpty(nodeGroupType)) {
+				ng = ngConfigs.getNodeGroupByName(nodeGroupType);
+				hosts = ng.getHosts();
+			}
+			else {
+				ng = INodeGroupData.NG_EMPTY;
+			}
+
+			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
+
+			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
+			
+			// prepare log
+			CmdLog jobLog = new CmdLog();
+			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
+			jobLog.setUserData(optionCleanup);
+			jobLog.setCommandKey(cmd.getName());
+			jobLog.setNodeGroup(ng);
+			
+			// fire task
+			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+			StandaloneTaskListener listener = new StandaloneTaskListener();
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog));
+			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error occur in job wizard, %s", e.getLocalizedMessage()));
+		}
+
+	}
+
+	/**
 	 * execute a command on a node group
 	 * @param dataType
 	 * @param nodeGroupType
@@ -209,9 +271,8 @@ public class Commands extends Controller {
 				ng = INodeGroupData.NG_EMPTY;
 			}
 
-			Map<String, String> userData = JsonUtil.decode(
-					DataUtil.getOptionValue(options, "var_values", "{}"), 
-					new TypeReference<HashMap<String, String>>(){});
+			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
 
 			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
 			
@@ -250,7 +311,7 @@ public class Commands extends Controller {
 			String[] hosts, 
 			ICommand cmd, 
 			Map<String, String> options, 
-			Map<String, String> userData) throws IOException 
+			Map<String, ?> userData) throws IOException 
 	{
 		HttpTaskRequest reqTemplate = cmd.createCopy();
 
@@ -282,8 +343,13 @@ public class Commands extends Controller {
 		reqTemplate.setBatchOption(batchOption);
 		
 		HashMap<String, String> values = new HashMap<String, String>();
-		for (Entry<String, String> entry : userData.entrySet()) {
-			values.put(entry.getKey(), entry.getValue());
+		for (Entry<String, ?> entry : userData.entrySet()) {
+			Object v = entry.getValue();
+			if (v instanceof String) {
+				values.put(entry.getKey(), (String) v);
+			} else {
+				values.put(entry.getKey(), JsonUtil.encode(v));
+			}
 		}
 		
 		if (hosts != null) {

@@ -8,8 +8,8 @@
 </script>
 
 <h3 style="text-transform: uppercase">${dataType}</h3>		 
-<a target=_self href="/config/editConfig/${dataType}/create/new" class="btn btn-small btn-primary">Create New</a> 
-<a target=_self href="/config/reloadConfig/${dataType}" class="btn btn-small btn-primary">Reload</a>
+<a target=_self href="/config/editConfig/${dataType}/create/new?nav=${topnav}" class="btn btn-small btn-primary">Create New</a> 
+<a target=_self href="/config/reloadConfig/${dataType}?nav=${topnav}" class="btn btn-small btn-primary">Reload</a>
 
 
 	<div  id="list-all-row">
@@ -33,17 +33,17 @@
 						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
 					</td>   
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/update/${obj}">
+						<a target=_self href="/config/editConfig/${dataType}/update/${obj}?nav=${topnav}">
 						<i class="fa fa-wrench fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/create/${obj}">
+						<a target=_self href="/config/editConfig/${dataType}/create/${obj}?nav=${topnav}">
 						<i class="fa fa-copy fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>
-						<a target=_self href="/config/deleteConfig/${dataType}/${obj}">
+						<a target=_self href="/config/deleteConfig/${dataType}/${obj}?nav=${topnav}">
 						<i class="fa fa-trash-o fa-lg"></i></a>
 						</a> 
 					</td>   

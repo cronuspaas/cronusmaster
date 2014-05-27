@@ -12,7 +12,7 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/services/<serviceName>",
       "method" : "POST",
-      "body" : null,
+      "body" : {},
       "headers" : {
         "Authorization" : "Basic <agentAuthKey>",
         "content-type" : "application/json"

@@ -15,6 +15,7 @@ GET     /commands/common                        Commands.commonCommands
 GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
 GET     /commands/wizard                        Commands.wizard
 GET     /commands/getOptions/{cmdName}			Commands.getOptions
+POST	/commands/runCmdFromLog					Commands.runCmdFromLog
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
 
 # workflows

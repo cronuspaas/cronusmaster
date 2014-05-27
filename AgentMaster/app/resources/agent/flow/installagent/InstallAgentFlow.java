@@ -1,4 +1,4 @@
-package resources.flow.agent;
+package resources.agent.flow.installagent;
 
 import org.lightj.session.FlowProperties;
 import org.lightj.session.FlowResult;
@@ -12,7 +12,7 @@ import org.lightj.session.step.StepBuilder;
 import org.lightj.session.step.StepTransition;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@FlowProperties(typeId="GenericCommand", desc="run generic commands in sequence", clustered=false, interruptible=false, timeoutInSec=0)
+@FlowProperties(typeId="InstallAgent", desc="install agent via ssh", clustered=false, interruptible=false, timeoutInSec=0)
 public class InstallAgentFlow extends FlowSession<InstallAgentFlowContext> {
 
 	//////////////// step implementation /////////////////

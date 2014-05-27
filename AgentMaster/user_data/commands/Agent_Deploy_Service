@@ -1,5 +1,5 @@
 {
-  "name" : "SAMPLE_ASYNCPOLL_COMMAND",
+  "name" : "Agent_Deploy_Service",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
@@ -10,12 +10,15 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/restart",
+      "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
       "method" : "POST",
-      "body" : {},
+      "body" : {
+        "manifest" : "<manifestName>",
+        "package" : "<package>"
+      },
       "headers" : {
-        "Authorization" : "Basic <agentAuthKey>",
-        "content-type" : "application/json"
+        "content-type" : "application/json",
+        "Authorization" : "Basic <agentAuthKey>"
       },
       "parameters" : {
       }
@@ -30,7 +33,8 @@
     "pollTemplate" : {
       "url" : "https://<host>:12020/status/<uuid>",
       "method" : "GET",
-      "body" : {},
+      "body" : {
+      },
       "headers" : {
         "content-type" : "application/json"
       },
@@ -40,8 +44,9 @@
     "resProcessorName" : "agentPollProcessor",
     "globalContext" : "agentAuthKeyContext"
   },
-  "aggRegexs" : [ "status/(.*?)\"" ],
   "userData" : {
-    "serviceName" : "myservice"
+    "serviceName" : "myservice",
+    "manifestName" : "manifestName",
+    "package" : "array of http pkg locations"
   }
 }

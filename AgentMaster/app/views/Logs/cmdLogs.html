@@ -17,6 +17,7 @@
 					<th>TimeStamp</th>
 					<th>Download</th>
 					<th>Aggregation</th>
+					<th>Run Again</th>
 					<th>Make Recurring Job</th>
 					<th>Delete</th>
 				</tr>
@@ -40,6 +41,10 @@
 						<i class="fa fa-list fa-lg"></i></a> 
 					</td>  
 					<td>   
+						<a target=_self href='javascript:runCmd("${logObj.type}", "${logObj.name}")'>
+						<i class="fa fa-magic fa-lg"></i></a> 
+					</td>  
+					<td>   
 						<a target=_self href="/jobs/wizard?logType=${logObj.type}&logId=${logObj.name}" >
 						<i class="fa fa-calendar fa-lg"></i></a> 
 					</td>  
@@ -55,6 +60,13 @@
 
 	</div>
 
+<script language="javascript"> 
+
+   function runCmd(logType, logId){
+      $.post("/commands/runCmdFromLog", { logType: logType, logId: logId } );
+   }
+
+</script>
 
 #{include 'tags/refresh.html'/}
 </div>

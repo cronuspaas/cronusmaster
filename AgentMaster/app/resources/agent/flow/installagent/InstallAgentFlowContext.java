@@ -1,4 +1,4 @@
-package resources.flow.agent;
+package resources.agent.flow.installagent;
 
 import java.io.IOException;
 import java.util.ArrayList;

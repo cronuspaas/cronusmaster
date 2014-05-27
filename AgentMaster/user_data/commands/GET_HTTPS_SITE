@@ -12,6 +12,7 @@
   "urlTemplate" : {
     "method" : "GET",
     "url" : "https://<host>/",
+    "body" : {},
     "headers" : {},
     "parameters" : {}
   }
