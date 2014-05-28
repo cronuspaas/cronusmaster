@@ -53,10 +53,10 @@ public class Logs extends Controller {
 	 * show logs
 	 * @param date
 	 */
-	public static void cmdLogs(String nav) {
+	public static void cmdLogs(String alert) {
 
 		String page = "cmdlogs";
-		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
+		String topnav = "commands";
 
 		try {
 			
@@ -84,7 +84,7 @@ public class Logs extends Controller {
 					
 				}});
 
-			render(page, topnav, logFiles, lastRefreshed);
+			render(page, topnav, logFiles, lastRefreshed, alert);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
@@ -96,10 +96,10 @@ public class Logs extends Controller {
 	 * job logs
 	 * @param date
 	 */
-	public static void jobLogs(String nav) {
+	public static void jobLogs(String alert) {
 
 		String page = "joblogs";
-		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
+		String topnav = "jobs";
 
 		try {
 			
@@ -127,7 +127,8 @@ public class Logs extends Controller {
 					
 				}});
 
-			render(page, topnav, logFiles, lastRefreshed);
+			render(page, topnav, logFiles, lastRefreshed, alert);
+			
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
@@ -139,10 +140,10 @@ public class Logs extends Controller {
 	 * job logs
 	 * @param date
 	 */
-	public static void wfLogs(String nav) {
+	public static void wfLogs(String alert) {
 
 		String page = "wflogs";
-		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
+		String topnav = "workflows";
 
 		try {
 			
@@ -170,7 +171,8 @@ public class Logs extends Controller {
 					
 				}});
 
-			render(page, topnav, logFiles, lastRefreshed);
+			render(page, topnav, logFiles, lastRefreshed, alert);
+			
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
@@ -221,7 +223,8 @@ public class Logs extends Controller {
 				redirectTarget = "Logs.wfLogs";
 				break;
 			}
-			redirect(redirectTarget);
+			String alert = String.format("%s deleted", name);
+			redirect(redirectTarget, alert);
 			
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -285,10 +288,12 @@ public class Logs extends Controller {
 							String logType,
 							String logId,
 							String aggField,
-							String aggRegEx) 
+							String aggRegEx,
+							String nav) 
 	{
 		String page = "cmdLogs";
-		String topnav = "logs";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
+		
 		String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
 		
 		try {
@@ -344,7 +349,7 @@ public class Logs extends Controller {
 	 */
 	public static void index() {
 		
-		redirect("Logs.cmdLogs", (String) null);
+		redirect("Logs.exploreFiles", (String) null);
 
 	}
 

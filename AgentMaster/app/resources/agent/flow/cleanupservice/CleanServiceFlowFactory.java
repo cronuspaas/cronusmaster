@@ -108,7 +108,7 @@ public class CleanServiceFlowFactory {
 							"https://host:12020/services/serviceName/action/deactivatemanifest", "host", "serviceName"), HttpMethod.POST);
 					deactivateReq.addHeader("content-type", "application/json").addHeader("Authorization", "Basic <agentAuthKey>");
 					UrlTemplate pollReq = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:12020/status/uuid", "host", "uuid"));
-					req2.setAsyncPollTaskOption("httpClient", deactivateReq, new ExecuteOption(0, 0, 3, 0), pollReq, new MonitorOption(0, 5*1000L, 120*1000L, 3, 0), "agentPollProcessor");
+					req2.setAsyncPollTaskOption("httpClient", deactivateReq, new ExecuteOption(0, 0, 3, 0), pollReq, new MonitorOption(0, 5, 120, 3, 0), "agentPollProcessor");
 					req2.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(
 							"serviceName", context.getServiceName()));
 					req2.setHosts(((HashSet<String>)context.getFromScrapbook("hostNeedDeactivate")).toArray(new String[0]));

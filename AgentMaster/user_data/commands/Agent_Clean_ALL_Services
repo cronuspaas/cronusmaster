@@ -1,5 +1,5 @@
 {
-  "name" : "Agent_Clean_Services",
+  "name" : "Agent_Clean_ALL_Services",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",

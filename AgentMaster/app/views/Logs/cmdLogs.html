@@ -37,11 +37,11 @@
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
 					<td>   
-						<a target=_self href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
+						<a target=_self href="/logs/aggregate?nav=${topnav}&logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
 						<i class="fa fa-list fa-lg"></i></a> 
 					</td>  
 					<td>   
-						<a target=_self href='javascript:runCmd("${logObj.type}", "${logObj.name}")'>
+						<a target=_self href="/commands/runCmdFromLog?logType=${logObj.type}&logId=${logObj.name}">
 						<i class="fa fa-magic fa-lg"></i></a> 
 					</td>  
 					<td>   
@@ -59,14 +59,6 @@
 		</table>
 
 	</div>
-
-<script language="javascript"> 
-
-   function runCmd(logType, logId){
-      $.post("/commands/runCmdFromLog", { logType: logType, logId: logId } );
-   }
-
-</script>
 
 #{include 'tags/refresh.html'/}
 </div>

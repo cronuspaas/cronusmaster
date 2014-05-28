@@ -9,6 +9,7 @@ import resources.TaskResourcesProvider.LogFlowEventListener;
 import resources.UserDataProvider;
 import resources.log.BaseLog.UserWorkflow;
 import resources.log.FlowLog;
+import resources.log.IJobLogger;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
 import resources.utils.DataUtil;
@@ -43,6 +44,8 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 			flowLog.setCommandKey(workflow.getFlowName());
 			flowLog.setNodeGroup(ng);
 			flowLog.setUserWorkflow(userWorkflow);
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			logger.saveLog(flowLog);
 
 			// save and run flow
 			flow.addEventListener(new LogFlowEventListener(flowLog));

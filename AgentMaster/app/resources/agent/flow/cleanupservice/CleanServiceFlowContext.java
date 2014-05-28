@@ -19,16 +19,18 @@ public class CleanServiceFlowContext extends FlowContext {
 	
 	// user data
 	@CtxProp(isUserData=true, sampleUserDataValue="10.10.10.10", saveType=CtxSaveType.NoSave)
-	private String[] hosts;
+	private List<String> hosts;
+	
 	@CtxProp(isUserData=true, sampleUserDataValue="myservice", saveType=CtxSaveType.NoSave)
 	private String serviceName;
+
 	@CtxProp(isUserData=true, sampleUserDataValue="UNLIMITED,0", saveType=CtxSaveType.NoSave)
 	private BatchOption batchOption;
 	
-	public String[] getHosts() {
+	public List<String> getHosts() {
 		return hosts;
 	}
-	public void setHosts(String[] hosts) {
+	public void setHosts(List<String> hosts) {
 		this.hosts = hosts;
 	}
 	public String getServiceName() {

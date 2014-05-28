@@ -227,7 +227,9 @@ public class Config extends Controller {
 	 * @param dataType
 	 * @param configName
 	 */
-	public static void deleteConfig(String dataType, String configName) {
+	public static void deleteConfig(String dataType, String configName, String nav) {
+
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
 			if (dataType == null) {
@@ -242,7 +244,7 @@ public class Config extends Controller {
 			// reload after
 			UserDataProvider.reloadAllConfigs();
 			
-			redirect("Config.showConfigs", dataType, alert);
+			redirect("Config.showConfigs", dataType, alert, topnav);
 
 		} catch (Exception e) {
 			e.printStackTrace();

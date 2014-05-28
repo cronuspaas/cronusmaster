@@ -39,9 +39,27 @@ public class InstallAgentFlowContext extends FlowContext {
 	@CtxProp(isUserData=true, sampleUserDataValue="rsa_id_passphrase", saveType=CtxSaveType.NoSave)
 	private String passPhrase;
 	
+	@CtxProp(isUserData=true, sampleUserDataValue="/var", saveType=CtxSaveType.NoSave)
+	private String installRoot;
+	
+	@CtxProp(isUserData=true, sampleUserDataValue="0.1.23", saveType=CtxSaveType.NoSave)
+	private String version;
+	
 	@CtxProp(isUserData=true, sampleUserDataValue="UNLIMITED,0", saveType=CtxSaveType.NoSave)
 	private BatchOption batchOption;
 	
+	public String getInstallRoot() {
+		return installRoot;
+	}
+	public void setInstallRoot(String installRoot) {
+		this.installRoot = installRoot;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
 	public List<String> getHosts() {
 		return hosts;
 	}

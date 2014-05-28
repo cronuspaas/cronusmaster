@@ -86,7 +86,9 @@ public class InstallAgentFlowFactory {
 												}
 											});
 											
-											String agentInstallCmd = "curl -sS 'https://raw.githubusercontent.com/yubin154/cronusagent/master/agent/scripts/agent_install/install_agent' | sudo pkg_ver=0.1.6 target_dir=/var bash";
+											String agentInstallCmd = String.format("curl -sS 'https://raw.githubusercontent.com/yubin154/cronusagent" +
+													"/master/agent/scripts/agent_install/install_agent' | sudo pkg_ver=%s target_dir=%s bash", 
+													context.getVersion(), context.getInstallRoot());
 											SshUtils.execCmd(session, agentInstallCmd);
 											
 										} 

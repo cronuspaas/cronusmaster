@@ -53,3 +53,10 @@ var getAlertAndWrite=function(alert){
 	#{if (topnav == "logs")} #{include 'Logs/lognav.html'/} #{/if}	
 	#{if (topnav == "config")} #{include 'Config/confignav.html'/} #{/if}	
 	
+	
+	<script type="text/javascript">	
+		getAlertAndWrite("${alert}");
+	</script>
+
+	
+	

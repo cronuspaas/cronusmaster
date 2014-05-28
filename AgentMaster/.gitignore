@@ -25,3 +25,9 @@ ebay.log.*
 *.plaintext.nonconcise.txt
 *.plaintext.concise.txt
 temp_persist_config_012.xml
+
+
+user_data/cmd_logs/
+user_data/flow_logs/
+user_data/job_logs/
+user_data/adhoc_nodegroups/

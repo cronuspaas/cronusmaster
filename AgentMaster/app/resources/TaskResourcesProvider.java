@@ -71,6 +71,11 @@ public class TaskResourcesProvider {
 		
 	}
 
+	/**
+	 * handle task execution event by task runner
+	 * @author binyu
+	 *
+	 */
 	public static final class LogTaskEventHandler extends SimpleTaskEventHandler<FlowContext> {
 		
 		private final BaseLog jobLog;

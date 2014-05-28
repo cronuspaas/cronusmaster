@@ -19,6 +19,7 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import resources.TaskResourcesProvider.LogFlowEventListener;
 import resources.UserDataProvider;
 import resources.log.BaseLog.UserWorkflow;
 import resources.log.FlowLog;
+import resources.log.IJobLogger;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
 import resources.utils.DataUtil;
@@ -171,6 +173,8 @@ public class Workflows extends Controller {
 			UserWorkflow userWorkflow = new UserWorkflow();
 			flowLog.setNodeGroup(ng);
 			flowLog.setUserWorkflow(userWorkflow);
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			logger.saveLog(flowLog);
 
 			// save and run flow
 			flow.addEventListener(new LogFlowEventListener(flowLog));
@@ -203,7 +207,7 @@ public class Workflows extends Controller {
 		values.put("batchOption", new BatchOption(maxRate, strategy));
 		
 		String[] hosts = ng.getHosts();
-		values.put("hosts", hosts);
+		values.put("hosts", Arrays.asList(hosts));
 		
 		FlowSession flow = FlowSessionFactory.getInstance().createSession(workflow.getFlowName());
 		flow.getSessionContext().addUserData(values);

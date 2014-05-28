@@ -46,6 +46,7 @@ import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
 import resources.log.CmdLog;
+import resources.log.IJobLogger;
 import resources.log.ILog;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.INodeGroup;
@@ -231,12 +232,18 @@ public class Commands extends Controller {
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			logger.saveLog(jobLog);
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog));
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+			
+			String alert = String.format("%s fired on %s successfully ", agentCommandType, nodeGroupType);
+			
+			redirect("Logs.cmdLogs", alert);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,6 +289,9 @@ public class Commands extends Controller {
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			logger.saveLog(jobLog);
+
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
