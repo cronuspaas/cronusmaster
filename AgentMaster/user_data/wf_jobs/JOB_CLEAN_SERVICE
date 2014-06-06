@@ -1,0 +1,1 @@
+{"name":"JOB_CLEAN_SERVICE","intervalInMinute":30,"enabled":false,"cmdName":"CleanService","nodeGroupName":"MY_DEVCLOUD_HOST","userData":{"thrStrategy":"","thr_rate":"","var_values":"{\"serviceName\":\"cms1\"}"},"description":"Run CleanService on MY_DEVCLOUD_HOST every 30 minute"}

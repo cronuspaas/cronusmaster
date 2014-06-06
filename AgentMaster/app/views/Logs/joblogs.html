@@ -1,0 +1,63 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+
+#{data-table-init tableName:'log-list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+<h3 style="text-transform: uppercase">Log Analysis with Response Aggregation</h3>		 
+
+	<div  id="agent-list-all-row">
+		<br/>
+			#{table-declare tableName:'log-list-all' /}
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Job</th>
+					<th>Command</th>
+					<th>NodeGroup</th>
+					<th>TimeStamp</th>
+					<th>Download</th>
+					<th>Aggregation</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:logFiles, as:'logObj'}
+				<tr>
+					<td>${logObj_index}</td>
+					<td>
+						<a target=_blank href="/config/viewConfigItem/command/${logObj.jobName}" >${logObj.jobName}</a> 
+					</td>
+					<td>
+						<a target=_blank href="/config/viewConfigItem/command/${logObj.command}" >${logObj.command}</a> 
+					</td>
+					<td>
+					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a> 
+					</td>
+					<td>${logObj.timeStampDisplay}</td>					
+					<td>   
+						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
+					</td>   
+					<td>   
+						<a target=_blank href="/logs/aggregate?logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
+						<i class="fa fa-list fa-lg"></i></a> 
+					</td>  
+					<td>   
+						<a target=_self href="/logs/delete?type=${logObj.type}&name=${logObj.name}" >
+						<i class="fa fa-trash-o fa-lg"></i></a> 
+					</td>  
+					
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+
+#{include 'tags/refresh.html'/}
+
+</div>
+
+	#{include 'Application/footer.html'/}
+</body>
+</html>

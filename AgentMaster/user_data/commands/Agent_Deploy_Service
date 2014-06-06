@@ -1,0 +1,52 @@
+{
+  "name" : "Agent_Deploy_Service",
+  "httpTaskRequest" : {
+    "taskType" : "asyncpoll",
+    "httpClientType" : "httpClient",
+    "executionOption" : {
+      "timeOutSec" : 0,
+      "initDelaySec" : 0,
+      "maxRetry" : 3,
+      "retryDelaySec" : 0
+    },
+    "urlTemplate" : {
+      "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
+      "method" : "POST",
+      "body" : {
+        "manifest" : "<manifestName>",
+        "package" : "<package>"
+      },
+      "headers" : {
+        "content-type" : "application/json",
+        "Authorization" : "Basic <agentAuthKey>"
+      },
+      "parameters" : {
+      }
+    },
+    "monitorOption" : {
+      "timeOutSec" : 0,
+      "initDelaySec" : 0,
+      "maxRetry" : 3,
+      "retryDelaySec" : 0,
+      "intervalSec" : 10
+    },
+    "pollTemplate" : {
+      "url" : "https://<host>:12020/status/<uuid>",
+      "method" : "GET",
+      "body" : {
+      },
+      "headers" : {
+        "content-type" : "application/json"
+      },
+      "parameters" : {
+      }
+    },
+    "resProcessorName" : "agentPollProcessor",
+    "globalContext" : "agentAuthKeyContext"
+  },
+  "userData" : {
+    "serviceName" : "myservice",
+    "manifestName" : "manifestName",
+    "package" : "array of http pkg locations"
+  }
+}

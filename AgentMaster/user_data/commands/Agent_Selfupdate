@@ -1,0 +1,51 @@
+{
+  "name" : "Agent_Selfupdate",
+  "httpTaskRequest" : {
+    "taskType" : "asyncpoll",
+    "httpClientType" : "httpClient",
+    "executionOption" : {
+      "timeOutSec" : 0,
+      "initDelaySec" : 0,
+      "maxRetry" : 3,
+      "retryDelaySec" : 0
+    },
+    "urlTemplate" : {
+      "url" : "https://<host>:12020/agent/selfupdate",
+      "method" : "POST",
+      "body" : {
+        "wisbSource" : "<source>",
+        "version" : "<agentVersion>"
+      },
+      "headers" : {
+        "content-type" : "application/json",
+        "Authorization" : "Basic <agentAuthKey>"
+      },
+      "parameters" : {
+      }
+    },
+    "monitorOption" : {
+      "timeOutSec" : 0,
+      "initDelaySec" : 0,
+      "maxRetry" : 3,
+      "retryDelaySec" : 0,
+      "intervalSec" : 10
+    },
+    "pollTemplate" : {
+      "url" : "https://<host>:12020/status/<uuid>",
+      "method" : "GET",
+      "body" : {
+      },
+      "headers" : {
+        "content-type" : "application/json"
+      },
+      "parameters" : {
+      }
+    },
+    "resProcessorName" : "agentPollProcessor",
+    "globalContext" : "agentAuthKeyContext"
+  },
+  "userData" : {
+    "source" : "source http location (e.g. http://somerepo/)",
+    "agentVersion" : "target agent version (e.g. 0.1.22)"
+  }
+}

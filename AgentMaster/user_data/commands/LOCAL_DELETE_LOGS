@@ -1,0 +1,27 @@
+{
+  "name" : "LOCAL_DELETE_LOGS",
+  "httpTaskRequest" : {
+    "taskType" : "async",
+    "httpClientType" : "httpClient",
+    "urlTemplate" : {
+      "url" : "http://<host>:9000/housekeeping/deleteLogs",
+      "method" : "POST",
+      "body" : {},
+      "headers" : {
+        "content-type" : "application/x-www-form-urlencoded"
+      },
+      "parameters" : {
+        "dataType" : "<dataType>",
+        "retainFactor" : "<retainFactor>",
+        "numToKeep" : "<numToKeep>"
+      }
+    },
+    "hosts" : [ "localhost" ],
+    "customHandler" : "logTaskEventHandler"
+  },
+  "userData" : {
+    "dataType" : "JOBLOG",
+    "retainFactor" : "name",
+    "numToKeep" : "1"
+  }
+}

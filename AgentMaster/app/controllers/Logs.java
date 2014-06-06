@@ -18,24 +18,29 @@ limitations under the License.
 package controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import models.data.LogFile;
-import models.data.LogFileGeneric;
-import models.data.providers.AgentConfigProvider;
-import models.data.providers.AgentDataProvider;
-import models.data.providers.LogProvider;
-import models.utils.DateUtils;
-import models.utils.FileIoUtils;
-import models.utils.VarUtils;
-import models.utils.VarUtils.CONFIG_FILE_TYPE;
+import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
+import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
+import resources.log.BaseLog;
+import resources.log.CmdLog;
+import resources.log.FlowLog;
+import resources.log.IJobLogger;
+import resources.log.ILog;
+import resources.log.JobLog;
+import resources.log.LogAggregation;
+import resources.log.LogAggregation.LogAggregationItem;
+import resources.utils.DataUtil;
+import resources.utils.DateUtils;
+import resources.utils.FileIoUtils;
 
 /**
  * 
@@ -44,184 +49,190 @@ import play.mvc.Controller;
  */
 public class Logs extends Controller {
 
-	public static void index(String date) {
+	/**
+	 * show logs
+	 * @param date
+	 */
+	public static void cmdLogs(String alert) {
 
-		String page = "index";
-		String topnav = "logs";
+		String page = "cmdlogs";
+		String topnav = "commands";
 
 		try {
-			LogProvider lp = LogProvider.getInstance();
-
-			List<LogFile> logFiles = lp
-					.getLogFilesInFolder(VarUtils.LOG_FOLDER_NAME_APP_WITH_SLASH);
-
-			if (date == null) {
-				date = DateUtils.getTodaysDateStr();
+			
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			List<String> logs = logger.listLogs();
+			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+			
+			for (String logName : logs) {
+				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
+				HashMap<String, String> log = new HashMap<String, String>();
+				log.putAll(logMeta);
+				log.put("name", logName);
+				log.put("type", DataType.CMDLOG.name());
+				logFiles.add(log);
 			}
-
 			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
 
-			// 20130510105239921-0700-ADHOC_NODE_LIST_2_BK-GET_VI.jsonlog.txt
-			// 20130510111550089-0700-ADHOC_NODEGROUP_20130510111546633-0700-GET_VI.jsonlog.txt
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
+					
+				}});
 
-			render(page, topnav, logFiles, date, lastRefreshed);
+			render(page, topnav, logFiles, lastRefreshed, alert);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
 		}
+
 	}
 
-	public static void adhocLog(String date) {
+	/**
+	 * job logs
+	 * @param date
+	 */
+	public static void jobLogs(String alert) {
 
-		String page = "adhoc";
-		String topnav = "logs";
+		String page = "joblogs";
+		String topnav = "jobs";
 
 		try {
-			LogProvider lp = LogProvider.getInstance();
-			List<LogFile> logFiles = lp
-					.getLogFilesInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_WITH_SLASH);
-
-			if (date == null) {
-				date = DateUtils.getTodaysDateStr();
+			
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.JOBLOG);
+			List<String> logs = logger.listLogs();
+			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+			
+			for (String logName : logs) {
+				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
+				HashMap<String, String> log = new HashMap<String, String>();
+				log.putAll(logMeta);
+				log.put("name", logName);
+				log.put("type", DataType.JOBLOG.name());
+				logFiles.add(log);
 			}
+			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
 
-			render(page, topnav, logFiles, date, lastRefreshed);
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
+					
+				}});
+
+			render(page, topnav, logFiles, lastRefreshed, alert);
+			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderJSON("Error occured in adhocLog of logs");
+			renderJSON("Error occured in index of logs");
 		}
+
 	}
 
-	public static void noneStandardLog(String date) {
+	/**
+	 * job logs
+	 * @param date
+	 */
+	public static void wfLogs(String alert) {
 
-		String page = "noneStandard";
-		String topnav = "logs";
+		String page = "wflogs";
+		String topnav = "workflows";
 
 		try {
-			LogProvider lp = LogProvider.getInstance();
-			List<LogFileGeneric> logFileGenerics = lp
-					.getLogFileGenericsInFolder(VarUtils.LOG_FOLDER_NAME_NONESTARDARD_WITH_SLASH);
-
-			if (date == null) {
-				date = DateUtils.getTodaysDateStr();
+			
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			List<String> logs = logger.listLogs();
+			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+			
+			for (String logName : logs) {
+				Map<String, String> logMeta = FlowLog.getLogMetaFromName(logName);
+				HashMap<String, String> log = new HashMap<String, String>();
+				log.putAll(logMeta);
+				log.put("name", logName);
+				log.put("type", DataType.FLOWLOG.name());
+				logFiles.add(log);
 			}
+			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
 
-			render(page, topnav, logFileGenerics, date, lastRefreshed);
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
+					
+				}});
+
+			render(page, topnav, logFiles, lastRefreshed, alert);
+			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderJSON("Error occured in noneStandardLog of logs");
-		}
-	}
-
-
-	public static void getLogContent(String logFileName) {
-
-		try {
-
-			String filePath = FileIoUtils.getLogFilePathPrefix(logFileName)
-					+ logFileName;
-			String fileContent = FileIoUtils.readFileToString(filePath);
-			renderText(fileContent);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error occured in index of logs");
+			renderJSON("Error occured in index of logs");
 		}
 
 	}
 
-	public static void getFileContent(String filePath) {
+	/**
+	 * download log file
+	 * @param type
+	 * @param name
+	 */
+	public static void download(String type, String name) {
 
 		try {
 
-			String fileContent = FileIoUtils.readFileToString(filePath);
-			renderText(fileContent);
+			DataType dtype = DataType.valueOf(type);
+			String fileContent = UserDataProvider.getUserDataDao().readData(dtype, name);
+			
+			renderJSON(fileContent);
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderText("Error occured in getFileContent of logs"
-					+ DateUtils.getNowDateTimeStrSdsm());
+			renderJSON(DataUtil.jsonResult("Error occured in index of logs"));
 		}
 
 	}
 
-	public static void archiveAppLogs(String archiveDate) {
+	/**
+	 * delete log file
+	 * @param type
+	 * @param name
+	 */
+	public static void delete(String type, String name) {
 
 		try {
-			boolean success = LogProvider.archiveAppLogsOnDate(archiveDate);
-
-			if (success) {
-
-				renderText("Success archive app logs into folder "
-						+ archiveDate);
-			} else {
-				renderText("Error occured in archive app logs " + archiveDate);
+			
+			DataType dtype = DataType.valueOf(type.toUpperCase());
+			UserDataProvider.getUserDataDao().deleteData(dtype, name);
+			String redirectTarget = null;
+			switch(dtype) {
+			case CMDLOG:
+				redirectTarget = "Logs.cmdLogs";
+				break;
+			case JOBLOG:
+				redirectTarget = "Logs.jobLogs";
+				break;
+			case FLOWLOG:
+				redirectTarget = "Logs.wfLogs";
+				break;
 			}
+			String alert = String.format("%s deleted", name);
+			redirect(redirectTarget, alert);
+			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderText("Error occured in archive app logs ");
+			renderJSON(t);
 		}
 
-	}// end func
-
-	public static void deleteAppLogs(String deleteDate) {
-
-		try {
-			boolean success = LogProvider.deleteAllAppLogsOnDate(deleteDate);
-
-			if (success) {
-
-				renderText("Success deleteAllAppLogsOnDate with date "
-						+ deleteDate);
-			} else {
-				renderText("Error occured in deleteAllAppLogsOnDate on date "
-						+ deleteDate);
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error occured in archive app logs ");
-		}
-
-	}// end func
-
-	public static void archiveAppLogsDailyJob() {
-
-		try {
-			boolean success = LogProvider.archiveAppLogsDailyJob();
-
-			if (success) {
-
-				renderText("Success archiveAppLogsDailyJob");
-			} else {
-				renderText("Error archiveAppLogsDailyJob");
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error archiveAppLogsDailyJob");
-		}
-
-	}// end func
-
-	public static void deleteAppLogsDailyJob() {
-
-		try {
-			boolean success = LogProvider.deleteAppLogsDailyJob();
-			if (success) {
-				renderText("Success deleteAppLogsDailyJob");
-			} else {
-				renderText("Error deleteAppLogsDailyJob");
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderText("Error deleteAppLogsDailyJob");
-		}
-
-	}// end func
-
+	}
+	
 	/**
 	 * Generic display any files.
 	 * 
@@ -252,40 +263,96 @@ public class Logs extends Controller {
 
 	}// end func
 
-	public static void deleteAllAppLogs(String pin) {
-		if (pin == null) {
-			renderText("Authorization required. Please input the right PIN (Password) to this command. Thanks for your cooperation. "
-					+ DateUtils.getNowDateTimeStrSdsm());
-		} else if (!pin.equals(VarUtils.SUPERMAN_PIN)) {
-			renderText("Authorization required. Please input the right PIN (Password) to this command. Thanks for your cooperation. "
-					+ DateUtils.getNowDateTimeStrSdsm());
-		}
+	/**
+	 * file content
+	 * @param filePath
+	 */
+	public static void getFileContent(String filePath) {
 
 		try {
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_APP_WITH_SLASH);
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_WITH_SLASH);
 
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_NONESTARDARD_WITH_SLASH);
-
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_COMPONENTS_AGGREGATION_RULES
-							+ "/");
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_COMPONENTS_COMMANDS
-							+ "/");
-			FileIoUtils
-					.deleteAllFileAndDirInFolder(VarUtils.LOG_FOLDER_NAME_ADHOC_COMPONENTS_NODE_GROUPS
-							+ "/");
-
-			renderText("Success deleteAllAppLogs logs in all logs folder ");
+			String fileContent = FileIoUtils.readFileToString(filePath);
+			renderText(fileContent);
 		} catch (Throwable t) {
 			t.printStackTrace();
-			renderText("Error occured in deleteAllAppLogs of Json logs");
+			renderText("Error occured in getFileContent of logs"
+					+ DateUtils.getNowDateTimeStrSdsm());
 		}
 
-	}// end func
+	}
+
+	/**
+	 * aggregate result
+	 */
+	public static void aggregate(
+							String logType,
+							String logId,
+							String aggField,
+							String aggRegEx,
+							String nav) 
+	{
+		String page = "cmdLogs";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
+		
+		String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+		
+		try {
+			DataType type = DataType.valueOf(logType.toUpperCase());
+			ILog alog = UserDataProvider.getJobLoggerOfType(type).readLog(logId);
+			String agentCommandType = null;
+			String nodeGroupType = null;
+			String dataType = null;
+			List<String> regExs = null;
+			LogAggregation logAggregation = null;
+			
+			if (alog instanceof CmdLog) {
+				CmdLog log = (CmdLog) alog;
+				agentCommandType = log.getCommandKey();
+				nodeGroupType = log.getNodeGroup().getName();
+				dataType = log.getNodeGroup().getType();
+				regExs = UserDataProvider.getCommandConfigs().getCommandByName(log.getCommandKey()).getAggRegexs();
+				logAggregation = log.aggregate(aggField, aggRegEx);
+			}
+			else if (alog instanceof JobLog)  {
+				JobLog log = (JobLog) alog;
+				agentCommandType = log.getCommandKey();
+				nodeGroupType = log.getNodeGroup().getName();
+				dataType = log.getNodeGroup().getType();
+				regExs = UserDataProvider.getCommandConfigs().getCommandByName(log.getCommandKey()).getAggRegexs();
+				logAggregation = log.aggregate(aggField, aggRegEx);
+			}
+			
+			ArrayList<Map<String, String>> aggList = new ArrayList<Map<String,String>>();
+			for (Entry<String, LogAggregationItem> aggEntry : logAggregation.getAggregations().entrySet()) {
+				Map<String, String> agg = new HashMap<String, String>();
+				agg.put("value", aggEntry.getKey());
+				agg.put("matchField", aggField);
+				agg.put("matchRegEx", aggRegEx);
+				agg.put("nodeCount", Integer.toString(aggEntry.getValue().count));
+				agg.put("nodes", StringUtil.join(aggEntry.getValue().hosts, "\n"));
+				aggList.add(agg);
+			}
+			HashMap<String, String> logMeta = new HashMap<String, String>();
+			logMeta.put("logType", logType);
+			logMeta.put("logId", logId);
+			logMeta.put("aggField", aggField);
+			render(page, topnav, aggList, lastRefreshed, agentCommandType, nodeGroupType, dataType, regExs, logMeta);
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+	}
+
+	/**
+	 * index page
+	 */
+	public static void index() {
+		
+		redirect("Logs.exploreFiles", (String) null);
+
+	}
+
+
 
 }

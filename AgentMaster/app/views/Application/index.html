@@ -34,11 +34,6 @@
             
      <br/> 
     </p>	
-	 <p>
-     <i class="fa fa-magic fa-lg"></i>&nbsp; Command Wizard on &nbsp; <a href="/commands/wizard" class="btn btn-primary">Predefined Nodes</a>
-     &nbsp;&nbsp;
-      <a href="/wizards/wizardToAdhocNodeGroup" class="btn btn-primary" >Ad hoc Nodes</a>
-    </p>
 	  
      <ul class="masthead-links">
      
@@ -70,27 +65,12 @@
    <ul class="bs-docs-social-buttons">
     
       <li>
-         <a href="/config/editConfig/nodegroup" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i> Edit Nodes</a>
+         <a href="config/showConfigs/nodegroup" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i>Manage Predefined Nodes</a>
       </li>
       
       <li>
-         <a href="/config/editConfig/agentcommand" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i> Edit Commands</a>
+         <a href="config/showConfigs/command" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i>Manage Commands</a>
       </li>
- 
-       <li>
-         <a href="/config/editConfig/aggregation" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i> Edit Aggregation</a>
-      </li>
-      
-      <li>
-         <a href="/config/editConfig/httpheader" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i> Edit HTTP Header</a>
-      </li>
-      
-      <li>
-         <a href="/config/reloadConfig" class="btn btn-small" target="_blank"><i class="fa fa-refresh"></i> Reload Config</a>
-      </li>
-      
-            
-      
       
     </ul>
 
@@ -105,42 +85,32 @@
 	<div class="span6">
 		<div class="feat-a">
 			<div class="feat">
-				<h1><a href="/" style="text-decoration: none"> ${metricMap.get("totalNodeCountInDataMapValid")}</a></h1>
+				<h1><a href="/" style="text-decoration: none"> ${metricMap.get("totalNodeCount")}</a></h1>
 				<p class="lead">
-				<abbr title="Number of servers with requests/response stored in 'valid data' hashmap in memory (excluding adhoc node groups). Use URL /agents/getAgentData to obtain the raw data (may be huge)">Nodes with Cmds: Predefined</abbr>
+				<abbr title="Number of servers in predefined node groups">Predefined Nodes</abbr>
 				</p>
 				
 			</div>
 		</div>
 		<div class="feat-b">
 			<div class="feat">
-			<h1><a href="/" style="text-decoration: none"> ${metricMap.get("totalNodeGroupCountInAdhocNodeGroup")}</a></h1>
+			<h1><a href="/" style="text-decoration: none"> ${metricMap.get("totalCmdCount")}</a></h1>
 				<p class="lead">
-				<abbr title="Number of ad hoc node groups with requests stored in memory.">Node Groups: Ad hoc</abbr>
+				<abbr title="Number of Commands">Commands</abbr>
 				</p>
 			</div>
 		</div>
 
 		<div class="clearfix"></div>
 		
-		<div class="feat">
-			<div class="feat">
-				<h2>${metricMap.get("lastRefreshDataValid")}</h2>
-				<p class="lead">Valid Data Last Refreshed</p>
-			</div>
-		</div>
-
-
-		<div class="clearfix"></div>
-
 	</div>
 	<div class="span6">
 
 		<div class="feat-a">
 			<div class="feat">
-				<h1><a href="/commands" style="text-decoration: none"> ${metricMap.get("totalCommandCountInAgentCommandMetadatas")} </a> </h1>
+				<h1><a href="/commands" style="text-decoration: none"> ${metricMap.get("totalWfCount")} </a> </h1>
 				<p class="lead">
-				<abbr title="Number of http requests defined in /conf/agentcommand.conf">Commands in Config</abbr>
+				<abbr title="Number of Workflows">Workflows</abbr>
 				</p>
 				
 				
@@ -148,55 +118,20 @@
 		</div>
 		<div class="feat-b">
 			<div class="feat">
-			<h1><a href="/nodeGroups" style="text-decoration: none"> ${metricMap.get("totalNodeCountInNodeGroupMetadatas")}</a></h1>
+			<h1><a href="/nodeGroups" style="text-decoration: none"> ${metricMap.get("totalJobCount")}</a></h1>
 				
 				<p class="lead">
-				<abbr title="Number of servers Commander can reach (Remove duplicated). Server list obtained in /conf/nodegroup.conf">Nodes in Config</abbr>
+				<abbr title="Number of Jobs">Jobs</abbr>
 				</p>
 				
 			</div>
 		</div>
 		<div class="clearfix"></div>
 
-		<div class="feat">
-			<div class="feat">
-			<h2>${metricMap.get("lastRefreshDataInProgress")}</h2>
-				<p class="lead">InProgress Data Last Refreshed</p>
-			</div>
-		</div>
-
-		<div class="clearfix"></div>
 	</div>
 </div>
 
 <br/>
-<div class="row">
- 	<div class="span6" style="text-align: left ">
- 	       
- 	</div> 
- 	
- 	<div class="span6" style="text-align: right ">
-	 	<span class="label label-info">Memory (MB) ${performaUsage.getSummary()} Free Disk (GB) ${diskUsage.getFreeSpaceGbStr()}</span>
- 	</div> 
- 	 <div class="span6" style="text-align: left ">
- 	       
- 	</div> 
- 	
- 	<div class="span6" style="text-align: right ">
-	 <span class="label label-info">Open Source Version 2014.03.17M1  RunCron: ${metricMap.get("runCronJob")}    RunningJob# ${metricMap.get("runningJobCount")}</span> 
- 	</div> 	
- 	
-
- 	
- 		<div class="span6" style="text-align: left ">
- 	   
- 	</div> 
- 	
- 	<div class="span6" style="text-align: right ">
-	 	<span class="label label-info"> Host ${metricMap.get("localHostName")}</span> 
- 	</div> 	
-</div>	
-
 <br/><br/>
 </div>	
 

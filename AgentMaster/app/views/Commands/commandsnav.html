@@ -4,13 +4,8 @@
 <ul class="nav nav-tabs">
 
 <li #{if (page == "index")} class="active" #{/if}><a href="/commands"><i class="fa fa-search"></i> Summary</a></li>
-<li #{if (page == "wizard")} class="active" #{/if}><a href="/commands/wizard"><i class="fa fa-magic"></i> Wizard</a></li>
-<li #{if (page == "editConfigagentcommand")} class="active" #{/if}><a href="/config/editConfig/agentcommand" target="_blank" ><i class="fa fa-pencil"></i> Edit Command Config</a></li>
-<li #{if (page == "getAgentCommand")} class="active" #{/if}><a href="/config/getAgentCommand" target="_blank" ><i class="fa fa-search"></i> Current Commands</a></li>
-<li #{if (page == "commonCommands")} class="active" #{/if}><a href="/commands/common"><i class="fa fa-search"></i> Common</a></li>
-<li #{if (page == "reloadConfig")} class="active" #{/if}><a href="/config/reloadConfig?type=AGENTCOMMAND"  target="_blank" ><i class="fa fa-refresh"></i> Reload Config </a></li>
-
-
+<li #{if (page == "showConfigscommand")} class="active" #{/if}><a href="/config/showConfigs/command?nav=commands"><i class="fa fa-search"></i> Manage</a></li>
+<li #{if (page == "cmdlogs")} class="active" #{/if}><a href="/logs/cmdlogs"><i class="fa fa-search"></i> Command Logs</a></li>
 
 </ul>
 <div class="row">
@@ -34,5 +29,10 @@ var getHttpMethodLabel=function(httpMethod){
 	 document.write(output);
 
 	 return;
+}
+
+displayList=function(mylist) {
+	var mylistNew = mylist.replace(/,/g, "<br/>");
+	document.write(mylistNew);
 }
 </script>

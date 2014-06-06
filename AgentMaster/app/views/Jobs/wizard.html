@@ -1,0 +1,187 @@
+#{include 'Application/top_head_wizard.html'/}
+#{include 'Application/top_nav.html'/}
+
+
+<div class="span6">
+	<button id="open-wizard" class="btn btn-primary">Job Wizard</button>
+ </div>
+  
+	<div class="wizard" id="wizard-jobs">
+			<h1>Create REST Job</h1>
+
+			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_requests">
+				<h3>Review Job Summary</h3>
+
+				<div class="wizard-input-section">
+					<p>
+						<strong>
+						Now review the job details for command, target, and user data 
+						</strong>
+					    <div class="row">
+						<label class="span2">Node Group:</label>${meta.ng}
+					    </div>
+					    <div class="row">
+						<label class="span2">Command Type:</label>${meta.cmdType}
+					    </div>
+					    <div class="row">
+						<label class="span2">Command Key:</label>${meta.cmdKey}
+					    </div>
+					    <div class="row">
+						<label class="span2">User Data: </label>
+						<textarea class="input-large" disabled name="var_values" rows="5">${meta.userData}</textarea>
+					    </div>
+					</p>
+				</div>
+			</div>
+
+			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_job">
+				<h3>Save as a Job</h3>
+
+				<div class="wizard-input-section">
+					<p>
+						<strong>
+						Select options (job name, interval, intitial state) to save the job.
+						</strong>
+					</p>
+					
+				    <div class="row">
+					<label class="span1" for="job_name">Job Name:</label>
+					<input id="job_name" class="input-small" type="text" placeholder="Unique job name" required>
+				    </div>
+				    <div class="row">
+					<label class="span1" for="job_interval">Job Name:</label>
+					<input id="job_interval" class="input-small" type="text" placeholder="Recurring interval increment of 5 min"> X 5 MINUTE
+				    </div>
+				    <div class="row">
+					<label class="span5" class="checkbox">
+						<input id="job_status" type="checkbox" value="enable">
+						Enable this job to run at the recurring interval
+					</label>
+				    </div>
+				</div>
+			</div>
+
+			<div class="wizard-error">
+				<div class="alert alert-error">
+					<strong>There was a problem</strong> with your submission.
+					Please correct the errors and re-submit.
+				</div>
+			</div>
+
+			<div class="wizard-failure">
+				<div class="alert alert-error">
+					<strong>There was a problem</strong> submitting the form.
+					Please try again in a minute.
+				</div>
+			</div>
+
+			<div class="wizard-success" data-cardname="dcn_success">
+				<div class="alert alert-success">
+					<span class="create-server-name"></span>
+					Request was sent <strong>successfully.</strong>
+					
+				</div>
+				
+				<div class="btn-toolbar" id="response_btngroup">
+				</div>
+
+				<br/>
+
+				<div class="btn-toolbar" id="click_btngroup">
+				<a class="btn btn-success create-another-server">Make Change</a>
+				<a class="btn btn-success"href="/jobs" target="_self" >Done</a>
+				</div>
+			</div>
+
+		</div>
+
+</div>
+
+
+
+<script type="text/javascript">
+
+$(function() {
+	$.fn.wizard.logging = true;
+
+	var wizard = $("#wizard-jobs").wizard();
+
+	wizard.el.find(".wizard-ns-select").change(function() {
+		wizard.el.find(".wizard-ns-detail").show();
+	});
+
+	wizard.el.find(".create-server-service-list").change(function() {
+		var noOption = $(this).find("option:selected").length == 0;
+		wizard.getCard(this).toggleAlert(null, noOption);
+	});
+
+	wizard.on("submit", function(wizard) {
+		var submitData = {
+			"jobOptions": {
+				"job_name": $("#job_name").val(),
+				"job_interval": $("#job_interval").val(),
+				"job_status": $("#job_status").val()
+			}
+		};
+		
+	    $.ajax({
+	        url: "/jobs/saveJob?dataType=${meta.logType}&logId=${meta.logId}",
+	        type: "POST",
+	        data: submitData,
+	        timeout: 1800000,
+	        success: function() {
+	            wizard.submitSuccess(); // displays the success card
+	            wizard.hideButtons(); // hides the next and back buttons
+	            wizard.updateProgressBar(0); // sets the progress meter to 0
+	        },
+	        
+	        error: function (xhr, ajaxOptions, thrownError) {
+	        	
+	        	errorSummary = "HTTP error status: " + xhr.status
+	            +" ThrowError: " + thrownError;
+	            
+	            $(".alert-error")
+	            .append("<strong>Error Summary:</strong><br/>")
+	            .append(errorSummary)
+	            .append("<br/><strong>Detail Error Message:</strong><br/>")
+	            .append(xhr.responseText);
+	            
+	            
+	            wizard.submitError(); // display the error card
+	            wizard.hideButtons(); // hides the next and back buttons
+	        }
+	    });		
+
+	});
+	
+
+	wizard.on("reset", function(wizard) {
+		wizard.setSubtitle("");
+		wizard.el.find("#new-server-fqdn").val("");
+		wizard.el.find("#new-server-name").val("");
+	});
+
+	wizard.el.find(".wizard-success .im-done").click(function() {
+		wizard.reset().close();
+	});
+
+	wizard.el.find(".wizard-success .create-another-server").click(function() {
+		wizard.reset();
+	});
+
+	$(".wizard-group-list").click(function() {
+		alert("Disabled for demo.");
+	});
+
+	$("#open-wizard").click(function() {
+		wizard.show();
+	});
+
+	wizard.show();
+});
+
+</script>
+
+
+</body>
+</html>

@@ -2,53 +2,123 @@
 #{include 'Application/top_nav.html'/}
 
 
-<div class="container">
-	#{include 'Commands/commandsnav.html'/}
-
-
- <div class="span6">
-        
-           	<button id="open-wizard" class="btn btn-primary">Command Wizard</button>
-  </div>
+<div class="span6">
+	<button id="open-wizard" class="btn btn-primary">Command Wizard</button>
+ </div>
   
-		<div class="wizard" id="wizard-commands">
+	<div class="wizard" id="wizard-commands">
 			<h1>Send REST Requests</h1>
 
 			<div class="wizard-card" data-cardname="name">
 				<h3>Select Target Nodes</h3>
-
-				<div class="wizard-input-section">
+					<div id="ng_class" class="btn-group" data-toggle="buttons-radio">
+    					<button id="ngp_button" type="button" class="btn btn-primary">Predefined</button>
+					    <button id="nga_button" type="button" class="btn btn-primary">Adhoc</button>
+					    <button id="nge_button" type="button" class="btn btn-primary">Embedded in Cmd</button>
+					</div>
+				
+				<div id="ng_predefined" class="wizard-input-section" style="display: none;">
 					<p>
 						<strong>
-						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/nodeGroups">here</a>. 
+						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/config/showConfigs/nodegroup">here</a>. 
 						</strong>
 					</p>
 
 					<select data-placeholder="Target nodes" style="width:350px;" class="chzn-select" id="target_nodes" >
 		                <option value=""></option>
-
 		            </select>
+				</div>
+				
+				<div id="ng_adhoc" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						Please enter target nodes by fqdn line by line (no additional symbols).
+						</strong>
+					</p>
+
+					<textarea class="input-xlarge" id="nodeListFromText" placeholder="host.phx.ebay.com" name="nodeListFromText" rows="5"></textarea>  
+				</div>
+				
+				<div id="ng_embed" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						Target nodes are defined in command itself. Please VERIFY the target nodes in command <a target="_blank" href="/config/showConfigs/command">here</a>.
+						</strong>
+					</p>
 
 				</div>
+
 			</div>
 
-			<div class="wizard-card" data-onload="" data-cardname="dcn_select_requests">
-				<h3>Select Requests</h3>
+			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_requests">
+				<h3>Customize Command</h3>
 
 				<div class="wizard-input-section">
 					<p>
 						<strong>
-						CAUTION: Please VERIFY the command you selected <a target="_blank" href="/commands">here</a>. 
+						Now customize the command for user inputs, execution, polling, and throttling settings 
 						</strong>
-						<br/>
-						Select the REST command on the target nodes.
 					</p>
-
-					<select data-placeholder="Commands" style="width:350px;" class="chzn-select" id="commands" >
-		                <option value=""></option>
-
-		            </select>
-
+    				<div class="tabbable tabs-left">
+    					<ul class="nav nav-tabs">
+							<li class="active" value="tab4"><a href="#tab4" data-toggle="tab">User Inputs</a></li>
+							<li value="tab1"><a href="#tab1" data-toggle="tab">Execution</a></li>
+							<li id="montab" value="tab2"><a href="#tab2" data-toggle="tab">Polling</a></li>
+							<li value="tab3"><a href="#tab3" data-toggle="tab">Throttling</a></li>
+    					</ul>
+    					<div class="tab-content">
+							<div class="tab-pane active" id="tab4">
+								<p>Variables in command: something</p>
+								<textarea class="input-large" id="var_values" placeholder='{"key": "value"}' name="var_values" rows="5"></textarea>
+							</div>
+							<div class="tab-pane" id="tab1">
+							    <div class="row">
+								<label class="span2" for="exe_initde">Initial Delay Second</label><input id="exe_initde" class="span1" type="text" placeholder="initial delay sec">
+							    </div>
+							    <div class="row">
+								<label class="span2" for="exe_to">Timeout Second</label><input id="exe_to" class="span1" type="text" placeholder="timeout sec">
+							    </div>
+							    <div class="row">
+								<label class="span2" for="exe_retry">Max Retry</label><input id="exe_retry" class="span1" type="text" placeholder="max retry">
+							    </div>
+							    <div class="row">
+								<label class="span2" for="exe_rede">Retry Delay Second</label><input id="exe_rede" class="span1" type="text" placeholder="retry delay sec">
+							    </div>						
+							</div>
+							<div class="tab-pane" id="tab2">
+							    <div class="row">
+								<label class="span2" for="mon_int">Poll Interval Second</label><input id="mon_int" class="span1" type="text" placeholder="poll interval sec">
+							    </div>						
+							    <div class="row">
+								<label class="span2" for="mon_initde">Initial Delay Second</label><input id="mon_initde" class="span1" type="text" placeholder="initial delay sec">
+							    </div>						
+							    <div class="row">
+								<label class="span2" for="mon_retry">Max Retry</label><input id="mon_retry" class="span1" type="text" placeholder="max retry">
+							    </div>						
+							    <div class="row">
+								<label class="span2" for="mon_rede">Retry Delay Second</label><input id="mon_rede" class="span1" type="text" placeholder="retry delay sec">
+							    </div>						
+							    <div class="row">
+								<label class="span2" for="mon_to">Timeout Second</label><input id="mon_to" class="span1 type="text" placeholder="timeout sec">
+							    </div>						
+							</div>
+							<div class="tab-pane" id="tab3" style="height:150px;">
+							    <div class="row">
+								<label class="span2" for="thrStrategy">Throttle Strategy</label>
+								<select data-placeholder="Throttling Strategy" style="width:350px;" class="chzn-select" id="thrStrategy" >
+		    					    <option value="UNLIMITED">UNLIMITED</option>
+		    			        	<option value="MAX_CONCURRENT_RATE_SLIDING">MAX_CONCURRENT_RATE_SLIDING</option>
+		            			</select>
+							    </div>						
+							    <div class="row">
+								<label class="span2" for="thr_rate">Throttle Rate</label>
+								<input id="thr_rate" class="input-small" type="text" placeholder="0">
+							    </div>						
+		            			<br/>
+								
+							</div>
+    					</div>
+    				</div>					
 				</div>
 			</div>
 
@@ -59,7 +129,7 @@
 					<p>Now will (1) generate requests, (2) insert data if needed (3) send request to target node group.
 					Responses normally take 10 seconds for 1000 nodes, less than 75 seconds for 20,000 nodes. Speed also depends on the timeout setting defined in application.conf. Please wait.  
 					</p>
-					<p><a href="/logs" target="_blank" >Check response logs</a></p>
+					<p><a href="/logs/cmdLogs" target="_blank" >Check response logs</a></p>
 				</div>
 			</div>
 
@@ -91,17 +161,14 @@
 
 				<div class="btn-toolbar" id="click_btngroup">
 				<a class="btn btn-success create-another-server">Send another request</a>
-				<a class="btn btn-success im-done">Done</a>
-				<a class="btn btn-success"href="/logs" target="_blank" >Response logs</a>
+				<a class="btn btn-success im-done" href="/commands" target="_self">Done</a>
+				<a class="btn btn-success" href="/logs/cmdLogs" target="_blank" >Response logs</a>
 				</div>
 			</div>
 
 		</div>
 
 </div>
-
-
-
 
 
 
@@ -168,39 +235,46 @@ function fqdn_or_ip(el) {
 	return ret;
 }
 
-
-
-
 $(function() {
+	// load command meta
+	var url = "/commands/getOptions/${cmdName}";
+	$.ajax({
+		dataType: "json",
+		url: url,
+	    success: function(json) {
+	    	$.each(json, function(idx, obj) {
+	    		if (obj.id=='mon_disabled' && obj.value=='true') {
+	    			$('#montab').hide();	    			
+	    		} 
+	    		else if (obj.id=='thrStrategy') {
+	    			$('#thrStrategy option[value="' + obj.value + '"]').prop('selected', true);
+	    		}
+	    		else {
+	    			$('#'+obj.id).val(obj.value);
+	    		}	    		
+			});	    	
+		}
+	});
+
 	$.fn.wizard.logging = true;
 
 	var wizard = $("#wizard-commands").wizard();
 
 	$(".chzn-select").chosen();
-	// console.log("!!!outside loop: + ${nodeGroupSourceMetadataListJsonArray}"  )
-	 
+	console.log("!!!outside loop: + ${nodeGroupSourceMetadataListJsonArray}"  )
+	
+	// populate nodegroup options 
 	var nodeGroupSourceMetadataListJsonArrayOld = "${nodeGroupSourceMetadataListJsonArray}";
 	var nodeGroupSourceMetadataListJsonArrayNew = nodeGroupSourceMetadataListJsonArrayOld.replace(/&quot;/g, '\"');
 	//console.log("!!!outside loop nodeGroupSourceMetadataListJsonArrayNew:" + nodeGroupSourceMetadataListJsonArrayNew  )
 	
-	var agentCommandMetadataListJsonArrayOld = "${agentCommandMetadataListJsonArray}";
-	var agentCommandMetadataListJsonArrayNew = agentCommandMetadataListJsonArrayOld.replace(/&quot;/g, '\"');
-	
-
-	 $($.parseJSON(nodeGroupSourceMetadataListJsonArrayNew)).map(function () {
+	$($.parseJSON(nodeGroupSourceMetadataListJsonArrayNew)).map(function () {
 	    console.log("!!!inside loop: " + this.nodeGroupType)
 		return $('<option>').val(this.nodeGroupType).text(this.nodeGroupType);
 	}).appendTo('#target_nodes');		 
 
-	 $("#target_nodes").trigger("liszt:updated");
+	$("#target_nodes").trigger("liszt:updated");
 	 
-	 $($.parseJSON(agentCommandMetadataListJsonArrayNew)).map(function () {
-		    console.log("!!!inside loop: " + this.nodeGroupType)
-			return $('<option>').val(this.agentCommandType).text(this.agentCommandType);
-		}).appendTo('#commands');		 
-
-		 $("#commands").trigger("liszt:updated");
-	
 	wizard.el.find(".wizard-ns-select").change(function() {
 		wizard.el.find(".wizard-ns-detail").show();
 	});
@@ -218,36 +292,38 @@ $(function() {
 	wizard.cards["dcn_send_requests"].on("validated", function(card) {
 		
 		var nodeGroupType = $("#target_nodes").val()
-		var agentCommandType = $("#commands").val()
-		var button1 ="<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/getAgentData?nodeGroupType="
-				+ nodeGroupType + "&agentCommandType=" +agentCommandType + "\">Response data</a>" 
-		var button2 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/aggregatePieChart?nodeGroupType="
-					+ nodeGroupType + "&agentCommandType=" +agentCommandType + "&rawDataSourceType=ALL_AGENT_DATA&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE\">Aggregation</a>" 
-		//var button3 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/aggregateMetrics?nodeGroupType="
-		//			+ nodeGroupType + "&agentCommandType=" +agentCommandType + "\">Number only plot</a>"
-		var button3 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/agents/aggregatePieChart?textOnly=true&nodeGroupType="
-					+ nodeGroupType + "&agentCommandType=" +agentCommandType + "&rawDataSourceType=ALL_AGENT_DATA&aggrRule=SUPERMAN_SPECIAL_STATUS_CODE\">Aggregation in text</a>" 
-		
-		
-		var button4 = "<a class=\"btn btn-info btn-middle \" target=\"_blank\" href=\"/config/editConfig/aggregation\">Edit Regex</a>" 
-		$('#response_btngroup').children().remove();
-		$("#response_btngroup").append(button1);
-		$("#response_btngroup").append(button2);
-		$("#response_btngroup").append(button3);
-		$("#response_btngroup").append(button4);
-		 //console.log("!!!!!!button1: " + button1)
-		 //console.log("!!!!!!button2: " + button2)
 		
 	});
 
 	wizard.on("submit", function(wizard) {
+		var dataType = $("#ngp_button").hasClass('active') ? "NODEGROUP" : "ADHOCNODEGROUP";
+		var nodeGroupType = $("#ngp_button").hasClass('active') ? $("#target_nodes").val() : $("#nodeListFromText").val();
+		var exeOptions = $("#exe_initde").val() + " ," + $("#exe_to").val() + " ," + $("#exe_retry").val() + " ," + $("#exe_rede").val() + " ";
+		var monOptions = $("#mon_int").val() + "," + $("#mon_initde").val() + "," + $("#mon_to").val() + "," + $("#mon_retry").val() + "," + $("#mon_rede").val();
+		var thrOptions = $("#thrStrategy").val() + "," + $("#thr_rate").val();
+		var varValues = $("#var_values").val();
 		var submitData = {
-			"nodeGroupType": $("#target_nodes").val(),
-			"agentCommandType": $("#commands").val()
+			"dataType": dataType,
+			"nodeGroupType": nodeGroupType,
+			"agentCommandType": "${cmdName}",
+			"options": {
+				"exe_initde": $("#exe_initde").val(),
+				"exe_to": $("#exe_to").val(),
+				"exe_retry": $("#exe_retry").val(),
+				"exe_rede": $("#exe_rede").val(),
+				"mon_int": $("#mon_int").val(),
+				"mon_initde": $("#mon_initde").val(),
+				"mon_to": $("#mon_to").val(),
+				"mon_retry": $("#mon_retry").val(),
+				"mon_rede": $("#mon_rede").val(),
+				"thrStrategy": $("#thrStrategy").val(),
+				"thr_rate": $("#thr_rate").val(),
+				"var_values": $("#var_values").val()
+			}
 		};
 		
 	    $.ajax({
-	        url: "/commands/generateUpdateSendAgentCommandToNodeGroup",
+	        url: "/commands/runCmdOnNodeGroup",
 	        type: "POST",
 	        data: submitData,
 	        timeout: 1800000,
@@ -273,7 +349,7 @@ $(function() {
 	            wizard.hideButtons(); // hides the next and back buttons
 	        }
 	    });		
-
+	    
 /* 		setTimeout(function() {
 			wizard.trigger("success");
 			wizard.hideButtons();
@@ -282,10 +358,6 @@ $(function() {
 			wizard._updateProgressBar(0);
 		}, 2000); */
 	});
-
-	
-	 
-	
 	
 
 	wizard.on("reset", function(wizard) {
@@ -311,6 +383,31 @@ $(function() {
 	});
 
 	wizard.show();
+});
+
+$("#ngp_button").on('click',function(){
+
+  $('#ng_adhoc').hide();
+  $('#ng_embed').hide();
+  $('#ng_predefined').show();
+
+});
+
+
+$("#nga_button").on('click',function(){
+
+  $('#ng_predefined').hide();
+  $('#ng_embed').hide();
+  $('#ng_adhoc').show();
+
+});
+
+$("#nge_button").on('click',function(){
+
+  $('#ng_predefined').hide();
+  $('#ng_adhoc').hide();
+  $('#ng_embed').show();
+
 });
 
 </script>

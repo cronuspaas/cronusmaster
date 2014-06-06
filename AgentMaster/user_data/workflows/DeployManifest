@@ -1,0 +1,1 @@
+{"flowName":"DeployManifest","flowType":"Predefined","flowClass":"DeployManifestFlow","flowDescription":"deploy manifest","userData":{"manifestPkgs":"http://somerepo:port/manifest-1.0.0.all.cronus","hosts":"10.10.10.10","manifestName":"manifest-1.0.0","batchOption":"UNLIMITED,0","serviceName":"myservice"}}

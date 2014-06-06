@@ -4,109 +4,61 @@
 
 # Home page
 GET     /                                       Application.index
-GET		/whatsnew												Application.whatsnew
-GET		/whatsold												Application.whatsold
-GET		/introVideo												Application.introVideo
-
-
-# Agents
-
-GET     /agents                                       Agents.index
-GET     /agents/getAgentData                                       Agents.getAgentData
-GET     /agents/sendAgentCommandToNodeGroup                        Agents.sendAgentCommandToNodeGroup
-GET     /agents/genAgentCommandInNodeGroup                        Agents.generateAgentCommandInNodeGroup
-
-
-GET     /agents/copyRequestToNodeGroup                        Agents.copyRequestToNodeGroup
-
-
-
-GET     /agents/resetData                        Agents.resetData
-GET     /agents/aggregateMetrics                        Agents.aggregateMetrics
-GET     /agents/aggregatePieChart                        Agents.aggregatePieChart
-GET     /agents/aggregateMetaDataNodeList                        Agents.aggregateMetaDataNodeList
-
-
-GET     /agents/updateRequestContent/{nodeGroupType}/{agentCommandType}                        Agents.updateRequestContent
-
-
-
+GET		/whatsnew								Application.whatsnew
+GET		/whatsold								Application.whatsold
+GET		/introVideo								Application.introVideo
+GET		/jsonedit								Application.jsonedit
 
 #commands 
-
-GET     /commands                        Commands.index
+GET     /commands                        		Commands.index
 GET     /commands/common                        Commands.commonCommands
 GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
-
 GET     /commands/wizard                        Commands.wizard
+GET     /commands/getOptions/{cmdName}			Commands.getOptions
+GET		/commands/runCmdFromLog					Commands.runCmdFromLog
+POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
 
-GET     /commands/generateUpdateSendAgentCommandToNodeGroup                        Commands.generateUpdateSendAgentCommandToNodeGroup
-POST     /commands/generateUpdateSendAgentCommandToAdhocNodeGroup                        Commands.generateUpdateSendAgentCommandToAdhocNodeGroup
-
-POST     /commands/genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson                        Commands.genUpdateSendCommandWithReplaceVarMapNodeSpecificAdhocJson
-POST     /commands/genUpdateSendCommandWithReplaceVarMapAdhocJson                        Commands.genUpdateSendCommandWithReplaceVarMapAdhocJson
-
-
-GET     /commands/updateRequestContentGeneric                        Commands.updateRequestContentGeneric
-
-
-#20140111: single server
-POST     /commands/commandToSingleTargetServer                        Commands.commandToSingleTargetServer
+# workflows
+GET		/workflows								Workflows.index
+GET		/workflows/getOptions/{wfName}			Workflows.getOptions
+POST	/workflows/runWfOnNodeGroup				Workflows.runWfOnNodeGroup
 
 
-
-# NodeGroups
-GET     /nodeGroups                        NodeGroups.index
-GET     /nodeGroups/nodeGroupType                        NodeGroups.getNodeGroupSourceMetadata
-GET     /nodeGroups/getNodesFromTopology                            						NodeGroups.getNodesFromTopology
-
-
-
+# Manage configs
 GET     /config                                       Config.index
-GET     /config/agentCommand                                       Config.getAgentCommand
-GET     /config/aggregation                                       Config.getAggregation
-GET     /config/httpHeaders                                       Config.getHttpHeaders
-
-
+GET		/config/viewConfigItem/{configType}/{configKey}			Config.viewConfigItem
+GET     /config/agentCommand                                    Config.getAgentCommand
+GET     /config/aggregation                                     Config.getAggregation
 GET     /config/nodeGroup                                       Config.getNodeGroup
-GET     /config/reloadConfig                                       Config.reloadConfig
-GET     /config/editConfig/{configFile}                                       Config.editConfig
-POST    /config/editConfigUpdate/{configFile}                                       Config.editConfigUpdate
-GET		/config/setRunCronJob										Config.setRunCronJob	
-GET		/config/setEnableLoadBalancer								Config.setEnableLoadBalancer
-GET		/config/setRunningDaisyDeploymentMultiplePoolsNow			Config.setRunningDaisyDeploymentMultiplePoolsNow	
-GET		/config/shutDownActorSystem							Config.shutDownActorSystem
-GET		/config/runGC							Config.runGC
+GET     /config/reloadConfig/{dataType}							Config.reloadConfig
+GET		/config/showConfigs/{dataType}							Config.showConfigs
+GET     /config/editConfig/{dataType}/{action}/{configName}				Config.editConfig
+GET     /config/deleteConfig/{dataType}/{configName}			Config.deleteConfig
+POST    /config/editConfigUpdate/{dataType}/{configName}		Config.editConfigUpdate
 
+# housekeeping
+POST	/housekeeping/runGC							HouseKeeping.runGC
+POST	/housekeeping/setRunCronJob					HouseKeeping.setRunCronJob	
+POST     /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
 
-
+# logs page
 GET     /logs                                       Logs.index
-GET     /logs/logContent/{logFileName}                                       Logs.getLogContent
-GET     /logs/fileContent                                       Logs.getFileContent
+GET     /logs/cmdlogs                                       Logs.cmdLogs
+GET     /logs/joblogs                                       Logs.jobLogs
+GET     /logs/wflogs                                        Logs.wfLogs
+GET     /logs/download                                      Logs.download
+GET     /logs/exploreFiles                                  Logs.exploreFiles
+GET		/logs/aggregate										Logs.aggregate
+GET     /logs/delete                                        Logs.delete
+GET     /logs/fileContent                                   Logs.getFileContent
 
-
-
-GET     /logs/adhocLog                                       Logs.adhocLog
-GET     /logs/noneStandardLog                                    Logs.noneStandardLog
-GET     /logs/exploreFiles                                       Logs.exploreFiles
-
-
-GET     /logs/archiveAppLogs/{archiveDate}                                       Logs.archiveAppLogs
-GET     /logs/deleteAppLogs/{deleteDate}                                       Logs.deleteAppLogs
-GET     /logs/deleteAllAppLogs                                       Logs.deleteAllAppLogs
-GET     /logs/archiveAppLogsDailyJob                                       Logs.archiveAppLogsDailyJob
-GET     /logs/deleteAppLogsDailyJob                                       Logs.deleteAppLogsDailyJob
-
-
-GET     /wizards                                       Wizards.index
-GET     /wizards/wizardToAdhocNodeGroup                                       Wizards.wizardToAdhocNodeGroup
-
-#20140111 single server
-GET     /wizards/singleServerWizard                                       Wizards.singleServerWizard
-
-
-GET    /logconsole               LogConsole.index
-GET    /logconsoleAjax           LogConsole.indexAjax
+# jobs page
+GET		/jobs										Jobs.index
+GET		/jobs/toggleStatus									Jobs.toggleJobStatus
+GET		/jobs/deleteJob										Jobs.deleteJob
+GET		/jobs/runJobNow										Jobs.runJobNow
+GET		/jobs/wizard										Jobs.wizard
+POST	/jobs/saveJob										Jobs.saveJob
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public

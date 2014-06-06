@@ -4,8 +4,7 @@
 
 #{data-table-init tableName:'dir-list-all', defaultSize:'10', , sortSpec:'[]' /}
 #{data-table-init tableName:'file-list-all', defaultSize:'50', , sortSpec:'[]' /}
-<div class="container">
-	#{include 'Logs/lognav.html'/}
+
 #{include 'tags/refresh.html'/}
 
 
@@ -25,7 +24,7 @@
     }
     </script>
 
-<h2>Directories and Files </h2>
+<h3>Directories and Files </h3>
 
 
 	<div  id="agent-list-all-row">
@@ -93,13 +92,6 @@
 		</table>
 
 	</div>
-
-
-#{include 'Logs/logfooter.html'/}
-
-
-
-
 
 </div>
 #{include 'Application/footer.html'/}

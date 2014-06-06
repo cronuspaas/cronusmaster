@@ -1,0 +1,66 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+#{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+<h4>Response Aggregation for Node Group <a target=_blank href="/config/viewConfigItem/${dataType}/${nodeGroupType}" >${nodeGroupType}</a> 
+on Command <a target=_blank href="/config/viewConfigItem/command/${agentCommandType}" >${agentCommandType}</a> </h4>
+<h5>Aggregation on the extracted string from response using rule <span class="label label-info">${aggrRule}</span> with regular expression: <span class="label label-info">${patternStr}</span> </h5>
+
+<h5>
+Aggregation Rule List:
+<form action="/logs/aggregate" method="GET">
+<input type="hidden" name="logType" value="${logMeta?.logType}">
+<input type="hidden" name="logId" value="${logMeta?.logId}">
+<input type="hidden" name="aggField" value="responseBody">
+<select name="aggRegEx" data-placeholder="Change aggregation rule..." style="width:300px;" class="chzn-select" id="aggRegEx" onchange="this.form.submit()">
+	<option>Change aggregation rule...</option>
+		#{list items:regExs, as:'regEx'}
+		<option>${regEx}</option>
+		#{/list}
+</select> 
+</form>
+</h5>
+<p>
+
+<h4>Details</h4>
+	<div  id="list-all-row">
+		<br/>
+			#{table-declare tableName:'list-all' /}
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Matching Field</th>
+					<th>Matching RegEx</th>
+					<th>Extracted String</th>
+					<th>Node Count</th>
+					<th>Node List</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:aggList, as:'obj'}
+				<tr>
+					<td>${obj_index}</td>
+					<td>${obj.matchField}</td>
+					<td>${obj.matchRegEx}</td>
+					<td>${obj.value}</td>
+					<td>${obj.nodeCount}</td>
+					<td><a href="#" id="blob" class="btn btn-primary" rel="popover" data-content="${obj.nodes}">Node List</a></td>   
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>	
+	
+<script>
+$("[rel='popover']").popover({offset: 10});
+</script>	
+#{include 'tags/refresh.html'/}
+
+#{include 'Application/footer.html'/}
+
+</div>
+
+</body>
+</html>

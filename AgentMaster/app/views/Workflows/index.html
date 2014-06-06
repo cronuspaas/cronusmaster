@@ -1,0 +1,51 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+
+#{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+<h3 style="text-transform: uppercase">Workflow Defined</h3>		 
+<h4>Workflows are predefined in code</h4>
+	<div  id="list-all-row">
+		<br/>
+			#{table-declare tableName:'list-all' /}
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Class</th>
+					<th>Description</th>
+					<th>User Data</th>
+					<th>Run</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:results, as:'obj'}
+				<tr>
+					<td>${obj_index}</td>
+					<td>   
+						<a target=_blank href="config/viewConfigItem/workflow/${obj.name}" >${obj.name}</a> 
+					</td>   
+					<td>${obj.type}</td>
+					<td>${obj.klazz}</td>
+					<td>${obj.description}</td>
+					<td><script type="text/javascript">displayList("${obj.userData}");</script></td>
+					<td>
+					<a href="/workflows/wizard?workflowId=${obj.name}" target=_self>
+					<i class="fa fa-magic fa-lg"></i></a>
+					</a>
+					</td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+
+#{include 'tags/refresh.html'/}
+
+</div>
+	#{include 'Application/footer.html'/}
+</body>
+</html>

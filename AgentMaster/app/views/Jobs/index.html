@@ -1,0 +1,72 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+
+#{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+<script type="text/javascript">	
+	getAlertAndWrite("${alert}");
+</script>
+
+<h3 style="text-transform: uppercase">Jobs Defined</h3>		 
+<h4>New job can be created by scheduling from an existing command or workflow execution log in the log section</h4>		 
+	<div  id="list-all-row">
+		<br/>
+			#{table-declare tableName:'list-all' /}
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Interval</th>
+					<th>Description</th>
+					<th>Status</th>
+					<th>Run</th>
+					<th>Toggle</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:jobDetails, as:'obj'}
+				<tr>
+					<td>${obj_index}</td>
+					<td>   
+						<a target=_self href="config/viewConfigItem/${obj.type}/${obj.name}" >${obj.name}</a> 
+					</td>   
+					<td>${obj.typeLabel}</td>
+					<td>${obj.interval}</td>
+					<td>${obj.description}</td>
+					<td>
+					#{if obj.status == 'Enabled' }<span class="label label-success">${obj.status}</span>#{/if}
+					#{else}<span class="label label-warning">${obj.status}</span>#{/else}
+					</td>
+					<td>
+					<a href="/jobs/runJobNow?dataType=${obj.type}&jobId=${obj.name}" target=_self>
+					<i class="fa fa-magic fa-lg"></i></a>
+					</a>
+					</td>
+					<td>
+					<a href="/jobs/toggleStatus?dataType=${obj.type}&jobId=${obj.name}&status=${obj.statustoggle}" target=_self>
+					#{if obj.statustoggle == 'Disable' }<i class="fa fa-pause fa-lg"></i>#{/if}
+					#{else}<i class="fa fa-play fa-lg"></i>#{/else}
+					</a>
+					</td>
+					<td>
+					<a href="/jobs/deleteJob?dataType=${obj.type}&jobId=${obj.name}" target=_self>
+					<i class="fa fa-trash-o fa-lg"></i>
+					</a>
+					</td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+
+#{include 'tags/refresh.html'/}
+
+
+</div>
+	#{include 'Application/footer.html'/}
+</body>
+</html>

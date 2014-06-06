@@ -17,23 +17,30 @@ limitations under the License.
 */
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import models.asynchttp.actors.ActorConfig;
-import models.data.providers.AgentConfigProvider;
-import models.data.providers.AgentDataProvider;
-import models.utils.ConfUtils;
-import models.utils.DateUtils;
-import models.utils.MyHttpUtils;
-import models.utils.VarUtils;
-import models.utils.VarUtils.CONFIG_FILE_TYPE;
+
+import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.task.ExecuteOption;
+import org.lightj.task.MonitorOption;
+import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
+import org.lightj.task.asynchttp.UrlTemplate;
+import org.lightj.util.JsonUtil;
+import org.lightj.util.StringUtil;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.mvc.Controller;
+import resources.IUserDataDao;
+import resources.IUserDataDao.DataType;
+import resources.command.CommandImpl;
+import resources.utils.DateUtils;
+import resources.UserDataProvider;
 
 /**
  * 
@@ -42,245 +49,217 @@ import play.mvc.Controller;
  */
 public class Config extends Controller {
 
-	public static void getAgentCommand() {
-
+	/**
+	 * view configs
+	 * @param configType
+	 * @param configKey
+	 */
+	public static void viewConfigItem(String configType, String configKey) {
 		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			renderJSON(adp.getAgentcommandmetadatas());
-		} catch (Throwable t) {
-			renderJSON("Error occured in getAgentCommand");
+			DataType type = DataType.valueOf(configType.toUpperCase());
+			String jsonResult = UserDataProvider.getUserDataDao().readData(type, configKey);;
+			renderJSON(jsonResult);
+		} catch (IOException e) {
+			e.printStackTrace();
+			renderJSON(e);
 		}
-
 	}
-
-	public static void getAggregation() {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			renderJSON(adp.getAggregationmetadata());
-		} catch (Throwable t) {
-			renderJSON("Error occured in getAggregation");
-		}
-
-	}
-
-	public static void getNodeGroup() {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			renderJSON(adp.getNodegroupsourcemetadatas());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in getNodeGroup");
-		}
-
-	}
-	
-	public static void getHttpHeaders(String httpHeaderType) {
-
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			if(httpHeaderType ==null 
-				|| 
-				!adp.getHeaderMetadataMap().containsKey(httpHeaderType)
-					){
-				
-				renderJSON(adp.getHeaderMetadataMap());
-			}else{
-				renderJSON(adp.getHeaderMetadataMap().get(httpHeaderType));
-			}
-
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in getHttpHeaders");
-		}
-
-	}
-	
 
 	/**
-	 * 
+	 * reload all config
+	 * @param dataType
 	 */
-	public static void shutDownActorSystem() {
+	public static void reloadConfig(String dataType, String nav) {
 
 		try {
-			ActorConfig.shutDownActorSystemWhenNoJobRunning();
-			renderJSON( "Success in shutDownActorSystem at " + DateUtils.getNowDateTimeStrSdsm());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in shutDownActorSystem");
+			UserDataProvider.reloadAllConfigs();
+			String alert = "Successful reload config with type " + dataType;
+			redirect("Config.showConfigs", dataType, alert, nav);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
 		}
 
 	}
 	
-	public static void runGC() {
+	/**
+	 * show all configs of a type
+	 * @param dataType
+	 */
+	public static void showConfigs(String dataType, String alert, String nav) {
+		
+		String page = "showConfigs"+dataType.toLowerCase();
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
-			ActorConfig.runGCWhenNoJobRunning();
-			renderJSON( "Success in RunGC at " + DateUtils.getNowDateTimeStrSdsm());
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in RunGC");
-		}
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			List<String> cfgNames = UserDataProvider.getUserDataDao().listNames(dType);
 
+			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+
+			render(page, topnav, dataType, cfgNames, lastRefreshed, alert);
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
 	}
 
-	public static void reloadConfig(String type) {
-
-		if (type == null) {
-			type = CONFIG_FILE_TYPE.ALL.toString();
-		}
-		try {
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-
-			String result = adp.updateConfigFromFile(type);
-
-			renderJSON(result + " in reloadConfig with type " + type);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in reloadConfig with type" + type);
-		}
-
-	}
-
-	public static void editConfig(String configFile) {
+	/**
+	 * edit page
+	 * @param dataType
+	 */
+	static final String NEW_CONFIG_NAME = "new";
+	public static void editConfig(String dataType, String action, String configName, String nav) {
 
 		String page = "editConfig";
-		String topnav = "config";
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
-			AgentConfigProvider acp = AgentConfigProvider.getInstance();
-
-			if (configFile == null) {
+			if (dataType == null) {
 				renderJSON("configFile is NULL. Error occured in editConfig");
 			}
 
-			CONFIG_FILE_TYPE configFileType = CONFIG_FILE_TYPE
-					.valueOf(configFile.toUpperCase(Locale.ENGLISH));
-
-			String configFileContent = acp.readConfigFile(configFileType);
-
-			String configFileUpper = configFile.toUpperCase(Locale.ENGLISH);
-
-			page = new String(page + configFile.toLowerCase(Locale.ENGLISH));
-
+			String content = null;
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			if (StringUtil.equalIgnoreCase("create", action)) {
+				if (!StringUtil.equalIgnoreCase("new", configName)) {
+					IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+					content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
+					configName = "new";
+				}
+				else {
+					if (dType == DataType.COMMAND) {
+						// this is for new configuration
+						CommandImpl command = new CommandImpl();
+						
+						HttpTaskRequest sampleReq = new HttpTaskRequest();
+						UrlTemplate temp = new UrlTemplate(UrlTemplate.encodeAllVariables("http://host:port/uri", "host"), HttpMethod.POST);
+						sampleReq.setUrlTemplate(temp);
+						sampleReq.setPollTemplate(temp);
+						sampleReq.setTaskType("asyncpoll");
+						sampleReq.setHttpClientType("httpClient");
+						sampleReq.setExecutionOption(new ExecuteOption(0,0,0,0));
+						sampleReq.setMonitorOption(new MonitorOption(10, 0));
+						sampleReq.setGlobalContext("globalContextLookup");
+						sampleReq.setResProcessorName("responseProcessor");
+						command.setHttpTaskRequest(sampleReq);
+						
+						command.addUserData("variableInHttpTemplate", "sample value");
+						command.setAggRegexs(Arrays.asList(new String[] {"regex for response aggregation"}));
+						
+						HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
+						cmdMap.put("httpTaskRequest", command.createCopy());
+						cmdMap.put("userData", command.getUserData());
+						cmdMap.put("aggRegexs", command.getAggRegexs());
+						
+						content = JsonUtil.encodePretty(cmdMap);
+					}
+					else if (dType == DataType.NODEGROUP) {
+						content = "line separated hosts";
+					}
+				}
+			}
+			else {
+				IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+				content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
+			}
+			
 			String alert = null;
 
-			render(page, topnav, configFileUpper, configFileContent, alert);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in editConfig");
+			render(page, topnav, dataType, configName, content, alert);
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
 		}
 
 	}// end func
-
-	public static void editConfigUpdate(String configFile,
-			String configFileContent) {
-
-		String page = "editConfig";
-		String topnav = "config";
-
-		try {
-			AgentConfigProvider acp = AgentConfigProvider.getInstance();
-
-			if (configFile == null) {
-				renderJSON("configFile is NULL. Error occured in editConfig");
-			}
-
-			CONFIG_FILE_TYPE configFileType = CONFIG_FILE_TYPE
-					.valueOf(configFile.toUpperCase(Locale.ENGLISH));
-
-			acp.saveConfigFile(configFileType, configFileContent);
-
-			String configFileUpper = configFile.toUpperCase(Locale.ENGLISH);
-
-			page = new String(page + configFile.toLowerCase(Locale.ENGLISH));
-
-			String alert = "Config was successfully updated at "
-					+ DateUtils.getNowDateTimeStrSdsm();
-
-			// reload after
-			AgentDataProvider adp = AgentDataProvider.getInstance();
-			adp.updateConfigFromFile(configFileUpper);
-
-			renderTemplate("Config/editConfig.html", page, topnav,
-					configFileContent, configFileUpper, alert);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in editConfigUpdate");
-		}
-
-	}// end func
-
-	public static void index() {
-
-		String page = "index";
-		String topnav = "config";
-
-		try {
-			AgentConfigProvider acp = AgentConfigProvider.getInstance();
-
-			String configFileContentAgentCommand = acp
-					.readConfigFile(CONFIG_FILE_TYPE.AGENTCOMMAND);
-			String configFileContentNodeGroup = acp
-					.readConfigFile(CONFIG_FILE_TYPE.NODEGROUP);
-			
-			String configFileContentAggregation= acp
-					.readConfigFile(CONFIG_FILE_TYPE.AGGREGATION);
-			
-			String configFileContentWisbvar= acp
-					.readConfigFile(CONFIG_FILE_TYPE.WISBVAR);
-			
-			String configFileContentHttpheader= acp
-					.readConfigFile(CONFIG_FILE_TYPE.HTTPHEADER);
-
-			String configFileAgentCommandTitle = CONFIG_FILE_TYPE.AGENTCOMMAND
-					.toString();
-			String configFileNodeGroupTitle = CONFIG_FILE_TYPE.NODEGROUP
-					.toString();
-			
-			String configFileAggregationTitle = CONFIG_FILE_TYPE.AGGREGATION
-					.toString();
-			
-			String configFileWisbvarTitle = CONFIG_FILE_TYPE.WISBVAR
-					.toString();
-			
-			String configFileHttpheaderTitle = CONFIG_FILE_TYPE.HTTPHEADER
-					.toString();
-
-			render(page, topnav, configFileAgentCommandTitle,
-					configFileNodeGroupTitle, configFileAggregationTitle, configFileContentAgentCommand,
-					configFileContentNodeGroup, configFileContentAggregation,
-					configFileWisbvarTitle,configFileHttpheaderTitle,
-					configFileContentWisbvar, configFileContentHttpheader
-					
-					
-					);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in editConfig");
-		}
-
-	}
-
 
 	/**
-	 * 20130718 add
-	 * 
-	 * @param runCronJob
+	 * save after edit
+	 * @param dataType
+	 * @param content
 	 */
-	public static void setRunCronJob(boolean runCronJob) {
+	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content, String nav) {
 
-		ConfUtils.setRunCronJob(runCronJob);
-		renderText("Set runCronJob as " + runCronJob + " at time: "
-				+ DateUtils.getNowDateTimeStrSdsm());
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
+
+		try {
+			if (dataType == null) {
+				renderJSON("configFile is NULL. Error occured in editConfig");
+			}
+			
+			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
+				// new config
+				configName = configNameNew;
+			}
+
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			switch(dType) {
+			case COMMAND:
+				UserDataProvider.getCommandConfigs().save(configName, content);
+				break;
+			case NODEGROUP:
+				UserDataProvider.getNodeGroupOfType(dType).save(configName, content);
+				break;
+			default:
+				throw new RuntimeException("Invalid datatype " + dataType);
+			}
+			
+			String alert = "Config was successfully updated at " + DateUtils.getNowDateTimeStrSdsm();
+
+			// reload after
+			UserDataProvider.reloadAllConfigs();
+			
+			redirect("Config.showConfigs", dataType, alert, topnav);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+
+	}// end func
+
+	/**
+	 * delete a config
+	 * @param dataType
+	 * @param configName
+	 */
+	public static void deleteConfig(String dataType, String configName, String nav) {
+
+		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
+
+		try {
+			if (dataType == null) {
+				renderJSON("configFile is NULL. Error occured in editConfig");
+			}
+			
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			UserDataProvider.getUserDataDao().deleteData(dType, configName);
+			
+			String alert = String.format("%s was successfully deleted at %s ", configName, DateUtils.getNowDateTimeStrSdsm());
+
+			// reload after
+			UserDataProvider.reloadAllConfigs();
+			
+			redirect("Config.showConfigs", dataType, alert, topnav);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+
+	}// end func
+
+	/**
+	 * show all configs
+	 */
+	public static void index() {
+		
+		redirect("Config.showConfigs", "nodegroup");
 
 	}
 
-	
-	
 }

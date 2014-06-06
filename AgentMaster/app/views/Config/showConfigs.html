@@ -1,0 +1,59 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+#{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+<h3 style="text-transform: uppercase">${dataType}</h3>		 
+<a target=_self href="/config/editConfig/${dataType}/create/new?nav=${topnav}" class="btn btn-small btn-primary">Create New</a> 
+<a target=_self href="/config/reloadConfig/${dataType}?nav=${topnav}" class="btn btn-small btn-primary">Reload</a>
+
+
+	<div  id="list-all-row">
+		<br/>
+		<br/>
+			#{table-declare tableName:'list-all' /}
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>Name</th>
+					<th>Edit</th>
+					<th>Copy</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:cfgNames, as:'obj'}
+				<tr>
+					<td>${obj_index}</td>
+					<td>   
+						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
+					</td>   
+					<td>   
+						<a target=_self href="/config/editConfig/${dataType}/update/${obj}?nav=${topnav}">
+						<i class="fa fa-wrench fa-lg"></i></a>	
+						</a>
+					</td>
+					<td>   
+						<a target=_self href="/config/editConfig/${dataType}/create/${obj}?nav=${topnav}">
+						<i class="fa fa-copy fa-lg"></i></a>	
+						</a>
+					</td>
+					<td>
+						<a target=_self href="/config/deleteConfig/${dataType}/${obj}?nav=${topnav}">
+						<i class="fa fa-trash-o fa-lg"></i></a>
+						</a> 
+					</td>   
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+
+
+#{include 'tags/refresh.html'/}
+
+</div>
+	#{include 'Application/footer.html'/}
+</body>
+</html>

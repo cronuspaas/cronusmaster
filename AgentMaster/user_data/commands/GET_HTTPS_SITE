@@ -1,0 +1,21 @@
+{
+  "name": "GET_HTTPS_SITE",
+  "httpTaskRequest": {
+  "taskType" : "async",
+  "httpClientType" : "httpClient",
+  "executionOption" : {
+    "timeoutInMs" : 0,
+    "initialDelayMs" : 0,
+    "maxRetry" : 0,
+    "retryDelayMs" : 0
+  },
+  "urlTemplate" : {
+    "method" : "GET",
+    "url" : "https://<host>/",
+    "body" : {},
+    "headers" : {},
+    "parameters" : {}
+  }
+},
+"aggRegexs": [".*<title>(.*)</title>.*"]
+}
