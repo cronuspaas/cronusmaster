@@ -34,6 +34,7 @@ import org.lightj.task.ExecuteOption;
 import org.lightj.task.MonitorOption;
 import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
+import org.lightj.task.TaskResultEnum;
 import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.MapListPrimitiveJsonParser;
@@ -223,9 +224,8 @@ public class Commands extends Controller {
 
 			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-
 			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
-			
+
 			// prepare log
 			CmdLog jobLog = new CmdLog();
 			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
@@ -234,11 +234,13 @@ public class Commands extends Controller {
 			jobLog.setNodeGroup(ng);
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
+			reqTemplate.getTemplateValuesForAllHosts().addNewTemplateValue("correlationId", jobLog.uuid());
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog));
+			int numOfHost = hosts!=null ? hosts.length : 1;
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 			
 			String alert = String.format("%s fired on %s successfully ", agentCommandType, nodeGroupType);
@@ -280,23 +282,24 @@ public class Commands extends Controller {
 
 			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-
 			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
-			
+
 			// prepare log
 			CmdLog jobLog = new CmdLog();
 			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
+			jobLog.setStatus(TaskResultEnum.Running.name());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
-
+			reqTemplate.getTemplateValuesForAllHosts().addNewTemplateValue("correlationId", jobLog.uuid());
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog));
+			int numOfHost = hosts!=null ? hosts.length : 1;
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 			
 		} catch (Throwable t) {

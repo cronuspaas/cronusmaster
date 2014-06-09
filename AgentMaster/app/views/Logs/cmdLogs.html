@@ -15,11 +15,14 @@
 					<th>Command</th>
 					<th>NodeGroup</th>
 					<th>TimeStamp</th>
-					<th>Download</th>
-					<th>Aggregation</th>
-					<th>Run Again</th>
-					<th>Make Recurring Job</th>
-					<th>Delete</th>
+					<th>Progress</th>
+					<th>Status</th>
+					<th>S:F:Other</th>
+					<th>Result</th>
+					<th>Stats</th>
+					<th>Rerun</th>
+					<th>Schedule</th>
+					<th>Remove</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -33,6 +36,17 @@
 					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a> 
 					</td>
 					<td>${logObj.timeStampDisplay}</td>					
+					<td>${logObj.progress}</td>
+					<td>
+					<script type="text/javascript">	
+						getLabel("${logObj.status}", ["Success","Failed"]);
+					</script>
+					</td>
+					<td>
+					<script type="text/javascript">	
+						getStatusDetail("${logObj.statusdetail}");
+					</script>
+					</td>
 					<td>   
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   

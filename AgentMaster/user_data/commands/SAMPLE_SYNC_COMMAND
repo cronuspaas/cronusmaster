@@ -15,6 +15,7 @@
       "body" : {},
       "headers" : {
         "Authorization" : "Basic <agentAuthKey>",
+        "X-CORRELATIONID": "<correlationId>",
         "content-type" : "application/json"
       },
       "parameters" : {

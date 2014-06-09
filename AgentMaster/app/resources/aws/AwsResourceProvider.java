@@ -3,6 +3,7 @@ package resources.aws;
 import org.lightj.util.SpringContextUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 
 import play.Play;
@@ -29,7 +30,7 @@ public class AwsResourceProvider {
 	 * s3 client
 	 * @return
 	 */
-	public @Bean @Scope("singleton") AmazonS3 s3client() {
+	public @Bean @Scope("singleton") @Lazy(true) AmazonS3 s3client() {
 		AWSCredentials myCredentials = new BasicAWSCredentials(myAccessKeyID, mySecretKey);
 		return new AmazonS3Client(myCredentials);
 	}
@@ -42,4 +43,5 @@ public class AwsResourceProvider {
 	public static AmazonS3 getS3Client() {
 		return SpringContextUtil.getBean("resources", AmazonS3.class);
 	}
+	
 }

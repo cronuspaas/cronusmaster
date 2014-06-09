@@ -29,4 +29,10 @@ public interface ILog {
 	
 	public DataType getCommandType();
 
+	public String getStatus();
+	
+	public String getDisplayProgress();
+	
+	public String getStatusDetail();
+	
 }

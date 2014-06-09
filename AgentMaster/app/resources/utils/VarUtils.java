@@ -32,4 +32,10 @@ public class VarUtils {
 	
 	public static final String AGENT_CRT_LOCATION = "conf/park.der";
 	
+	public static final boolean LOG_PROGRESS_ENABLED = Boolean.valueOf(Play.configuration.getProperty("agentmaster.logProgressEnabled", "true")).booleanValue();
+	
+	public static final String ELASTICSEARCH_DATA = Play.configuration.getProperty("agentmaster.esData", "user_data/elasticsearch_data");
+	public static final String ELASTICSEARCH_EP = Play.configuration.getProperty("agentmaster.esEp", "localhost");
+	public static final boolean LOCAL_ES_ENABLED = Boolean.valueOf(Play.configuration.getProperty("agentmaster.localEsEnabled", "true")).booleanValue();
+	
 }

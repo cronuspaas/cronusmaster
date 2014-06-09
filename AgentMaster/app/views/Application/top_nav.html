@@ -15,6 +15,32 @@ var getAlertAndWrite=function(alert){
 	 return;
 }
 
+var getLabel=function(label, schemeArray){
+
+	var output = null;
+	if(label=== schemeArray[0]){
+		output ="<span class=\"label label-success\">" + label + "</span> ";
+	} else if(httpMethod=== schemeArray[1]){
+		output ="<span class=\"label label-important\">" + label + "</span> ";
+	} else {
+		output ="<span class=\"label label-warning\">" + label + "</span> ";
+	}
+
+	document.write(output);
+	return;
+}
+
+var getStatusDetail=function(statusDetailStr){
+
+	var output = null;
+	var tokens = statusDetailStr.split(":");
+	if (tokens.length==3) {
+		output ="<span class=\"label label-success\">" + tokens[0] + "</span><span class=\"label label-important\">" + tokens[1] + "</span><span class=\"label label-warning\">" + tokens[2] + "</span> ";
+		document.write(output);
+	}
+	return;
+}
+
 </script>	
 
 <div class="navbar navbar-fixed-top navbar-inverse">

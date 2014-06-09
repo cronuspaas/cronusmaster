@@ -32,6 +32,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 import resources.UserDataProvider;
+import resources.elasticsearch.EmbeddedESServer;
+import resources.utils.VarUtils;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -46,10 +48,12 @@ public class Bootstrap extends Job {
     public void doJob() {
         RuntimeContext.setClusterUuid("restcommander", "prod", "all", Long.toString(System.currentTimeMillis()));
     	
+        // initialize spring bean registration
 		Config conf = ConfigFactory.load("actorconfig");
 		AnnotationConfigApplicationContext resourcesCtx = new AnnotationConfigApplicationContext("resources");
 		SpringContextUtil.registerContext("resources", resourcesCtx);
 		
+		// initialize flow and task modules
 		AnnotationConfigApplicationContext flowCtx = new AnnotationConfigApplicationContext("flows");
 		InitializationProcessor initializer = new InitializationProcessor(
 				new BaseModule[] {
@@ -61,6 +65,12 @@ public class Bootstrap extends Job {
 				});
 		initializer.initialize();
 		
+		// initialize local elastic search
+		if (VarUtils.LOCAL_ES_ENABLED) {
+			SpringContextUtil.getBean("resources", EmbeddedESServer.class);
+		}
+		
+		// initialize user data	
 		try {
 			UserDataProvider.reloadAllConfigs();
 		} catch (IOException e) {

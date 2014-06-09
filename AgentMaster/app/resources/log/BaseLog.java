@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public abstract class BaseLog implements ILog {
 	
 	public static final String DateFormat = "yyyy.MM.dd.HH.mm.ss.SSSZZZ";
+	public static final int ProgressTotalUnit = 1000;
 	
 	/** timestamp of the log */
 	protected String timestamp = DateUtil.format(new Date(), DateFormat);
@@ -46,6 +47,15 @@ public abstract class BaseLog implements ILog {
 	
 	/** command key, command id, workflow id etc. */
 	protected String commandKey;
+	
+	/** status */
+	protected String status;
+	
+	/** progress 1 unit = 0.1%, et. 1000 = 100%*/
+	protected int progress;
+	
+	/** status detail of #success-#failure-#other */
+	protected String statusDetail;
 	
 	public BaseLog(DataType commandType) {
 		this.commandType = commandType;
@@ -88,6 +98,33 @@ public abstract class BaseLog implements ILog {
 	}
 	public void setCommandKey(String commandKey) {
 		this.commandKey = commandKey;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public int getProgress() {
+		return progress;
+	}
+	public String getDisplayProgress() {
+		return String.format("%.1f%%", (((float) progress/ProgressTotalUnit) * 100));
+	}
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
+	public void incProgress(int progDelta) {
+		this.progress = Math.min(ProgressTotalUnit, this.progress + progDelta);
+	}
+	public String getStatusDetail() {
+		return statusDetail;
+	}
+	public void setStatusDetail(String statusDetail) {
+		this.statusDetail = statusDetail;
+	}
+	public void setStatusDetail(int numSuccess, int numFail, int numOther) {
+		this.statusDetail = String.format("%s:%s:%s", numSuccess, numFail, numOther);
 	}
 
 	/**

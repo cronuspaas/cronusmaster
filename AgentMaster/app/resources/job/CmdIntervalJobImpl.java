@@ -16,6 +16,7 @@ import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
 import resources.command.ICommand;
 import resources.command.ICommandData;
+import resources.log.IJobLogger;
 import resources.log.JobLog;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.INodeGroupData;
@@ -59,11 +60,15 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
 			jobLog.setJobId(getName());
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			logger.saveLog(jobLog);
+			reqTemplate.getTemplateValuesForAllHosts().addNewTemplateValue("correlationId", jobLog.uuid());
 			
 			// fire
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog));
+			int numOfHost = hosts!=null ? hosts.length : 1;
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 			
 		} catch (Throwable t) {

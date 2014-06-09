@@ -27,7 +27,9 @@ import resources.log.BaseLog;
 import resources.log.FlowLog;
 import resources.log.BaseLog.CommandResponse;
 import resources.log.IJobLogger;
+import resources.utils.VarUtils;
 
+import com.amazonaws.services.datapipeline.model.TaskStatus;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
 import com.ning.http.client.Response;
@@ -79,17 +81,20 @@ public class TaskResourcesProvider {
 	public static final class LogTaskEventHandler extends SimpleTaskEventHandler<FlowContext> {
 		
 		private final BaseLog jobLog;
-		private final DataType logType;
-		public LogTaskEventHandler(DataType logType, BaseLog jobLog) {
+		private final IJobLogger logger;
+		private final int hostProgInc;
+		public LogTaskEventHandler(DataType logType, BaseLog jobLog, int hostProgInc) {
 			this.jobLog = jobLog;
-			this.logType = logType;
+			this.logger = UserDataProvider.getJobLoggerOfType(logType);
+			this.hostProgInc = hostProgInc;
 		}
-
+		
 		@Override
 		public void executeOnResult(FlowContext ctx, Task task,
 				TaskResult result) {
 			if (task instanceof SimpleHttpTask) {
 				String host = ((SimpleHttpTask) task).getReq().getHost();
+				jobLog.incProgress(hostProgInc);
 				if (result.getStatus() == TaskResultEnum.Success) {
 					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
 					jobLog.addCommandResponse(new CommandResponse(host, res.getStatusCode(), res.getResponseBody())); 
@@ -97,19 +102,46 @@ public class TaskResourcesProvider {
 				else {
 					jobLog.addCommandResponse(new CommandResponse(host, 0, String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
 				}
+				saveLog(false);
 			}
 		}
 
 		@Override
-		public TaskResultEnum executeOnCompleted(FlowContext ctx,
-				Map<String, TaskResult> results) {
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(logType);
-			try {
-				logger.saveLog(jobLog);
-			} catch (IOException e) {
-				play.Logger.error(e.getMessage());
+		public TaskResultEnum executeOnCompleted(FlowContext ctx, Map<String, TaskResult> results) 
+		{
+			TaskResultEnum status = TaskResultEnum.Success;
+			int suc=0, fail=0, other=0;
+			for (TaskResult res : results.values()) {
+				if (res.getStatus().getSeverity() > status.getSeverity()) {
+					status = res.getStatus();
+				}
+				switch (res.getStatus()) {
+				case Success:
+					suc++;
+					break;
+				case Failed:
+					fail++;
+					break;
+				default:
+					other++;
+					break;
+				}
 			}
+			jobLog.setStatus(status.name());
+			jobLog.setStatusDetail(suc, fail, other);
+			jobLog.setProgress(jobLog.ProgressTotalUnit);
+			saveLog(true);
 			return super.executeOnCompleted(ctx, results);
+		}
+		
+		private void saveLog(boolean isResult) {
+			if (isResult || VarUtils.LOG_PROGRESS_ENABLED) {
+				try {
+					logger.saveLog(jobLog);
+				} catch (IOException e) {
+					play.Logger.error(e.getMessage());
+				}
+			}
 		}
 	}
 
