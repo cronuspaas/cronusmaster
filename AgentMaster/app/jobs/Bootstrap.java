@@ -66,9 +66,9 @@ public class Bootstrap extends Job {
 		initializer.initialize();
 		
 		// initialize local elastic search
-//		if (VarUtils.LOCAL_ES_ENABLED) {
-//			EsResourceProvider.getEmbeddedEsServer();
-//		}
+		if (VarUtils.LOCAL_ES_ENABLED) {
+			EsResourceProvider.getEmbeddedEsServer();
+		}
 		
 		// initialize user data	
 		try {

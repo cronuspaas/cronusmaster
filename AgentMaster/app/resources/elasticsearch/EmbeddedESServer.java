@@ -28,30 +28,19 @@ public class EmbeddedESServer {
         this(VarUtils.ELASTICSEARCH_DATA);
     }
 
-    public EmbeddedESServer(String dataDirectory) {
-        this.dataDirectory = dataDirectory;
+	public EmbeddedESServer(String dataDirectory) {
+		this.dataDirectory = dataDirectory;
 
-		try {
-			String uuid = UUID.randomUUID().toString();
-			ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
-//                .put("http.enabled", "false")
-					.put("node.name", uuid)
-					.put("network.host", InetAddress.getLocalHost().getHostAddress())
-			        .put("path.data", dataDirectory);
+		ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings
+				.settingsBuilder()
+				// .put("http.enabled", "false")
+				.put("path.data", dataDirectory);
 
-			node = new NodeBuilder()
-            	.local(true)
-            	.settings(elasticsearchSettings.build())
-            	.clusterName(uuid)
-            	.data(true)
-            	.node();
-			
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+		node = new NodeBuilder().local(true)
+				.settings(elasticsearchSettings.build())
+				.data(true).node();
 
-    }
+	}
 
     public Client getClient() {
         return node.client();

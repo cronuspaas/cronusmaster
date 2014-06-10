@@ -6,12 +6,19 @@
   
   <script type="text/javascript" src="/public/javascripts/jquery.facetview.js"></script>
 
+  <link rel="stylesheet" href="/public/stylesheets/facetview.css">
+
+  <link rel="stylesheet" href="/public/stylesheets/facetstyle.css">
+
   <script type="text/javascript">
   
 jQuery(document).ready(function($) {
   $('.facet-view-simple').facetview({
     search_url: 'http://localhost:9200/_search?',
     search_index: 'elasticsearch',
+    facets: [
+        {'field':'host', 'display': 'host'},
+    ],
     paging: {
       from: 0,
       size: 10

@@ -91,9 +91,7 @@ public abstract class BaseLog implements ILog {
 			commandResponse.indexMeta = String.format("%s,%s,%s,%s", _index, _type, _id, _version);
 			
 		} catch (Exception e) {
-			
 			commandResponse.indexMeta = e.getMessage();
-		
 		}
 
 		commandResponse.trimBodyToLength(VarUtils.BASELOG_CMDRES_LENGTH);

@@ -50,11 +50,13 @@
         var resdisplay = [
                 [
                     {
-                        "field": "host"
+                        "pre": "<strong>",
+                        "field": "host",
+                        "post": "</strong>"
                     },
                     {
                         "pre": "(",
-                        "field": "httpStatusCode",
+                        "field": "httpStatusCode",	
                         "post": ")"
                     }
                 ],
@@ -68,11 +70,6 @@
                 [
                     {
                         "field": "responseBody"
-                    }
-                ],
-                [
-                    {
-                        "field": "indexMeta"
                     }
                 ]
             ]
