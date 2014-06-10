@@ -2,6 +2,9 @@ package resources.elasticsearch;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
@@ -28,14 +31,26 @@ public class EmbeddedESServer {
     public EmbeddedESServer(String dataDirectory) {
         this.dataDirectory = dataDirectory;
 
-        ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
+		try {
+			String uuid = UUID.randomUUID().toString();
+			ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
 //                .put("http.enabled", "false")
-                .put("path.data", dataDirectory);
+					.put("node.name", uuid)
+					.put("network.host", InetAddress.getLocalHost().getHostAddress())
+			        .put("path.data", dataDirectory);
 
-        node = new NodeBuilder()
-                .local(true)
-                .settings(elasticsearchSettings.build())
-                .node();
+			node = new NodeBuilder()
+            	.local(true)
+            	.settings(elasticsearchSettings.build())
+            	.clusterName(uuid)
+            	.data(true)
+            	.node();
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
     }
 
     public Client getClient() {

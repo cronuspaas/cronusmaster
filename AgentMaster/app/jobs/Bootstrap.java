@@ -32,7 +32,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 import resources.UserDataProvider;
-import resources.elasticsearch.EmbeddedESServer;
+import resources.elasticsearch.EsResourceProvider;
 import resources.utils.VarUtils;
 
 import com.typesafe.config.Config;
@@ -66,9 +66,9 @@ public class Bootstrap extends Job {
 		initializer.initialize();
 		
 		// initialize local elastic search
-		if (VarUtils.LOCAL_ES_ENABLED) {
-			SpringContextUtil.getBean("resources", EmbeddedESServer.class);
-		}
+//		if (VarUtils.LOCAL_ES_ENABLED) {
+//			EsResourceProvider.getEmbeddedEsServer();
+//		}
 		
 		// initialize user data	
 		try {

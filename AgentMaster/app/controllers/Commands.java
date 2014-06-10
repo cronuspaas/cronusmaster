@@ -234,7 +234,7 @@ public class Commands extends Controller {
 			jobLog.setNodeGroup(ng);
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
-			reqTemplate.getTemplateValuesForAllHosts().addNewTemplateValue("correlationId", jobLog.uuid());
+			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
@@ -293,7 +293,7 @@ public class Commands extends Controller {
 			jobLog.setStatus(TaskResultEnum.Running.name());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
-			reqTemplate.getTemplateValuesForAllHosts().addNewTemplateValue("correlationId", jobLog.uuid());
+			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);

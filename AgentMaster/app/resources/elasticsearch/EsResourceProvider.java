@@ -28,14 +28,21 @@ public class EsResourceProvider {
 	 */
 	public @Bean @Scope("singleton") @Lazy(true) Client esClient() {
 		if (VarUtils.LOCAL_ES_ENABLED) {
-			EmbeddedESServer embededServer = SpringContextUtil.getBean("resources", EmbeddedESServer.class);
-			return embededServer.getClient();
+			return getEmbeddedEsServer().getClient();
 		}
 		else {
 			Client client = new TransportClient().addTransportAddress(
 					new InetSocketTransportAddress(VarUtils.ELASTICSEARCH_EP, 9300));
 			return client;
 		}
+	}
+	
+	/**
+	 * get embedded elastic search server
+	 * @return
+	 */
+	public static EmbeddedESServer getEmbeddedEsServer() {
+		return SpringContextUtil.getBean("resources", EmbeddedESServer.class);
 	}
 	
 

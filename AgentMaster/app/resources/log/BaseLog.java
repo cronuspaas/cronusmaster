@@ -6,16 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.Client;
 import org.lightj.session.FlowInfo;
 import org.lightj.util.DateUtil;
+import org.lightj.util.JsonUtil;
+import org.lightj.util.StringUtil;
 
 import resources.IUserDataDao.DataType;
-import resources.command.CommandImpl;
-import resources.command.ICommand;
+import resources.elasticsearch.EsResourceProvider;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.NodeGroupImpl;
-import resources.workflow.IWorkflowMeta;
-import resources.workflow.WorkflowMetaImpl;
+import resources.utils.VarUtils;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -68,6 +70,33 @@ public abstract class BaseLog implements ILog {
 		this.commandResponses = commandResponses;
 	}
 	public void addCommandResponse(CommandResponse commandResponse) {
+//		this.commandResponses.add(commandResponse);
+		
+		try {
+			String jsonStr = JsonUtil.encode(commandResponse);
+			
+			Client client = EsResourceProvider.getEsClient();
+			IndexResponse response = client.prepareIndex("log", "cmdLog")
+					.setSource(jsonStr).execute().actionGet();
+			
+			// Index name
+			String _index = response.getIndex();
+			// Type name
+			String _type = response.getType();
+			// Document ID (generated or not)
+			String _id = response.getId();
+			// Version (if it's the first time you index this document, you will get: 1)
+			long _version = response.getVersion();
+			
+			commandResponse.indexMeta = String.format("%s,%s,%s,%s", _index, _type, _id, _version);
+			
+		} catch (Exception e) {
+			
+			commandResponse.indexMeta = e.getMessage();
+		
+		}
+
+		commandResponse.trimBodyToLength(VarUtils.BASELOG_CMDRES_LENGTH);
 		this.commandResponses.add(commandResponse);
 	}
 	public String getTimestamp() {
@@ -170,12 +199,19 @@ public abstract class BaseLog implements ILog {
 		public int httpStatusCode;
 		public String responseBody;
 		public long timeReceived;
+		public String indexMeta;
 		public CommandResponse() {}
 		public CommandResponse(String host, int httpStatusCode, String responseBody) {
 			this.host = host;
 			this.httpStatusCode = httpStatusCode;
 			this.responseBody = responseBody;
 			this.timeReceived = System.currentTimeMillis();
+		}
+		public void trimBodyToLength(int length) {
+			this.responseBody = StringUtil.trimToLength(this.responseBody, length);
+		}
+		public void setIndexMeta(String indexMeta) {
+			this.indexMeta = indexMeta;
 		}
 	}
 	

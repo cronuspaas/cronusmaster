@@ -50,50 +50,29 @@
         var resdisplay = [
                 [
                     {
-                        "field": "commandKey"
+                        "field": "host"
                     },
                     {
                         "pre": "(",
-                        "field": "nodeGroup",
+                        "field": "httpStatusCode",
                         "post": ")"
                     }
                 ],
                 [
                     {
                         "pre": "<strong>",
-                        "field": "timestamp",
+                        "field": "timeReceived",
                         "post": "</strong>"
                     }
                 ],
                 [
                     {
-                        "field": "commandResponse"
-                    },
-                    {
-                        "pre": "in <em>",
-                        "field": "status",
-                        "post": "</em>,"
-                    },
-                    {
-                        "pre": "<em>",
-                        "field": "progress",
-                        "post": "</em>,"
-                    },
-                    {
-                        "pre": "vol. ",
-                        "field": "userData",
-                        "post": ","
-                    },
-                    {
-                        "field": "displayProgress"
-                    },
-                    {
-                        "field": "publisher"
+                        "field": "responseBody"
                     }
                 ],
                 [
                     {
-                        "field": "link.url"
+                        "field": "indexMeta"
                     }
                 ]
             ]

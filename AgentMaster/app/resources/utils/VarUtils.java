@@ -38,4 +38,6 @@ public class VarUtils {
 	public static final String ELASTICSEARCH_EP = Play.configuration.getProperty("agentmaster.esEp", "localhost");
 	public static final boolean LOCAL_ES_ENABLED = Boolean.valueOf(Play.configuration.getProperty("agentmaster.localEsEnabled", "true")).booleanValue();
 	
+	public static final int BASELOG_CMDRES_LENGTH = Integer.parseInt(Play.configuration.getProperty("agentmaster.baseLog.cmdResLength", "200"));
+	
 }

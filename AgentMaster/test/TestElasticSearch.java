@@ -34,10 +34,10 @@ public class TestElasticSearch extends UnitTest {
 	@Test
 	public void testEmbeddedEsServer() throws Exception {
 		
-//		SpringContextUtil.getBean("resources", EmbeddedESServer.class);
-//		Client client = EsResourceProvider.getEsClient();
+		SpringContextUtil.getBean("resources", EmbeddedESServer.class);
+		Client client = EsResourceProvider.getEsClient();
 		
-		Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("192.168.1.101", 9300));
+//		Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("192.168.1.101", 9300));
 
 		CmdLog jobLog = new CmdLog();
 		Map<String, String> optionCleanup = new HashMap<String, String>();

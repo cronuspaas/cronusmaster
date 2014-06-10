@@ -62,7 +62,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			jobLog.setJobId(getName());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
-			reqTemplate.getTemplateValuesForAllHosts().addNewTemplateValue("correlationId", jobLog.uuid());
+			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 			
 			// fire
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
