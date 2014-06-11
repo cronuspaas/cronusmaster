@@ -70,7 +70,7 @@ GET		/monitor/threads										Monitor.threads
 GET		/monitor/disk										Monitor.disk
 
 # elastic search
-GET		/search/searchLog									Search.searchLog
+GET		/search/searchCmdLog						Search.searchCmdLog
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}

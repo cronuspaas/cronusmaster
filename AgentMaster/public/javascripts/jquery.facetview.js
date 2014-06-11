@@ -192,7 +192,7 @@
             event.preventDefault()
             var modal = '<div class="modal" id="facetview_rangemodal"> \
                 <div class="modal-header"> \
-                <a class="facetview_removerange close">Ã—</a> \
+                <a class="facetview_removerange close">?—</a> \
                 <h3>Set a filter range</h3> \
                 </div> \
                 <div class="modal-body"> \
@@ -476,7 +476,7 @@
                             thevalue.push(res[row][parts[counter]])
                         }
                     }
-                    if (thevalue && thevalue.length) {
+                    if (thevalue && thevalue.toString().length) {
                         display[lineitem][object]['pre'] 
                             ? line += display[lineitem][object]['pre'] : false
                         if ( typeof(thevalue) == 'object' ) {

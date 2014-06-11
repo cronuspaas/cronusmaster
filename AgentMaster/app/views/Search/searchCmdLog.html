@@ -14,10 +14,13 @@
   
 jQuery(document).ready(function($) {
   $('.facet-view-simple').facetview({
-    search_url: 'http://localhost:9200/log/${logType}/_search?',
+    search_url: "http://localhost:9200/log/${logType}/_search?",
     search_index: 'elasticsearch',
     facets: [
         {'field':'host', 'display': 'host'},
+        {'field':'status', 'display': 'status'},
+        {'field':'timeReceived', 'display': 'timeReceived'},
+        {'field':'httpStatusCode', 'display': 'httpStatusCode'}
     ],
     paging: {
       from: 0,

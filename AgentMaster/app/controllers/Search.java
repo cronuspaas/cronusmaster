@@ -55,9 +55,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class Search extends Controller {
 
 	// index page
-	public static void searchLog(String topnav, String logType) {
+	public static void searchCmdLog() {
 
-		String page = "searchLog";
+		String topnav = "commands";
+		String page = "searchCmdLog";
+		String logType = "CmdLog";
 		try {
 			
 			render(page, topnav, logType);

@@ -17,6 +17,10 @@ limitations under the License.
 */
 package resources.utils;
 
+import org.lightj.util.JsonUtil;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import play.Play;
 
 
@@ -41,6 +45,8 @@ public class VarUtils {
 	public static final int BASELOG_CMDRES_LENGTH = getVarInt("agentmaster.baseLog.cmdResLength", 200);
 
 	public static final String ESLOG_DATA_TTL = getVarStr("agentmaster.esLogDataTtl", "1d");
+	
+	public static final ObjectMapper ES_DATA_MAPPER = JsonUtil.customMapper("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
 	
 	public static final String getVarStr(String propName, String defVal) {
 		return Play.configuration.getProperty(propName, defVal);

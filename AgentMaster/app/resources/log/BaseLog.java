@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
@@ -77,22 +78,23 @@ public abstract class BaseLog implements ILog {
 //		this.commandResponses.add(commandResponse);
 		
 		try {
-			String jsonStr = JsonUtil.encode(commandResponse);
+			String jsonStr = VarUtils.ES_DATA_MAPPER.writeValueAsString(commandResponse);
 			
 			Client client = EsResourceProvider.getEsClient();
-			IndexResponse response = client.prepareIndex("log", this.getClass().getSimpleName())
-					.setSource(jsonStr).execute().actionGet();
-			
+
 			// Index name
-			String _index = response.getIndex();
+			String _index = "log";
 			// Type name
-			String _type = response.getType();
+			String _type = this.getClass().getSimpleName();
 			// Document ID (generated or not)
-			String _id = response.getId();
-			// Version (if it's the first time you index this document, you will get: 1)
-			long _version = response.getVersion();
+			String _id = UUID.randomUUID().toString();
 			
-			commandResponse.indexMeta = String.format("%s,%s,%s,%s", _index, _type, _id, _version);
+			// async add to index
+			client.prepareIndex(_index, _type)
+					.setId(_id)
+					.setSource(jsonStr).execute();
+			
+			commandResponse.indexMeta = String.format("/%s/%s/%s", _index, _type, _id);
 			
 		} catch (Exception e) {
 			commandResponse.indexMeta = e.getMessage();
@@ -200,14 +202,16 @@ public abstract class BaseLog implements ILog {
 		public String host;
 		public int httpStatusCode;
 		public String responseBody;
-		public long timeReceived;
+		public Date timeReceived;
 		public String indexMeta;
+		public String status;
 		public CommandResponse() {}
-		public CommandResponse(String host, int httpStatusCode, String responseBody) {
+		public CommandResponse(String host, String status, int httpStatusCode, String responseBody) {
 			this.host = host;
+			this.status = status;
 			this.httpStatusCode = httpStatusCode;
 			this.responseBody = responseBody;
-			this.timeReceived = System.currentTimeMillis();
+			this.timeReceived = new Date();
 		}
 		public void trimBodyToLength(int length) {
 			this.responseBody = StringUtil.trimToLength(this.responseBody, length);

@@ -48,7 +48,7 @@ public class TestElasticSearch extends UnitTest {
 		jobLog.setProgress(1000);
 		jobLog.setStatus("Success");
 		jobLog.setStatusDetail(100, 1, 1);
-		CommandResponse commandResponse = new CommandResponse("testhost", 200, "some random string that can be very very very long");
+		CommandResponse commandResponse = new CommandResponse("testhost", "Success", 200, "some random string that can be very very very long");
 		jobLog.addCommandResponse(commandResponse);
 		String jsonStr = JsonUtil.encode(jobLog);
 
