@@ -32,12 +32,26 @@ public class VarUtils {
 	
 	public static final String AGENT_CRT_LOCATION = "conf/park.der";
 	
-	public static final boolean LOG_PROGRESS_ENABLED = Boolean.valueOf(Play.configuration.getProperty("agentmaster.logProgressEnabled", "true")).booleanValue();
+	public static final boolean LOG_PROGRESS_ENABLED = getVarBool("agentmaster.logProgressEnabled", true);
 	
-	public static final String ELASTICSEARCH_DATA = Play.configuration.getProperty("agentmaster.esData", "user_data/elasticsearch_data");
-	public static final String ELASTICSEARCH_EP = Play.configuration.getProperty("agentmaster.esEp", "localhost");
-	public static final boolean LOCAL_ES_ENABLED = Boolean.valueOf(Play.configuration.getProperty("agentmaster.localEsEnabled", "true")).booleanValue();
+	public static final String ELASTICSEARCH_DATA = getVarStr("agentmaster.esData", "user_data/elasticsearch_data");
+	public static final String ELASTICSEARCH_EP = getVarStr("agentmaster.esEp", "localhost");
+	public static final boolean LOCAL_ES_ENABLED = getVarBool("agentmaster.localEsEnabled", true);
 	
-	public static final int BASELOG_CMDRES_LENGTH = Integer.parseInt(Play.configuration.getProperty("agentmaster.baseLog.cmdResLength", "200"));
+	public static final int BASELOG_CMDRES_LENGTH = getVarInt("agentmaster.baseLog.cmdResLength", 200);
+
+	public static final String ESLOG_DATA_TTL = getVarStr("agentmaster.esLogDataTtl", "1d");
+	
+	public static final String getVarStr(String propName, String defVal) {
+		return Play.configuration.getProperty(propName, defVal);
+	}
+	
+	public static final int getVarInt(String propName, int defVal) {
+		return Integer.parseInt(Play.configuration.getProperty(propName, Integer.toString(defVal)));
+	}
+	
+	public static final boolean getVarBool(String propName, boolean defVal) {
+		return Boolean.valueOf(Play.configuration.getProperty(propName, Boolean.toString(defVal))).booleanValue();
+	}
 	
 }

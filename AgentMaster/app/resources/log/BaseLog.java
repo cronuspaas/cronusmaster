@@ -6,8 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.lightj.session.FlowInfo;
 import org.lightj.util.DateUtil;
 import org.lightj.util.JsonUtil;
@@ -76,7 +80,7 @@ public abstract class BaseLog implements ILog {
 			String jsonStr = JsonUtil.encode(commandResponse);
 			
 			Client client = EsResourceProvider.getEsClient();
-			IndexResponse response = client.prepareIndex("log", "cmdLog")
+			IndexResponse response = client.prepareIndex("log", this.getClass().getSimpleName())
 					.setSource(jsonStr).execute().actionGet();
 			
 			// Index name

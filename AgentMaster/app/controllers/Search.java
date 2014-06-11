@@ -52,14 +52,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * @author binyu
  *
  */
-public class ElasticSearch extends Controller {
+public class Search extends Controller {
 
 	// index page
-	public static void index() {
+	public static void searchLog(String topnav, String logType) {
 
+		String page = "searchLog";
 		try {
 			
-			render("ElasticSearch/index.html");
+			render(page, topnav, logType);
 
 		} catch (Exception e) {
 			e.printStackTrace();

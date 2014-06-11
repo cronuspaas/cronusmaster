@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.node.Node;
@@ -40,6 +43,15 @@ public class EmbeddedESServer {
 				.settings(elasticsearchSettings.build())
 				.data(true).node();
 
+		HashMap<String, String> settings = new HashMap<String, String>();
+		settings.put("_ttl", VarUtils.ESLOG_DATA_TTL);
+		ImmutableSettings.Builder indicesSettings = ImmutableSettings.settingsBuilder().put(settings);
+				
+		Client client = node.client();
+		if (!client.admin().indices().prepareExists("log").execute().actionGet().isExists()) {
+			client.admin().indices().prepareCreate("log").setSettings(indicesSettings).execute().actionGet();
+		}
+		
 	}
 
     public Client getClient() {
