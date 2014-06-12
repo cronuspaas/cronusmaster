@@ -38,6 +38,9 @@ jQuery(document).ready(function($) {
     });
     $('.facet-view-here').facetview(_data);
   });
+  
+  $('#facetview_freetext').val("\"${logId}\"").focus().trigger('keyup');
+  
 });
   </script>
 

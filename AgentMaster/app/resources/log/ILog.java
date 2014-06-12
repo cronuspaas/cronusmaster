@@ -35,4 +35,12 @@ public interface ILog {
 	
 	public String getStatusDetail();
 	
+	public boolean isHasRawLogs();
+	
+	public void setHasRawLogs(boolean hasRawLogs);
+	
+	public boolean isRawLogsFetched();
+	
+	public void setRawLogsFetched(boolean rawLogsFetched);	
+	
 }

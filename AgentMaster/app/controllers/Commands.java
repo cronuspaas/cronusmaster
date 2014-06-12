@@ -232,6 +232,7 @@ public class Commands extends Controller {
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
+			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
 			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
@@ -290,6 +291,7 @@ public class Commands extends Controller {
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
+			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			jobLog.setStatus(TaskResultEnum.Running.name());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);

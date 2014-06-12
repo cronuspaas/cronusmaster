@@ -13,13 +13,13 @@
       "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
       "method" : "POST",
       "body" : {
-        "manifest" : "<manifestName>",
-        "package" : "<package>"
+        "package" : "<package>",
+        "manifest" : "<manifestName>"
       },
       "headers" : {
         "content-type" : "application/json",
-        "X-CORRELATIONID": "<correlationId>",
-        "Authorization" : "Basic <agentAuthKey>"
+        "Authorization" : "Basic <agentAuthKey>",
+        "X-CORRELATIONID" : "<correlationId>"
       },
       "parameters" : {
       }
@@ -49,5 +49,6 @@
     "serviceName" : "myservice",
     "manifestName" : "manifestName",
     "package" : "array of http pkg locations"
-  }
+  },
+  "hasRawLogs" : true
 }

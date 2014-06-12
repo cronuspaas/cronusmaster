@@ -51,6 +51,7 @@ GET     /logs/exploreFiles                                  Logs.exploreFiles
 GET		/logs/aggregate										Logs.aggregate
 GET     /logs/delete                                        Logs.delete
 GET     /logs/fileContent                                   Logs.getFileContent
+GET		/logs/fetchRawLogs/{logId}							Logs.fetchRawLogs
 
 # jobs page
 GET		/jobs										Jobs.index

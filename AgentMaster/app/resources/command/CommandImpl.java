@@ -25,6 +25,17 @@ public class CommandImpl implements ICommand {
 	/** user inputs */
 	private Map<String, String> userData = new HashMap<String, String>();
 	
+	/** this command has more logs that can be fetched */
+	private boolean hasRawLogs;
+	
+	public boolean isHasRawLogs() {
+		return hasRawLogs;
+	}
+
+	public void setHasRawLogs(boolean hasRawLogs) {
+		this.hasRawLogs = hasRawLogs;
+	}
+
 	public List<String> getAggRegexs() {
 		return aggRegexs;
 	}

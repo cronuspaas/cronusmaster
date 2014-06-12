@@ -50,7 +50,7 @@
         var resdisplay = [
                 [
                     {
-                        "pre": "<strong>",
+                        "pre": "<strong>Host</strong>: <strong>",
                         "field": "host",
                         "post": "</strong>"
                     },
@@ -62,15 +62,22 @@
                 ],
                 [
                     {
-                        "pre": "<strong>",
+                        "pre": "<strong>Datetime</strong>: <strong>",
                         "field": "timeReceived",
                         "post": "</strong>"
                     }
                 ],
                 [
                     {
+                        "pre": "<strong>HttpResponse:</strong> ",
                         "field": "responseBody"
                     }
+                ],
+                [
+                 {
+                     "pre": "<strong>RawLogs:</strong> ",
+                     "field": "rawScriptLogs"
+                 }
                 ]
             ]
 
@@ -80,12 +87,12 @@
             "config_file":false,
             "facets":[],
             "result_display": resdisplay,
-            "ignore_fields":["_id","_rev"],
+            "ignore_fields":["_rev"],
             "description":"",
             "search_url":"",
             "search_index":"elasticsearch",
             "default_url_params":{},
-            "freetext_submit_delay":"700",
+            "freetext_submit_delay":"1000",
             "query_parameter":"q",
             "q":"*:*",
             "predefined_filters":{},
@@ -740,14 +747,14 @@
                <div class="span9">  \
                  <form method="GET" action="#search"> \
                    <div id="facetview_searchbar" style="display:inline-block; float:left;" class="input-prepend"> \
-                   <span class="add-on"><i class="fa fa-search fa-lg"></i></span> \
-                   <input class="span4" id="facetview_freetext" name="q" value="" placeholder="search term" autofocus /> \
+                     <span class="add-on"><i class="fa fa-search fa-lg"></i></span> \
+                     <input class="span4" id="facetview_freetext" name="q" value="" placeholder="search term" autofocus /> \
                    </div> \
                    <div style="display:inline-block; float:left;margin-left:-2px;" class="btn-group"> \
                     <a style="-moz-border-radius:0px 3px 3px 0px; \
                     -webkit-border-radius:0px 3px 3px 0px; border-radius:0px 3px 3px 0px;" \
                     class="btn dropdown-toggle" data-toggle="dropdown" href="#"> \
-        			<i class="fa fa-cog fa-lg"></i> <span class="caret"></span></a> \
+        			<span><i class="fa fa-cog fa-lg"></i> <span class="caret"></span></a> \
                     <ul class="dropdown-menu"> \
                     <li><a id="facetview_partial_match" href="">partial match</a></li> \
                     <li><a id="facetview_exact_match" href="">exact match</a></li> \
@@ -792,8 +799,8 @@
 
             // resize the searchbar
             var thewidth = $('#facetview_searchbar').parent().parent().width()
-            $('#facetview_searchbar').css('width',thewidth - 50 + 'px')
-            $('#facetview_freetext').css('width', thewidth - 88 + 'px')
+            $('#facetview_searchbar').css('width',thewidth - 100 + 'px')
+            $('#facetview_freetext').css('width', thewidth - 138 + 'px')
 
             // append the filters to the facetview object
             buildfilters();

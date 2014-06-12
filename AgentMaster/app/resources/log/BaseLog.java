@@ -22,6 +22,7 @@ import resources.IUserDataDao.DataType;
 import resources.elasticsearch.EsResourceProvider;
 import resources.nodegroup.INodeGroup;
 import resources.nodegroup.NodeGroupImpl;
+import resources.utils.ElasticSearchUtils;
 import resources.utils.VarUtils;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -64,6 +65,12 @@ public abstract class BaseLog implements ILog {
 	/** status detail of #success-#failure-#other */
 	protected String statusDetail;
 	
+	/** whether this task have more raw logs */
+	protected boolean hasRawLogs;
+	
+	/** wether raw logs for this task is already fetched */
+	protected boolean rawLogsFetched;
+	
 	public BaseLog(DataType commandType) {
 		this.commandType = commandType;
 	}
@@ -75,24 +82,18 @@ public abstract class BaseLog implements ILog {
 		this.commandResponses = commandResponses;
 	}
 	public void addCommandResponse(CommandResponse commandResponse) {
-//		this.commandResponses.add(commandResponse);
 		
 		try {
 			String jsonStr = VarUtils.ES_DATA_MAPPER.writeValueAsString(commandResponse);
 			
-			Client client = EsResourceProvider.getEsClient();
-
 			// Index name
 			String _index = "log";
 			// Type name
 			String _type = this.getClass().getSimpleName();
 			// Document ID (generated or not)
-			String _id = UUID.randomUUID().toString();
-			
-			// async add to index
-			client.prepareIndex(_index, _type)
-					.setId(_id)
-					.setSource(jsonStr).execute();
+			String _id = String.format("%s~%s", this.uuid(), commandResponse.host);
+
+			ElasticSearchUtils.insertDocument(_index, _type, _id, jsonStr);
 			
 			commandResponse.indexMeta = String.format("/%s/%s/%s", _index, _type, _id);
 			
@@ -158,6 +159,18 @@ public abstract class BaseLog implements ILog {
 	}
 	public void setStatusDetail(int numSuccess, int numFail, int numOther) {
 		this.statusDetail = String.format("%s:%s:%s", numSuccess, numFail, numOther);
+	}
+	public boolean isHasRawLogs() {
+		return hasRawLogs;
+	}
+	public void setHasRawLogs(boolean hasRawLogs) {
+		this.hasRawLogs = hasRawLogs;
+	}
+	public boolean isRawLogsFetched() {
+		return rawLogsFetched;
+	}
+	public void setRawLogsFetched(boolean rawLogsFetched) {
+		this.rawLogsFetched = rawLogsFetched;
 	}
 
 	/**

@@ -30,4 +30,9 @@ public interface ICommand {
 
 	/** user data */
 	public Map<String, String> getUserData();
+	
+	public boolean isHasRawLogs();
+
+	public void setHasRawLogs(boolean hasRawLogs);
+
 }

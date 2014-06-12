@@ -1,6 +1,7 @@
 package resources;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.lightj.session.FlowContext;
@@ -27,6 +28,8 @@ import resources.log.BaseLog;
 import resources.log.FlowLog;
 import resources.log.BaseLog.CommandResponse;
 import resources.log.IJobLogger;
+import resources.log.ILog;
+import resources.utils.ElasticSearchUtils;
 import resources.utils.VarUtils;
 
 import com.amazonaws.services.datapipeline.model.TaskStatus;
@@ -37,8 +40,11 @@ import com.ning.http.client.Response;
 @Configuration
 public class TaskResourcesProvider {
 	
+	public static String HTTP_CLIENT = "httpClient";
+	
 	/**
-	 * log flow execution log at flow stop
+	 * log flow execution log at flow stop, and save in FlowLog
+	 * 
 	 * @author biyu
 	 *
 	 */
@@ -72,9 +78,38 @@ public class TaskResourcesProvider {
 		}
 		
 	}
+	
+	/**
+	 * run a task and handle task event, save result in memory for other to access
+	 * 
+	 * @author binyu
+	 *
+	 */
+	public static final class LogTaskEventUpdater extends SimpleTaskEventHandler<FlowContext> {
+		
+		private ILog log;
+		public LogTaskEventUpdater(ILog log) {
+			this.log = log;
+		}
+		
+		@Override
+		public void executeOnResult(FlowContext ctx, Task task, TaskResult result) {
+			if (task instanceof SimpleHttpTask) {
+				String host = ((SimpleHttpTask) task).getReq().getHost();
+				if (result.getStatus() == TaskResultEnum.Success) {
+					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
+					HashMap<String, String> values = new HashMap<String, String>();
+					values.put("rawScriptLogs", res.getResponseBody());
+					String id = String.format("%s~%s", log.uuid(), host);
+					ElasticSearchUtils.updateDocument("log", log.getClass().getSimpleName(), id, values);
+				}
+			}
+		}
+	}
 
 	/**
-	 * handle task execution event by task runner
+	 * handle task execution event by task runner, and save log in CmdLog or JobJog
+	 * 
 	 * @author binyu
 	 *
 	 */
@@ -134,6 +169,10 @@ public class TaskResourcesProvider {
 			return super.executeOnCompleted(ctx, results);
 		}
 		
+		/**
+		 * save log
+		 * @param isResult
+		 */
 		private void saveLog(boolean isResult) {
 			if (isResult || VarUtils.LOG_PROGRESS_ENABLED) {
 				try {

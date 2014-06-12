@@ -59,6 +59,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			jobLog.setUserData(DataUtil.removeNullAndZero(userData));
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
+			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			jobLog.setJobId(getName());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);

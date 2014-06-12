@@ -21,7 +21,8 @@
 					<th>Status</th>
 					<th>S:F:Other</th>
 					<th>Result</th>
-					<th>Stats</th>
+					<th>Search</th>
+					<th>Logs</th>
 					<th>Rerun</th>
 					<th>Schedule</th>
 					<th>Remove</th>
@@ -53,8 +54,11 @@
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
 					<td>   
-						<a target=_self href="/logs/aggregate?nav=${topnav}&logType=${logObj.type}&logId=${logObj.name}&aggField=httpStatusCode&aggRegEx=" >
-						<i class="fa fa-list fa-lg"></i></a> 
+						<a target=_self href="/search/searchCmdLog?logId=${logObj.name}" >
+						<i class="fa fa-search fa-lg"></i></a> 
+					</td>  
+					<td>
+						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}"><i class="fa fa-file-text-o fa-lg"></i></a> #{/if}   
 					</td>  
 					<td>   
 						<a target=_self href="/commands/runCmdFromLog?logType=${logObj.type}&logId=${logObj.name}">

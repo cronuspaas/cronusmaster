@@ -25,11 +25,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.lightj.example.task.HostTemplateValues;
+import org.lightj.example.task.HttpTaskBuilder;
+import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.task.BatchOption;
+import org.lightj.task.ExecutableTask;
+import org.lightj.task.ExecuteOption;
+import org.lightj.task.StandaloneTaskExecutor;
+import org.lightj.task.StandaloneTaskListener;
+import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
+import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 import resources.IUserDataDao.DataType;
+import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
+import resources.agent.AgentResourceProvider;
 import resources.log.BaseLog;
 import resources.log.CmdLog;
 import resources.log.FlowLog;
@@ -48,6 +60,47 @@ import resources.utils.FileIoUtils;
  *
  */
 public class Logs extends Controller {
+	
+	/**
+	 * fetch raw script logs
+	 * @param logId
+	 */
+	public static void fetchRawLogs(String logId) {
+		
+		try {
+			
+			String alert = null;
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			ILog log = logger.readLog(logId);
+			if (log.isRawLogsFetched()) {
+				alert = String.format("Raw logs for job %s are already available in full text search", log.uuid());
+			}
+			else {
+				HttpTaskRequest taskReq = new HttpTaskRequest();
+				UrlTemplate urlTemplate = new UrlTemplate("https://<host>:12020/status/guidoutput/<guid>", HttpMethod.GET);
+				taskReq.setSyncTaskOptions(TaskResourcesProvider.HTTP_CLIENT, urlTemplate, new ExecuteOption(), AgentResourceProvider.AGENT_PROCESSOR);
+				taskReq.setHosts(log.getNodeGroup().getHosts());
+				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue("guid", log.uuid()));
+				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
+
+				StandaloneTaskListener listener = new StandaloneTaskListener();
+				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(log));
+				
+				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
+				
+				log.setRawLogsFetched(true);
+				logger.saveLog(log);
+				alert = String.format("Fetch raw script logs for job %s, it will be available in full text search", log.uuid());
+			}
+			
+			redirect("Logs.cmdLogs", alert);
+			
+		} catch (Throwable t) {
+			t.printStackTrace();
+			renderJSON("Error occured in index of logs");
+		}
+
+}
 
 	/**
 	 * show logs
@@ -76,25 +129,21 @@ public class Logs extends Controller {
 					log.put("status", logImpl.getStatus());
 					log.put("statusdetail", logImpl.getStatusDetail());
 					log.put("progress", logImpl.getDisplayProgress());
+					if (logImpl.isHasRawLogs()) {
+						log.put("fetch", "true");
+					}
 				}
 				else {
 					log.put("status", "-");
 					log.put("statusdetail", "-");
 					log.put("progress", "-");
+					log.put("fetch", "false");
 				}
 				logFiles.add(log);
 			}
 			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-//			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
-//
-//				@Override
-//				public int compare(Map<String, String> o1,
-//						Map<String, String> o2) {
-//					return 0-(o1.get("timeStamp").compareTo(o2.get("timeStamp")));
-//					
-//				}});
 
 			render(page, topnav, logFiles, lastRefreshed, alert);
 		} catch (Throwable t) {

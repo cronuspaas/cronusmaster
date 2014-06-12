@@ -1,1 +1,0 @@
-{"flowName":"GenericCommand","flowType":"Predefined","flowClass":"GenericCommandFlow","flowDescription":"run generic commands in sequence","userData":{"cmdUserData":"{\"command1\" : \"{key: value}\", \"command2\": \"{key: value}\"}","commands":"[\"command1\", \"command2\"]","hosts":"[\"host\"]","batchOption":"UNLIMITED,0"}}
