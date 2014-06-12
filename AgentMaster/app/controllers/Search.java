@@ -54,13 +54,49 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 public class Search extends Controller {
 
-	// index page
+	/**
+	 * elastic search command logs
+	 * @param logId
+	 */
 	public static void searchCmdLog(String logId) {
 
 		String topnav = "commands";
 		String page = "searchCmdLog";
 		String logType = "CmdLog";
 		
+		searchLogs(logId, topnav, page, logType);
+	}
+
+	/**
+	 * elastic search job logs
+	 * @param logId
+	 */
+	public static void searchJobLog(String logId) {
+
+		searchLogs(logId, "jobs", "searchJobLog", "JobLog");
+
+	}
+	
+	/**
+	 * elastic search wf logs
+	 * @param logId
+	 */
+	public static void searchWfLog(String logId) {
+
+		searchLogs(logId, "workflows", "searchWfLog", "WfLog");
+
+	}
+
+	/**
+	 * elastic search logs
+	 * 
+	 * @param logId
+	 * @param topnav
+	 * @param page
+	 * @param logType
+	 */
+	private static void searchLogs(String logId, String topnav, String page, String logType) {
+
 		try {
 			
 			render(page, topnav, logType, logId);
@@ -71,5 +107,4 @@ public class Search extends Controller {
 		}
 
 	}
-
 }

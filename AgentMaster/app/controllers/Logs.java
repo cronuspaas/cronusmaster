@@ -168,12 +168,28 @@ public class Logs extends Controller {
 			List<String> logs = logger.listLogs();
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
+			int idx = 0;
 			for (String logName : logs) {
 				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
 				log.put("name", logName);
 				log.put("type", DataType.JOBLOG.name());
+				if (idx++ <= 50) {
+					ILog logImpl = logger.readLog(logName);
+					log.put("status", logImpl.getStatus());
+					log.put("statusdetail", logImpl.getStatusDetail());
+					log.put("progress", logImpl.getDisplayProgress());
+					if (logImpl.isHasRawLogs()) {
+						log.put("fetch", "true");
+					}
+				}
+				else {
+					log.put("status", "-");
+					log.put("statusdetail", "-");
+					log.put("progress", "-");
+					log.put("fetch", "false");
+				}
 				logFiles.add(log);
 			}
 			// List<>
