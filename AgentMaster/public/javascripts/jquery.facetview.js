@@ -75,8 +75,9 @@
                 ],
                 [
                  {
-                     "pre": "<strong>RawLogs:</strong> ",
-                     "field": "rawScriptLogs"
+                     "pre": "<strong>RawLogs:</strong> <pre>",
+                     "field": "rawScriptLogs",
+                     "post": "</pre>"
                  }
                 ]
             ]
