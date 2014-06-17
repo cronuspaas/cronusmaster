@@ -24,6 +24,8 @@ import resources.log.LoggerImpl;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.INodeGroupData;
 import resources.nodegroup.NodeGroupDataImpl;
+import resources.script.IScriptData;
+import resources.script.ScriptDataImpl;
 import resources.workflow.IWorkflowData;
 import resources.workflow.WorkflowDataImpl;
 
@@ -146,11 +148,38 @@ public class UserDataProvider {
 	}
 	
 	/**
+	 * predefined script
+	 * @return
+	 */
+	public @Bean @Scope("singleton") IScriptData predefinedScripts() {
+		ScriptDataImpl sd = new ScriptDataImpl();
+		sd.setDataType(DataType.SCRIPT);
+		return sd;
+	}
+	
+	/**
 	 * return current IUserConfigsDao
 	 * @return
 	 */
 	public static ICommandData getCommandConfigs() {
 		return SpringContextUtil.getBean("resources", "commandConfigs", ICommandData.class);
+	}
+	
+	/**
+	 * getscript configs of a type
+	 * @param type
+	 * @return
+	 */
+	public static IScriptData getScriptOfType(DataType type) {
+		IScriptData sd = null;
+		switch(type) {
+		case SCRIPT:
+			sd = SpringContextUtil.getBean("resources", "predefinedScripts", IScriptData.class);
+			break;
+		default:
+			throw new IllegalArgumentException(String.format("Invalid script type %s", type));
+		}
+		return sd;
 	}
 	
 	/**

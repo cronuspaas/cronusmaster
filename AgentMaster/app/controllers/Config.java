@@ -204,6 +204,9 @@ public class Config extends Controller {
 			case NODEGROUP:
 				UserDataProvider.getNodeGroupOfType(dType).save(configName, content);
 				break;
+			case SCRIPT:
+				UserDataProvider.getScriptOfType(dType).save(configName, content);
+				break;
 			default:
 				throw new RuntimeException("Invalid datatype " + dataType);
 			}

@@ -10,6 +10,7 @@ import resources.log.FlowLog;
 import resources.log.BaseLog;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.NodeGroupImpl;
+import resources.script.ScriptImpl;
 import resources.workflow.WorkflowMetaImpl;
 
 /**
@@ -30,6 +31,7 @@ public interface IUserDataDao {
 	public enum DataType 
 	{
 		NODEGROUP("Predefined NodeGroup", "user_data/predefined_nodegroups", NodeGroupImpl.class), 
+		SCRIPT("Predefined Script", "user_data/predefined_scripts", ScriptImpl.class),
 		COMMAND("Command", "user_data/commands", CommandImpl.class), 
 		WORKFLOW("Workflow", "user_data/workflows", WorkflowMetaImpl.class),
 		ADHOCNODEGROUP("Adhoc NodeGroup", "user_data/adhoc_nodegroups", AdhocNodeGroupDataImpl.class), 
