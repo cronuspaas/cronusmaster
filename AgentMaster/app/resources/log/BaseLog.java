@@ -84,6 +84,8 @@ public abstract class BaseLog implements ILog {
 	public void addCommandResponse(CommandResponse commandResponse) {
 		
 		try {
+			// add logId for elastic search only
+			commandResponse.logId = this.uuid();
 			String jsonStr = VarUtils.ES_DATA_MAPPER.writeValueAsString(commandResponse);
 			
 			// Index name
@@ -95,13 +97,16 @@ public abstract class BaseLog implements ILog {
 
 			ElasticSearchUtils.insertDocument(_index, _type, _id, jsonStr);
 			
-			commandResponse.indexMeta = String.format("/%s/%s/%s", _index, _type, _id);
+			commandResponse.indexMeta = String.format("%s/%s/%s", _index, _type, _id);
 			
 		} catch (Exception e) {
 			commandResponse.indexMeta = e.getMessage();
 		}
 
+		// trim response length so we don't persist too much
 		commandResponse.trimBodyToLength(VarUtils.BASELOG_CMDRES_LENGTH);
+		// reset logId back to null before we persisted it as part of user data
+		commandResponse.logId = null;
 		this.commandResponses.add(commandResponse);
 	}
 	public String getTimestamp() {
@@ -218,6 +223,7 @@ public abstract class BaseLog implements ILog {
 		public Date timeReceived;
 		public String indexMeta;
 		public String status;
+		public String logId;
 		public CommandResponse() {}
 		public CommandResponse(String host, String status, int httpStatusCode, String responseBody) {
 			this.host = host;

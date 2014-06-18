@@ -44,6 +44,8 @@ public class Application extends Controller {
 			metricMap.put("totalJobCount",
 					Integer.toString(UserDataProvider.getIntervalJobOfType(DataType.CMDJOB).getAllJobs().size()
 					+ UserDataProvider.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs().size()));
+			metricMap.put("totalScriptCount", 
+					Integer.toString(UserDataProvider.getScriptOfType(DataType.SCRIPT).getScriptCount()));
 
 			render(metricMap);
 			

@@ -14,6 +14,8 @@ import resources.utils.VarUtils;
 @Configuration
 public class EsResourceProvider {
 	
+	public static final String INDEX_LOG = "log";
+	
 	/**
 	 * initialize elastic search embedded server
 	 * @return

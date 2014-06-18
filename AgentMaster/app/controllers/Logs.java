@@ -43,6 +43,7 @@ import resources.TaskResourcesProvider;
 import resources.UserDataProvider;
 import resources.agent.AgentResourceProvider;
 import resources.log.BaseLog;
+import resources.log.BaseLog.CommandResponse;
 import resources.log.CmdLog;
 import resources.log.FlowLog;
 import resources.log.IJobLogger;
@@ -52,6 +53,7 @@ import resources.log.LogAggregation;
 import resources.log.LogAggregation.LogAggregationItem;
 import resources.utils.DataUtil;
 import resources.utils.DateUtils;
+import resources.utils.ElasticSearchUtils;
 import resources.utils.FileIoUtils;
 
 /**
@@ -286,8 +288,21 @@ public class Logs extends Controller {
 
 		try {
 			
+			
 			DataType dtype = DataType.valueOf(type.toUpperCase());
+
+			// asynchronously delete elastic search data
+			ILog log = UserDataProvider.getJobLoggerOfType(dtype).readLog(name);
+			if (log instanceof BaseLog) {
+				for (CommandResponse res : ((BaseLog) log).getCommandResponses()) {
+					ElasticSearchUtils.deleteDocumentFromCmdResponse(res.indexMeta);
+				}
+			}
+			
+			// delete log
 			UserDataProvider.getUserDataDao().deleteData(dtype, name);
+			
+			// redirect with message
 			String redirectTarget = null;
 			switch(dtype) {
 			case CMDLOG:

@@ -94,7 +94,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 				sb.append(line).append("\n");
 			}
 
-			play.Logger.info("Completed readConfigFile with size: "
+			play.Logger.debug("Completed readConfigFile with size: "
 					+ sb.toString().length() / 1024.0 + " KB at "
 					+ DateUtils.getNowDateTimeStr());
 

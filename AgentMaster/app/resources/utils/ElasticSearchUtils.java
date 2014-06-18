@@ -37,5 +37,18 @@ public class ElasticSearchUtils {
 		client.prepareUpdate(idx, type, id)
 				.setDoc(values).execute();
 	}
+	
+	/**
+	 * delete a document based on persisted cmdresponse indexmeta
+	 * @param cmdResIndexMeta
+	 */
+	public static void deleteDocumentFromCmdResponse(String cmdResIndexMeta) {
+		String[] tokens = cmdResIndexMeta.split("/", 3);
+		if (tokens.length == 3) {
+			EsResourceProvider.getEsClient()
+						.prepareDelete(tokens[0], tokens[1], tokens[2])
+						.execute();
+		}
+	}
 
 }

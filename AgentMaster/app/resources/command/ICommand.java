@@ -31,8 +31,10 @@ public interface ICommand {
 	/** user data */
 	public Map<String, String> getUserData();
 	
+	/** this command has raw logs */
 	public boolean isHasRawLogs();
 
+	/** the raw log of this command has been fetched and indexed */
 	public void setHasRawLogs(boolean hasRawLogs);
 
 }

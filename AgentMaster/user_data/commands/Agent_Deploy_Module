@@ -1,5 +1,5 @@
 {
-  "name" : "Agent_Deploy_Service",
+  "name" : "Agent_Deploy_Module",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
@@ -10,10 +10,9 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
+      "url" : "https://<host>:12020/agent/modules/<moduleName>",
       "method" : "POST",
       "body" : {
-        "manifest" : "<manifestName>",
         "package" : "<package>"
       },
       "headers" : {
@@ -46,9 +45,8 @@
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
-    "serviceName" : "myservice",
-    "manifestName" : "manifestName",
-    "package" : "[\"http pkg locations\"]"
+    "moduleName" : "moduleName",
+    "package" : "http pkg location"
   },
   "hasRawLogs" : true
 }

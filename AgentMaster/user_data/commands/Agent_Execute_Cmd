@@ -1,5 +1,5 @@
 {
-  "name" : "Agent_Deploy_Service",
+  "name" : "Agent_Execute_Cmd",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
@@ -10,11 +10,12 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
+      "url" : "https://<host>:12020/admin/executeCmd",
       "method" : "POST",
       "body" : {
-        "manifest" : "<manifestName>",
-        "package" : "<package>"
+        "cmd" : "<cmd>",
+        "sudoUser" : "<sudoUser>",
+        "params" : "<params>"
       },
       "headers" : {
         "content-type" : "application/json",
@@ -46,9 +47,9 @@
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
-    "serviceName" : "myservice",
-    "manifestName" : "manifestName",
-    "package" : "[\"http pkg locations\"]"
+    "cmd" : "cmd",
+    "params" : "array of parameters",
+    "sudoUser" : "optional sudo user"
   },
   "hasRawLogs" : true
 }

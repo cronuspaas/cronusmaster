@@ -6,8 +6,10 @@ import java.util.List;
 import resources.command.CommandImpl;
 import resources.job.CmdIntervalJobImpl;
 import resources.job.FlowIntervalJobImpl;
+import resources.log.CmdLog;
 import resources.log.FlowLog;
 import resources.log.BaseLog;
+import resources.log.JobLog;
 import resources.nodegroup.AdhocNodeGroupDataImpl;
 import resources.nodegroup.NodeGroupImpl;
 import resources.script.ScriptImpl;
@@ -31,13 +33,13 @@ public interface IUserDataDao {
 	public enum DataType 
 	{
 		NODEGROUP("Predefined NodeGroup", "user_data/predefined_nodegroups", NodeGroupImpl.class), 
+		ADHOCNODEGROUP("Adhoc NodeGroup", "user_data/adhoc_nodegroups", AdhocNodeGroupDataImpl.class), 
 		SCRIPT("Predefined Script", "user_data/predefined_scripts", ScriptImpl.class),
 		COMMAND("Command", "user_data/commands", CommandImpl.class), 
 		WORKFLOW("Workflow", "user_data/workflows", WorkflowMetaImpl.class),
-		ADHOCNODEGROUP("Adhoc NodeGroup", "user_data/adhoc_nodegroups", AdhocNodeGroupDataImpl.class), 
-		JOBLOG("Job Logs", "user_data/job_logs", BaseLog.class),
+		JOBLOG("Job Logs", "user_data/job_logs", JobLog.class),
 		FLOWLOG("Workflow Logs", "user_data/flow_logs", FlowLog.class),
-		CMDLOG("Command Logs", "user_data/cmd_logs", BaseLog.class),
+		CMDLOG("Command Logs", "user_data/cmd_logs", CmdLog.class),
 		CMDJOB("Command Job", "user_data/cmd_jobs", CmdIntervalJobImpl.class),
 		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class);
 		

@@ -5,27 +5,31 @@
 	
 	<div class="container">
 	
-		<h1>REST Commander  </h1> 
+		<h1>Cronus Master</h1> 
 <p>		
     Fast Parallel Async
         
      HTTP/<abbr title="Representational State Transfer (REST) is a style of software architecture for distributed systems such as the World Wide Web. REST has emerged as a predominant web API design model.">REST</abbr>/SOAP
-      client as a service to monitor and manage 10,000 web servers.
+      client as a service to deploy and manage 10,000 web servers.
        <br/>   
    
-     Sends requests to <strong>1000</strong> servers with response aggregation in <strong>10</strong> seconds. or <strong>10,000</strong> servers in <strong>50</strong> seconds.
+     Deploy any application to <strong>1000</strong> servers in <strong>10</strong> seconds, or <strong>10,000</strong> servers in <strong>50</strong> seconds.
 
      <br/>
      <br/>
 
 
-      <abbr title="Generic response aggregation by user-defined regular expression matching.">Response analysis</abbr>
-     &nbsp;&nbsp; <abbr title="Quickly check any HTTP results from an ad hoc list of servers with generic response aggregation by regular expression matching. FAST: No dependency or setup required.">Agent-less monitor</abbr>
-      &nbsp;&nbsp;<abbr title="Push uniform config or node-specific configs to HTTP end points, as long as there are HTTP (REST/SOAP) APIs to perform.">Configuration push</abbr>
-      &nbsp;&nbsp; <abbr title="Discover misconfigured servers from thousands of servers with http APIs in no time.">Discover outliers</abbr>
-      &nbsp;&nbsp; <abbr title="Scalable multi-step HTTP operations to thousands of HTTP endpoints.">Orchestration</abbr>
-     <br/> 
-       <abbr title="1. Generic HTTP request: Any HTTP/HTTPS GET/POST/PUT/DELETE request. 2. Generic response aggregation: any user defined regular expression matching. 3 Generic node specific config push or request: generic variable replacement in request parameters or APIs. ">Generic</abbr>
+      <abbr title="Able to run on and manage public or private cloud.">Cloud Enabled</abbr>
+      &nbsp;&nbsp;
+      <abbr title="Fully managed application life cycle, deploy, start, stop, restart, upgrade, decom.">Deploy Any Application</abbr>
+      &nbsp;&nbsp;
+      <abbr title="Full text search enabled for all responses and raw logs.">Fulltext Search Results</abbr>
+      &nbsp;&nbsp; 
+      <abbr title="Quickly check any HTTP results from an ad hoc list of servers with generic response enabled in full text search/aggregation. FAST: No dependency or setup required.">Zero Setup Monitoring</abbr>
+      &nbsp;&nbsp; 
+      <abbr title="Scalable multi-step workflows to thousands of HTTP endpoints.">Orchestration</abbr>
+      <br/> 
+      <abbr title="1. Generic HTTP request: Any HTTP/HTTPS GET/POST/PUT/DELETE request. 2. Generic response aggregation: any user defined regular expression matching. 3 Generic node specific config push or request: generic variable replacement in request parameters or APIs. ">Generic</abbr>
       &nbsp;&nbsp;    <abbr title="Hit and aggregate responses from 10,000+ servers within 1 minute from Commander running on a single server.">Scalablity</abbr>
      &nbsp;&nbsp;&nbsp;<abbr title="Code under Apache 2.0 License. ">Open Source</abbr>
      &nbsp;&nbsp; <abbr title="Response aggregation in tables. All responses are saved in standard json logs file for further analysis.">Visibility</abbr>
@@ -59,25 +63,6 @@
 	</div>
 </div>
 
-  
-<div class="bs-docs-social">
-  <div class="container">
-   <ul class="bs-docs-social-buttons">
-    
-      <li>
-         <a href="config/showConfigs/nodegroup" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i>Manage Predefined Nodes</a>
-      </li>
-      
-      <li>
-         <a href="config/showConfigs/command" class="btn btn-small" target="_blank"><i class="fa fa-pencil"></i>Manage Commands</a>
-      </li>
-      
-    </ul>
-
-  </div>
-</div>
-
-
 <a href="https://github.com/ebay/restsuperman"  ><img style="position: absolute; top: 0; right: 0; border: 0;  z-index: 1032;" src="/public/images/fork_me_in_git_banner970x210_img.png" alt="Fork me on GitHub"></a>
   <div class="container">
 <div class="row">
@@ -85,18 +70,18 @@
 	<div class="span6">
 		<div class="feat-a">
 			<div class="feat">
-				<h1><a href="/" style="text-decoration: none"> ${metricMap.get("totalNodeCount")}</a></h1>
+				<h1><a href="/config/showConfigs/nodegroup" style="text-decoration: none"> ${metricMap.get("totalNodeCount")}</a></h1>
 				<p class="lead">
 				<abbr title="Number of servers in predefined node groups">Predefined Nodes</abbr>
 				</p>
-				
 			</div>
 		</div>
+
 		<div class="feat-b">
 			<div class="feat">
-			<h1><a href="/" style="text-decoration: none"> ${metricMap.get("totalCmdCount")}</a></h1>
+			<h1><a href="/commands" style="text-decoration: none"> ${metricMap.get("totalCmdCount")}</a></h1>
 				<p class="lead">
-				<abbr title="Number of Commands">Commands</abbr>
+				<abbr title="Number of Commands">RESTful Commands</abbr>
 				</p>
 			</div>
 		</div>
@@ -104,11 +89,12 @@
 		<div class="clearfix"></div>
 		
 	</div>
+
 	<div class="span6">
 
 		<div class="feat-a">
 			<div class="feat">
-				<h1><a href="/commands" style="text-decoration: none"> ${metricMap.get("totalWfCount")} </a> </h1>
+				<h1><a href="/workflows" style="text-decoration: none"> ${metricMap.get("totalWfCount")} </a> </h1>
 				<p class="lead">
 				<abbr title="Number of Workflows">Workflows</abbr>
 				</p>
@@ -118,10 +104,10 @@
 		</div>
 		<div class="feat-b">
 			<div class="feat">
-			<h1><a href="/nodeGroups" style="text-decoration: none"> ${metricMap.get("totalJobCount")}</a></h1>
+			<h1><a href="/jobs" style="text-decoration: none"> ${metricMap.get("totalJobCount")}</a></h1>
 				
 				<p class="lead">
-				<abbr title="Number of Jobs">Jobs</abbr>
+				<abbr title="Number of Jobs">Recurring Jobs</abbr>
 				</p>
 				
 			</div>
@@ -129,6 +115,7 @@
 		<div class="clearfix"></div>
 
 	</div>
+
 </div>
 
 <br/>
