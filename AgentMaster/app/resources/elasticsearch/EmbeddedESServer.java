@@ -50,33 +50,33 @@ public class EmbeddedESServer {
 
 		// now add indices
 		// for logs
-		HashMap<String, String> settings = new HashMap<String, String>();
-		settings.put("_ttl", VarUtils.ESLOG_DATA_TTL);
-		ImmutableSettings.Builder indicesSettings = ImmutableSettings.settingsBuilder().put(settings);
-				
-		Client client = node.client();
-		if (!client.admin().indices().prepareExists("log").execute().actionGet().isExists()) {
-			client.admin().indices().prepareCreate("log").setSettings(indicesSettings).execute().actionGet();
-		}
-		
-		// now set the type mappings
-		try {
-			XContentBuilder builder = jsonBuilder()
-					.startObject()
-					.startObject("CmdLog")
-					.startObject("properties")
-					.startObject("host").field("type", "string").endObject()
-					.startObject("httpStatusCode").field("type", "integer").endObject()
-					.startObject("timeReceived").field("type", "date").endObject()
-					.startObject("responseBody").field("type", "string").endObject()
-					.startObject("status").field("type", "string").endObject()
-					.endObject().endObject().endObject();
-					
-			client.admin().indices().preparePutMapping("log")
-						.setType("CmdLog").setSource(builder).execute().actionGet();		
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
+//		HashMap<String, String> settings = new HashMap<String, String>();
+//		settings.put("_ttl", VarUtils.ESLOG_DATA_TTL);
+//		ImmutableSettings.Builder indicesSettings = ImmutableSettings.settingsBuilder().put(settings);
+//				
+//		Client client = node.client();
+//		if (!client.admin().indices().prepareExists("log").execute().actionGet().isExists()) {
+//			client.admin().indices().prepareCreate("log").setSettings(indicesSettings).execute().actionGet();
+//		}
+//		
+//		// now set the type mappings
+//		try {
+//			XContentBuilder builder = jsonBuilder()
+//					.startObject()
+//					.startObject("CmdLog")
+//					.startObject("properties")
+//					.startObject("host").field("type", "string").endObject()
+//					.startObject("httpStatusCode").field("type", "integer").endObject()
+//					.startObject("timeReceived").field("type", "date").endObject()
+//					.startObject("responseBody").field("type", "string").endObject()
+//					.startObject("status").field("type", "string").endObject()
+//					.endObject().endObject().endObject();
+//					
+//			client.admin().indices().preparePutMapping("log")
+//						.setType("CmdLog").setSource(builder).execute().actionGet();		
+//		} catch(IOException e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 

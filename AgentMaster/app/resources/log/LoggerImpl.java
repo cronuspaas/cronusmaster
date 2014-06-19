@@ -7,7 +7,10 @@ import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
+import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
+import resources.log.BaseLog.CommandResponse;
+import resources.utils.ElasticSearchUtils;
 
 /**
  * logger impl
@@ -67,7 +70,21 @@ public class LoggerImpl<T extends ILog> implements IJobLogger<T> {
 
 	@Override
 	public void deleteLog(String logId) throws IOException {
-		userDataDao.deleteData(dataType, logId);
+		
+		try {
+			// asynchronously delete elastic search data
+			T log = this.readLog(logId);
+			if (log instanceof BaseLog) {
+				for (CommandResponse res : ((BaseLog) log).getCommandResponses()) {
+					
+					ElasticSearchUtils.deleteDocumentFromCmdResponse(res.indexMeta);
+					play.Logger.debug("Completed delete elastic search document %s", res.indexMeta);
+				}
+			}
+		} finally {
+			userDataDao.deleteData(dataType, logId);
+		}
+		
 	}
 
 }

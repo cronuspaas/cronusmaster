@@ -13,8 +13,10 @@
       "url" : "https://<host>:12020/admin/executeScript",
       "method" : "POST",
       "body" : {
-        "script-location" : "<scriptLocation>",
-        "script-name" : "<scriptName>"
+        "scriptName" : "<scriptName>",
+        "sudoUser" : "<sudoUser>",
+        "params" : "<params>",
+        "scriptLocation" : "<scriptLocation>"
       },
       "headers" : {
         "content-type" : "application/json",
@@ -47,7 +49,9 @@
   },
   "userData" : {
     "scriptLocation" : "script loc url",
-    "scriptName" : "optional local rename"
+    "scriptName" : "local script name",
+    "sudoUser" : "optional sudo user",
+    "params" : "optional parameters"
   },
   "hasRawLogs" : true
 }

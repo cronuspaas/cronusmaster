@@ -61,7 +61,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			jobLog.setNodeGroup(ng);
 			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			jobLog.setJobId(getName());
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.JOBLOG);
 			logger.saveLog(jobLog);
 			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 			

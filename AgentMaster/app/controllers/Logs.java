@@ -288,19 +288,9 @@ public class Logs extends Controller {
 
 		try {
 			
-			
 			DataType dtype = DataType.valueOf(type.toUpperCase());
-
-			// asynchronously delete elastic search data
-			ILog log = UserDataProvider.getJobLoggerOfType(dtype).readLog(name);
-			if (log instanceof BaseLog) {
-				for (CommandResponse res : ((BaseLog) log).getCommandResponses()) {
-					ElasticSearchUtils.deleteDocumentFromCmdResponse(res.indexMeta);
-				}
-			}
-			
-			// delete log
-			UserDataProvider.getUserDataDao().deleteData(dtype, name);
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(dtype);
+			logger.deleteLog(name);
 			
 			// redirect with message
 			String redirectTarget = null;

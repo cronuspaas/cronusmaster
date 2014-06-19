@@ -12,7 +12,13 @@ import org.lightj.session.step.StepBuilder;
 import org.lightj.session.step.StepTransition;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@FlowProperties(typeId="InstallAgent", desc="install agent via ssh", clustered=false, interruptible=false, timeoutInSec=0)
+@FlowProperties(
+		typeId="InstallAgent",
+		desc="install agent via ssh, use PKI authentication, the user must have sudo access to install the agent", 
+		clustered=false, 
+		interruptible=false, 
+		timeoutInSec=0
+)
 public class InstallAgentFlow extends FlowSession<InstallAgentFlowContext> {
 
 	//////////////// step implementation /////////////////
