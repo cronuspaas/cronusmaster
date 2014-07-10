@@ -38,7 +38,7 @@ public class VarUtils {
 	
 	public static final boolean LOG_PROGRESS_ENABLED = getVarBool("agentmaster.logProgressEnabled", true);
 	
-	public static final String ELASTICSEARCH_DATA = getVarStr("agentmaster.esData", "user_data/elasticsearch_data");
+	public static final String ELASTICSEARCH_DATA = getVarStr("agentmaster.esData", "user_data/elasticsearch_data/data");
 	public static final String ELASTICSEARCH_EP = getVarStr("agentmaster.esEp", "localhost");
 	public static final boolean LOCAL_ES_ENABLED = getVarBool("agentmaster.localEsEnabled", true);
 	
