@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 
+import play.vfs.VirtualFile;
+
 import resources.utils.VarUtils;
 
 @Configuration
@@ -21,7 +23,8 @@ public class EsResourceProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") @Lazy(true) EmbeddedESServer embeddedEsServer() {
-		return new EmbeddedESServer();
+		VirtualFile vf = VirtualFile.fromRelativePath(VarUtils.ELASTICSEARCH_DATA);
+		return new EmbeddedESServer(vf.getRealFile().getAbsolutePath());
 	}
 
 	/**
