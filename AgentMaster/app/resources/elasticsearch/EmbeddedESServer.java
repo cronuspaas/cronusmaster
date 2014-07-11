@@ -1,6 +1,8 @@
 package resources.elasticsearch;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -17,6 +19,8 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+
+import play.vfs.VirtualFile;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 
 import resources.utils.VarUtils;
@@ -31,10 +35,6 @@ public class EmbeddedESServer {
 
 	private final Node node;
 	private final String dataDirectory;
-
-	public EmbeddedESServer() {
-		this(VarUtils.ELASTICSEARCH_DATA);
-	}
 
 	public EmbeddedESServer(String dataDirectory) {
 		this.dataDirectory = dataDirectory;

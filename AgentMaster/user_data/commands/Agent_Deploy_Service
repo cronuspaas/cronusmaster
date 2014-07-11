@@ -13,6 +13,8 @@
       "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
       "method" : "POST",
       "body" : {
+        "cos" : "<cos>",
+        "upstartService" : "<upstartService>",
         "manifest" : "<manifestName>",
         "package" : "<package>"
       },
@@ -48,7 +50,9 @@
   "userData" : {
     "serviceName" : "myservice",
     "manifestName" : "manifestName",
-    "package" : "[\"http pkg locations\"]"
+    "package" : "[\"http pkg locations\"]",
+    "upstartService" : "yims",
+    "cos" : "prod"
   },
   "hasRawLogs" : true
 }
