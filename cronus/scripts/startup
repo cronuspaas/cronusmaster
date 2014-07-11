@@ -1,0 +1,38 @@
+#!/bin/bash -ae
+
+app_name=AgentMaster
+rt_name=play-1.2.4
+
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+scripts_dir=`dirname "$abspath"`
+package_dir=$scripts_dir/../..
+rt_home="$package_dir/$rt_name"
+app_home="$package_dir/$app_name"
+
+echo -e "\nscripts_dir is $scripts_dir"
+echo -e "\npackage_dir is $package_dir"
+echo -e "\nruntime_home is $rt_home"
+echo -e "\napp_home is $app_home"
+
+# the conf folder; has conf
+app_conf_dir="$app_home/conf"
+
+# enter the scripts_dir; this is critical for application log
+cd $scripts_dir
+
+# copy the .conf files 
+echo 'copy the .conf files again during startup (safety) '
+
+# Stopping the current play application: safety meature. make the startup idempotent
+echo 'stopping current superman if any already running; removing pid if any'
+$rt_home/play stop $app_home
+
+rm -f "$app_home/server.pid"
+
+# Starting application 
+
+echo 'starting app... (activate step already pre compiled'
+#$rt_home/play start $app_home -Dprecompiled=true 
+$rt_home/play start $app_home 
+
+echo 'App started! tail -f log/application.log to check logs'
