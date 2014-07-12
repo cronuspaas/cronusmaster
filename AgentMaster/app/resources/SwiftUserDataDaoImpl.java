@@ -1,5 +1,12 @@
 package resources;
 
+import org.javaswift.joss.model.Account;
+import org.javaswift.joss.model.Container;
+import org.javaswift.joss.model.StoredObject;
+import org.springframework.stereotype.Component;
+
+import resources.swift.SwiftResourceProvider;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,18 +15,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.javaswift.joss.model.Account;
-import org.javaswift.joss.model.Container;
-import org.javaswift.joss.model.StoredObject;
-
-import resources.swift.SwiftResourceProvider;
-
 /**
  * use Swift as user data store
  * 
  * @author binyu
  *
  */
+@Component
 public class SwiftUserDataDaoImpl implements IUserDataDao {
 
 	@Override

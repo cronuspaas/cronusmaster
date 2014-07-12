@@ -23,16 +23,9 @@ cd $scripts_dir
 # copy the .conf files 
 echo 'copy the .conf files again during startup (safety) '
 
-# Stopping the current play application: safety meature. make the startup idempotent
-echo 'stopping current superman if any already running; removing pid if any'
-$rt_home/play stop $app_home
-
-rm -f "$app_home/server.pid"
-
 # Starting application 
 
 echo 'starting app... (activate step already pre compiled'
-#$rt_home/play start $app_home -Dprecompiled=true 
-$rt_home/play start $app_home 
+$rt_home/play start $app_home -Dprecompiled=true 
 
 echo 'App started! tail -f log/application.log to check logs'

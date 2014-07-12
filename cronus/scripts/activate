@@ -24,12 +24,6 @@ cd $scripts_dir
 # copy the .conf files 
 echo 'copy the .conf files '
 
-# Stopping the current play application: safety meature. make the startup idempotent
-echo 'stopping current superman if any already running; removing pid if any'
-$rt_home/play stop $app_home
-
-rm -f "$app_home/server.pid"
-
 # Starting application 
 
 echo 'precomiling app...'

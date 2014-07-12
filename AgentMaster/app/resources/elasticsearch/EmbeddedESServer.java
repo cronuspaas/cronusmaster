@@ -19,10 +19,10 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+import org.springframework.context.annotation.Configuration;
 
 import play.vfs.VirtualFile;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
-
 import resources.utils.VarUtils;
 
 /**
@@ -31,6 +31,7 @@ import resources.utils.VarUtils;
  * @author binyu
  * 
  */
+@Configuration
 public class EmbeddedESServer {
 
 	private final Node node;

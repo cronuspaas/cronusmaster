@@ -1,16 +1,5 @@
 package resources;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import play.Logger;
-import resources.aws.AwsResourceProvider;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -22,11 +11,24 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.StringInputStream;
 
+import org.springframework.stereotype.Component;
+
+import resources.aws.AwsResourceProvider;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * use S3 as user data store
  * @author binyu
  *
  */
+@Component
 public class S3UserDataDaoImpl implements IUserDataDao {
 
 	@Override

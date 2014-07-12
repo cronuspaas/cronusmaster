@@ -1,5 +1,13 @@
 package resources.nodegroup;
 
+import org.lightj.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import resources.IUserDataDao;
+import resources.IUserDataDao.DataType;
+import resources.utils.DateUtils;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -7,20 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import org.lightj.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import resources.IUserDataDao;
-import resources.IUserDataDao.DataType;
-import resources.utils.DateUtils;
-
 /**
  * node group configs impl
  * 
  * @author binyu
  * 
  */
+@Component
 public class NodeGroupDataImpl implements INodeGroupData {
 
 	private int nodeCount;

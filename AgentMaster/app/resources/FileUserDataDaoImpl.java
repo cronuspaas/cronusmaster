@@ -1,5 +1,13 @@
 package resources;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.springframework.stereotype.Component;
+
+import play.Logger;
+import play.vfs.VirtualFile;
+import resources.utils.DateUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,19 +18,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-
-import play.Logger;
-import play.vfs.VirtualFile;
-import resources.utils.DateUtils;
-
 /**
  * file based {IUserConfigsDao}
  * @author binyu
  *
  */
+@Component
 public class FileUserDataDaoImpl implements IUserDataDao {
 	
 	public FileUserDataDaoImpl() {}
