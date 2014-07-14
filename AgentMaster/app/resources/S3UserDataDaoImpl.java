@@ -11,6 +11,8 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.StringInputStream;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import resources.aws.AwsResourceProvider;
@@ -28,7 +30,6 @@ import java.util.List;
  * @author binyu
  *
  */
-@Component
 public class S3UserDataDaoImpl implements IUserDataDao {
 
 	@Override

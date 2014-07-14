@@ -2,6 +2,8 @@ package resources;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import play.Logger;
@@ -23,7 +25,6 @@ import java.util.List;
  * @author binyu
  *
  */
-@Component
 public class FileUserDataDaoImpl implements IUserDataDao {
 	
 	public FileUserDataDaoImpl() {}

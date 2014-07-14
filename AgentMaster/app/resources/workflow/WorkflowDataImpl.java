@@ -12,13 +12,19 @@ import org.lightj.session.FlowType;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import resources.IUserDataDao;
+import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
 
+@Component
+@Scope("singleton")
 public class WorkflowDataImpl implements IWorkflowData {
 	
-	@Autowired
+	@Autowired(required=true)
 	private IUserDataDao userConfigs;
 	
 	private HashMap<String, IWorkflowMeta> flows = new HashMap<String, IWorkflowMeta>();

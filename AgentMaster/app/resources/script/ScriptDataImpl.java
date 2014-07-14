@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
 import resources.utils.DateUtils;
 
 /**
@@ -21,17 +22,17 @@ import resources.utils.DateUtils;
  * @author binyu
  * 
  */
-public class ScriptDataImpl implements IScriptData {
+public abstract class ScriptDataImpl implements IScriptData {
 
 	private int scriptCount;
 	
-	@Autowired(required = true)
+	@Autowired(required=true)
 	private IUserDataDao userConfigs;
 
 	/** loaded node groups */
 	private HashMap<String, IScript> scripts = null;
 
-	private DataType dataType;
+	protected DataType dataType;
 
 	public DataType getDataType() {
 		return dataType;

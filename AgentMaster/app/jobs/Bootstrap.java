@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-*/
+ */
 package jobs;
 
 import java.io.IOException;
@@ -30,64 +30,70 @@ import org.lightj.util.SpringContextUtil;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import play.Play;
-
-import resources.PlayAnnotationConfigApplicationContext;
-import resources.PlayResourceLoader;
-import resources.PlayClassPathBeanDefinitionScanner;
-import models.ResourceConfigs;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
+import resources.PlayAnnotationConfigApplicationContext;
 import resources.UserDataProvider;
 import resources.elasticsearch.EsResourceProvider;
 import resources.utils.VarUtils;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+
 /**
  * 
  * @author ypei
- *
+ * 
  */
 @OnApplicationStart
 public class Bootstrap extends Job {
 
-    public void doJob() {
-        RuntimeContext.setClusterUuid("restcommander", "prod", "all", Long.toString(System.currentTimeMillis()));
-    	
-        // initialize spring bean registration
+	public void doJob() {
+		RuntimeContext.setClusterUuid("restcommander", "prod", "all",
+				Long.toString(System.currentTimeMillis()));
+
+		// initialize spring bean registration
 		final Config conf = ConfigFactory.load("actorconfig");
-		
-        AnnotationConfigApplicationContext resourcesCtx = new PlayAnnotationConfigApplicationContext("resources");
-        resourcesCtx.setClassLoader(Play.classloader);
-//        resourcesCtx.setResourceLoader(new PlayResourceLoader());
-//        PlayClassPathBeanDefinitionScanner playScanner = new PlayClassPathBeanDefinitionScanner(resourcesCtx);
-//        playScanner.scan("resources");
-//        resourcesCtx.refresh();
-        
-        SpringContextUtil.registerContext("resources", resourcesCtx);
-        
-        // initialize flow and task modules
-        AnnotationConfigApplicationContext flowCtx = new AnnotationConfigApplicationContext("flows");
-        InitializationProcessor initializer = new InitializationProcessor(
-                new BaseModule[] {
-                        new TaskModule().setActorSystemConfig("restcommander", conf).getModule(),
-                        new FlowModule().setDb(LocalDatabaseEnum.TESTMEMDB)
-                                        .setSpringContext(flowCtx)
-                                        .setExectuorService(Executors.newFixedThreadPool(5))
-                                        .getModule()
-                });
-        initializer.initialize();
-        
-        // initialize local elastic search
-        if (VarUtils.LOCAL_ES_ENABLED) {
-            EsResourceProvider.getEmbeddedEsServer();
-        }
-        
-        // initialize user data 
-        try {
-            UserDataProvider.reloadAllConfigs();
-        } catch (IOException e) {
-            play.Logger.error(e, "error load configs");
-        }
-    }    
+
+		PlayAnnotationConfigApplicationContext resourcesCtx = new PlayAnnotationConfigApplicationContext();
+		resourcesCtx.setClassLoader(Play.classloader);
+		resourcesCtx.scan("resources");
+		resourcesCtx.refresh();
+
+		// resourcesCtx.setClassLoader(Play.classloader);
+		// resourcesCtx.setResourceLoader(new PlayResourceLoader());
+		// PlayClassPathBeanDefinitionScanner playScanner = new
+		// PlayClassPathBeanDefinitionScanner(resourcesCtx);
+		// playScanner.scan("resources");
+		// resourcesCtx.refresh();
+
+		SpringContextUtil.registerContext("resources", resourcesCtx);
+
+		// initialize flow and task modules
+		AnnotationConfigApplicationContext flowCtx = new AnnotationConfigApplicationContext(
+				"flows");
+		InitializationProcessor initializer = new InitializationProcessor(
+				new BaseModule[] {
+						new TaskModule().setActorSystemConfig("restcommander",
+								conf).getModule(),
+						new FlowModule()
+								.setDb(LocalDatabaseEnum.TESTMEMDB)
+								.setSpringContext(flowCtx)
+								.setExectuorService(
+										Executors.newFixedThreadPool(5))
+								.getModule() });
+		initializer.initialize();
+
+		// initialize local elastic search
+		if (VarUtils.LOCAL_ES_ENABLED) {
+			EsResourceProvider.getEmbeddedEsServer();
+		}
+
+		// initialize user data
+		try {
+			UserDataProvider.reloadAllConfigs();
+		} catch (IOException e) {
+			play.Logger.error(e, "error load configs");
+		}
+	}
 }

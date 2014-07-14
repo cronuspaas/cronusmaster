@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import resources.IUserDataDao;
 import resources.UserDataProvider;
@@ -17,14 +20,14 @@ import resources.utils.ElasticSearchUtils;
  * @author binyu
  *
  */
-public class LoggerImpl<T extends ILog> implements IJobLogger<T> {
+public abstract class LoggerImpl<T extends ILog> implements IJobLogger<T> {
 	
 	@Autowired(required=true)
 	private IUserDataDao userDataDao;
 	
-	private DataType dataType;
+	protected DataType dataType;
 	
-	private Class<T> logDoKlass;
+	protected Class<T> logDoKlass;
 	
 	public Class getLogDoKlass() {
 		return logDoKlass;

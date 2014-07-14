@@ -9,15 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
 import resources.log.BaseLog;
 
-public class IntervalJobDataImpl implements IntervalJobData {
+/**
+ * base class of interval job
+ * @author binyu
+ *
+ */
+public abstract class IntervalJobDataImpl implements IntervalJobData {
 
 	@Autowired(required=true)
 	private IUserDataDao userDataDao;
 
 	/** type of job */
-	private DataType jobType;
+	protected DataType jobType;
+	
+	public IntervalJobDataImpl() {
+	}
 
 	public DataType getJobType() {
 		return jobType;

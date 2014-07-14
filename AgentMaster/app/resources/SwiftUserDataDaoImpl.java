@@ -3,6 +3,8 @@ package resources;
 import org.javaswift.joss.model.Account;
 import org.javaswift.joss.model.Container;
 import org.javaswift.joss.model.StoredObject;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import resources.swift.SwiftResourceProvider;
@@ -21,7 +23,6 @@ import java.util.List;
  * @author binyu
  *
  */
-@Component
 public class SwiftUserDataDaoImpl implements IUserDataDao {
 
 	@Override

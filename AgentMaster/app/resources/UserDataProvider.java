@@ -36,127 +36,127 @@ public class UserDataProvider {
 	 * IUserConfigs impl
 	 * @return
 	 */
-	public @Bean(name="userConfigs") @Scope("singleton") IUserDataDao userConfigs() {
-		String userDataDaoType = new Play().configuration.getProperty("agentmaster.userDataDao").toString();
-		if (StringUtil.equalIgnoreCase("file", userDataDaoType)) {
-			return new FileUserDataDaoImpl();
-		} 
-		else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
-			// set bucket uuid if it is different from enum name
-			for (DataType dt : DataType.values()) {
-				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.s3.%s.uuid", dt.name())));
-			}
-			return new S3UserDataDaoImpl();
-		} 
-		else if (StringUtil.equalIgnoreCase("openstack_swift", userDataDaoType)) {
-			// set container uuid if it is different from enum name
-			for (DataType dt : DataType.values()) {
-				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.swift.%s.uuid", dt.name())));
-			}
-			return new SwiftUserDataDaoImpl();
-		}
-		throw new RuntimeException("undefined user data dao type " + userDataDaoType);
-	}
+//	public @Bean(name="userConfigs") @Scope("singleton") IUserDataDao userConfigs() {
+//		String userDataDaoType = new Play().configuration.getProperty("agentmaster.userDataDao").toString();
+//		if (StringUtil.equalIgnoreCase("file", userDataDaoType)) {
+//			return new FileUserDataDaoImpl();
+//		} 
+//		else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
+//			// set bucket uuid if it is different from enum name
+//			for (DataType dt : DataType.values()) {
+//				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.s3.%s.uuid", dt.name())));
+//			}
+//			return new S3UserDataDaoImpl();
+//		} 
+//		else if (StringUtil.equalIgnoreCase("openstack_swift", userDataDaoType)) {
+//			// set container uuid if it is different from enum name
+//			for (DataType dt : DataType.values()) {
+//				dt.setUuid(new Play().configuration.getProperty(String.format("agentmaster.userDataDao.swift.%s.uuid", dt.name())));
+//			}
+//			return new SwiftUserDataDaoImpl();
+//		}
+//		throw new RuntimeException("undefined user data dao type " + userDataDaoType);
+//	}
 	
-	/**
-	 * IUserConfigsDao
-	 * @return
-	 * @throws IOException
-	 */
-	public @Bean(name="commandConfigs") @Scope("singleton") ICommandData commandConfigs() throws IOException {
-		CommandDataImpl dao = new CommandDataImpl();
-		return dao;
-	}
-	
-	/**
-	 * predefined node group
-	 * @return
-	 */
-	public @Bean @Scope("singleton") INodeGroupData predefinedNodeGroup() {
-		NodeGroupDataImpl ngd = new NodeGroupDataImpl();
-		ngd.setDataType(DataType.NODEGROUP);
-		return ngd;		
-	}
-
-	/**
-	 * adhoc node group
-	 * @return
-	 */
-	public @Bean @Scope("singleton") INodeGroupData adhocNodeGroup() {
-		return new AdhocNodeGroupDataImpl();
-	}
-	
-	/**
-	 * job logger
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IJobLogger jobLogger() {
-		LoggerImpl logger = new LoggerImpl<JobLog>();
-		logger.setDataType(DataType.JOBLOG);
-		logger.setLogDoKlass(JobLog.class);
-		return logger;
-	}
-
-	/**
-	 * flow logger
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IJobLogger flowLogger() {
-		LoggerImpl logger = new LoggerImpl<FlowLog>();
-		logger.setDataType(DataType.FLOWLOG);
-		logger.setLogDoKlass(FlowLog.class);
-		return logger;
-	}
-	
-	/**
-	 * cmd logger
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IJobLogger cmdLogger() {
-		LoggerImpl logger = new LoggerImpl<CmdLog>();
-		logger.setDataType(DataType.CMDLOG);
-		logger.setLogDoKlass(CmdLog.class);
-		return logger;
-	}
-	
-	/**
-	 * cmd interval jobs
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IntervalJobData cmdIntervalJob() {
-		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
-		jobDataImpl.setJobType(DataType.CMDJOB);
-		return jobDataImpl;
-	}
-
-	/**
-	 * flow based interval jobs
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IntervalJobData flowIntervalJob() {
-		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
-		jobDataImpl.setJobType(DataType.FLOWJOB);
-		return jobDataImpl;
-	}
-
-	/**
-	 * workflow configs
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IWorkflowData workflowConfigs() {
-		return new WorkflowDataImpl();
-	}
-	
-	/**
-	 * predefined script
-	 * @return
-	 */
-	public @Bean @Scope("singleton") IScriptData predefinedScripts() {
-		ScriptDataImpl sd = new ScriptDataImpl();
-		sd.setDataType(DataType.SCRIPT);
-		return sd;
-	}
-	
+//	/**
+//	 * IUserConfigsDao
+//	 * @return
+//	 * @throws IOException
+//	 */
+//	public @Bean(name="commandConfigs") @Scope("singleton") ICommandData commandConfigs() throws IOException {
+//		CommandDataImpl dao = new CommandDataImpl();
+//		return dao;
+//	}
+//	
+//	/**
+//	 * predefined node group
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") INodeGroupData predefinedNodeGroup() {
+//		NodeGroupDataImpl ngd = new NodeGroupDataImpl();
+//		ngd.setDataType(DataType.NODEGROUP);
+//		return ngd;		
+//	}
+//
+//	/**
+//	 * adhoc node group
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") INodeGroupData adhocNodeGroup() {
+//		return new AdhocNodeGroupDataImpl();
+//	}
+//	
+//	/**
+//	 * job logger
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IJobLogger jobLogger() {
+//		LoggerImpl logger = new LoggerImpl<JobLog>();
+//		logger.setDataType(DataType.JOBLOG);
+//		logger.setLogDoKlass(JobLog.class);
+//		return logger;
+//	}
+//
+//	/**
+//	 * flow logger
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IJobLogger flowLogger() {
+//		LoggerImpl logger = new LoggerImpl<FlowLog>();
+//		logger.setDataType(DataType.FLOWLOG);
+//		logger.setLogDoKlass(FlowLog.class);
+//		return logger;
+//	}
+//	
+//	/**
+//	 * cmd logger
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IJobLogger cmdLogger() {
+//		LoggerImpl logger = new LoggerImpl<CmdLog>();
+//		logger.setDataType(DataType.CMDLOG);
+//		logger.setLogDoKlass(CmdLog.class);
+//		return logger;
+//	}
+//	
+//	/**
+//	 * cmd interval jobs
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IntervalJobData cmdIntervalJob() {
+//		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
+//		jobDataImpl.setJobType(DataType.CMDJOB);
+//		return jobDataImpl;
+//	}
+//
+//	/**
+//	 * flow based interval jobs
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IntervalJobData flowIntervalJob() {
+//		IntervalJobDataImpl jobDataImpl = new IntervalJobDataImpl();
+//		jobDataImpl.setJobType(DataType.FLOWJOB);
+//		return jobDataImpl;
+//	}
+//
+//	/**
+//	 * workflow configs
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IWorkflowData workflowConfigs() {
+//		return new WorkflowDataImpl();
+//	}
+//	
+//	/**
+//	 * predefined script
+//	 * @return
+//	 */
+//	public @Bean @Scope("singleton") IScriptData predefinedScripts() {
+//		ScriptDataImpl sd = new ScriptDataImpl();
+//		sd.setDataType(DataType.SCRIPT);
+//		return sd;
+//	}
+//	
 	/**
 	 * return current IUserConfigsDao
 	 * @return
@@ -250,6 +250,18 @@ public class UserDataProvider {
 	 */
 	public static IUserDataDao getUserDataDao() {
 		return SpringContextUtil.getBean("resources", IUserDataDao.class);
+//		String userDataDaoType = new Play().configuration.getProperty("agentmaster.userDataDao").toString();
+//		if (StringUtil.equalIgnoreCase("file", userDataDaoType)) {
+//			return SpringContextUtil.getBean("resources", FileUserDataDaoImpl.class);
+//		} 
+//		else if (StringUtil.equalIgnoreCase("aws_s3", userDataDaoType)) {
+//			return SpringContextUtil.getBean("resources", S3UserDataDaoImpl.class);
+//		} 
+//		else if (StringUtil.equalIgnoreCase("openstack_swift", userDataDaoType)) {
+//			return SpringContextUtil.getBean("resources", SwiftUserDataDaoImpl.class);
+//		}
+//		throw new RuntimeException("undefined user data dao type " + userDataDaoType);
+		
 	}
 	
 	/**

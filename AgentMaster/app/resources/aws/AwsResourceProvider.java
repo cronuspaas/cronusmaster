@@ -20,28 +20,33 @@ import com.amazonaws.services.s3.AmazonS3Client;
  * @author binyu
  *
  */
-//@Configuration
 public class AwsResourceProvider {
 
 	static final String myAccessKeyID = new Play().configuration.getProperty("agentmaster.userDataDao.s3.myAccessKeyID");
 	static final String mySecretKey = new Play().configuration.getProperty("agentmaster.userDataDao.s3.mySecretKey");
 
+	private static AmazonS3Client s3Client;
+	
 	/**
 	 * s3 client
 	 * @return
 	 */
-	public @Bean @Scope("singleton") @Lazy(true) AmazonS3 s3client() {
-		AWSCredentials myCredentials = new BasicAWSCredentials(myAccessKeyID, mySecretKey);
-		return new AmazonS3Client(myCredentials);
-	}
+//	public @Bean @Scope("singleton") @Lazy(true) AmazonS3 s3client() {
+//		AWSCredentials myCredentials = new BasicAWSCredentials(myAccessKeyID, mySecretKey);
+//		return new AmazonS3Client(myCredentials);
+//	}
 	
 
 	/**
 	 * get s3 client
 	 * @return
 	 */
-	public static AmazonS3 getS3Client() {
-		return SpringContextUtil.getBean("resources", AmazonS3.class);
+	public synchronized static AmazonS3 getS3Client() {
+		if (s3Client == null) {
+			AWSCredentials myCredentials = new BasicAWSCredentials(myAccessKeyID, mySecretKey);
+			s3Client = new AmazonS3Client(myCredentials);
+		}
+		return s3Client;
 	}
 	
 }

@@ -2,9 +2,12 @@ package resources.nodegroup;
 
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import resources.IUserDataDao;
+import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
 import resources.utils.DateUtils;
 
@@ -21,18 +24,19 @@ import java.util.Map;
  * @author binyu
  * 
  */
-@Component
+@Component("predefinedNodeGroup")
+@Scope("singleton")
 public class NodeGroupDataImpl implements INodeGroupData {
 
 	private int nodeCount;
 	
-	@Autowired(required = true)
+	@Autowired(required=true)
 	private IUserDataDao userConfigs;
 
 	/** loaded node groups */
 	private HashMap<String, INodeGroup> nodeGroups = null;
 
-	private DataType dataType;
+	private DataType dataType = DataType.NODEGROUP;
 
 	public DataType getDataType() {
 		return dataType;

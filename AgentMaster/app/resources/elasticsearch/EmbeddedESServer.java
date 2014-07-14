@@ -20,6 +20,9 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import play.vfs.VirtualFile;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
@@ -31,7 +34,9 @@ import resources.utils.VarUtils;
  * @author binyu
  * 
  */
-@Configuration
+@Component("embeddedEsServer")
+@Lazy
+@Scope("singleton")
 public class EmbeddedESServer {
 
 	private final Node node;

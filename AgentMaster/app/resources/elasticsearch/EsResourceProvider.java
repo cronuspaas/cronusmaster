@@ -16,38 +16,38 @@ import resources.utils.VarUtils;
 @Configuration
 public class EsResourceProvider {
 	
-	public static final String INDEX_LOG = "log";
+	private static Client esClient;
 	
 	/**
 	 * initialize elastic search embedded server
 	 * @return
 	 */
-	public @Bean @Scope("singleton") @Lazy(true) EmbeddedESServer embeddedEsServer() {
-		VirtualFile vf = VirtualFile.fromRelativePath(VarUtils.ELASTICSEARCH_DATA);
-		return new EmbeddedESServer(vf.getRealFile().getAbsolutePath());
-	}
+//	public @Bean @Scope("singleton") @Lazy(true) EmbeddedESServer embeddedEsServer() {
+//		VirtualFile vf = VirtualFile.fromRelativePath(VarUtils.ELASTICSEARCH_DATA);
+//		return new EmbeddedESServer(vf.getRealFile().getAbsolutePath());
+//	}
 
 	/**
 	 * elastic search client
 	 * @return
 	 */
-	public @Bean @Scope("singleton") @Lazy(true) Client esClient() {
-		if (VarUtils.LOCAL_ES_ENABLED) {
-			return getEmbeddedEsServer().getClient();
-		}
-		else {
-			Client client = new TransportClient().addTransportAddress(
-					new InetSocketTransportAddress(VarUtils.ELASTICSEARCH_EP, 9300));
-			return client;
-		}
-	}
+//	public @Bean @Scope("singleton") @Lazy(true) Client esClient() {
+//		if (VarUtils.LOCAL_ES_ENABLED) {
+//			return getEmbeddedEsServer().getClient();
+//		}
+//		else {
+//			Client client = new TransportClient().addTransportAddress(
+//					new InetSocketTransportAddress(VarUtils.ELASTICSEARCH_EP, 9300));
+//			return client;
+//		}
+//	}
 	
 	/**
 	 * get embedded elastic search server
 	 * @return
 	 */
 	public static EmbeddedESServer getEmbeddedEsServer() {
-		return SpringContextUtil.getBean("resources", EmbeddedESServer.class);
+		return SpringContextUtil.getBean("resources", "embeddedEsServer", EmbeddedESServer.class);
 	}
 	
 
@@ -55,7 +55,16 @@ public class EsResourceProvider {
 	 * get elastic search client
 	 * @return
 	 */
-	public static Client getEsClient() {
-		return SpringContextUtil.getBean("resources", Client.class);
+	public synchronized static Client getEsClient() {
+		if (esClient == null) {
+			if (VarUtils.LOCAL_ES_ENABLED) {
+				esClient = getEmbeddedEsServer().getClient();
+			}
+			else {
+				esClient = new TransportClient().addTransportAddress(
+						new InetSocketTransportAddress(VarUtils.ELASTICSEARCH_EP, 9300));
+			}
+		}
+		return esClient;
 	}
 }

@@ -9,11 +9,17 @@ import java.util.Map;
 
 import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import resources.IUserDataDao;
+import resources.UserDataProvider;
 import resources.IUserDataDao.DataType;
 import resources.utils.DateUtils;
 
+@Component("adhocNodeGroup")
+@Scope("singleton")
 public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	
 	@Autowired(required=true)

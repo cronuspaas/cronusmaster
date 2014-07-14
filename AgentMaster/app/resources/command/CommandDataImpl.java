@@ -11,10 +11,16 @@ import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import resources.IUserDataDao;
 import resources.IUserDataDao.DataType;
+import resources.UserDataProvider;
 
+@Component("commandConfigs")
+@Scope("singleton")
 public class CommandDataImpl implements ICommandData {
 	
 	@Autowired(required=true)
@@ -23,7 +29,8 @@ public class CommandDataImpl implements ICommandData {
 	/** templates */
 	private HashMap<String, ICommand> templates = null;
 	
-	public CommandDataImpl() {}
+	public CommandDataImpl() {
+	}
 	
 	@Override
 	public Map<String, ICommand> getAllCommands() throws IOException {
