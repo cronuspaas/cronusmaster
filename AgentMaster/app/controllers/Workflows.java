@@ -33,19 +33,18 @@ import org.lightj.util.JsonUtil;
 import org.lightj.util.MapListPrimitiveJsonParser;
 
 import play.mvc.Controller;
-import resources.IUserDataDao.DataType;
-import resources.TaskResourcesProvider.LogFlowEventListener;
-import resources.UserDataProvider;
-import resources.log.BaseLog.UserWorkflow;
-import resources.log.FlowLog;
-import resources.log.IJobLogger;
-import resources.nodegroup.INodeGroup;
-import resources.nodegroup.INodeGroupData;
-import resources.utils.DataUtil;
-import resources.utils.DateUtils;
-import resources.workflow.IWorkflowMeta;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogFlowEventListener;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.log.BaseLog.UserWorkflow;
+import com.stackscaling.agentmaster.resources.log.FlowLog;
+import com.stackscaling.agentmaster.resources.log.IJobLogger;
+import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
+import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
+import com.stackscaling.agentmaster.resources.utils.DataUtil;
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
+import com.stackscaling.agentmaster.resources.workflow.IWorkflowMeta;
 
 /**
  * 

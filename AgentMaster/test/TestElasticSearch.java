@@ -2,7 +2,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
@@ -10,23 +9,17 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.junit.Test;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.SpringContextUtil;
 
 import play.test.UnitTest;
-import resources.UserDataProvider;
-import resources.IUserDataDao.DataType;
-import resources.elasticsearch.EmbeddedESServer;
-import resources.elasticsearch.EsResourceProvider;
-import resources.log.BaseLog.CommandResponse;
-import resources.log.CmdLog;
-import resources.log.IJobLogger;
-import resources.log.ILog;
-import resources.nodegroup.AdhocNodeGroupDataImpl;
-import resources.utils.DataUtil;
+
+import com.stackscaling.agentmaster.resources.elasticsearch.EmbeddedESServer;
+import com.stackscaling.agentmaster.resources.elasticsearch.EsResourceProvider;
+import com.stackscaling.agentmaster.resources.log.BaseLog.CommandResponse;
+import com.stackscaling.agentmaster.resources.log.CmdLog;
+import com.stackscaling.agentmaster.resources.nodegroup.AdhocNodeGroupDataImpl;
 
 
 public class TestElasticSearch extends UnitTest {

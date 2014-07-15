@@ -29,14 +29,11 @@ import org.lightj.task.TaskModule;
 import org.lightj.util.SpringContextUtil;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import play.Play;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
-import resources.PlayAnnotationConfigApplicationContext;
-import resources.UserDataProvider;
-import resources.elasticsearch.EsResourceProvider;
-import resources.utils.VarUtils;
 
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.elasticsearch.EsResourceProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
@@ -54,18 +51,14 @@ public class Bootstrap extends Job {
 
 		// initialize spring bean registration
 		final Config conf = ConfigFactory.load("actorconfig");
+		
+		new PlayVarUtils();
 
-		PlayAnnotationConfigApplicationContext resourcesCtx = new PlayAnnotationConfigApplicationContext();
-		resourcesCtx.setClassLoader(Play.classloader);
-		resourcesCtx.scan("resources");
-		resourcesCtx.refresh();
-
-		// resourcesCtx.setClassLoader(Play.classloader);
-		// resourcesCtx.setResourceLoader(new PlayResourceLoader());
-		// PlayClassPathBeanDefinitionScanner playScanner = new
-		// PlayClassPathBeanDefinitionScanner(resourcesCtx);
-		// playScanner.scan("resources");
-		// resourcesCtx.refresh();
+		AnnotationConfigApplicationContext resourcesCtx = new AnnotationConfigApplicationContext("com.stackscaling.agentmaster.resources");
+//		resourcesCtx.setClassLoader(Play.classloader);
+//		resourcesCtx.scan("resources");
+//		resourcesCtx.register(AgentResourceProvider.class);
+//		resourcesCtx.refresh();
 
 		SpringContextUtil.registerContext("resources", resourcesCtx);
 
@@ -85,7 +78,7 @@ public class Bootstrap extends Job {
 		initializer.initialize();
 
 		// initialize local elastic search
-		if (VarUtils.LOCAL_ES_ENABLED) {
+		if (PlayVarUtils.LOCAL_ES_ENABLED) {
 			EsResourceProvider.getEmbeddedEsServer();
 		}
 

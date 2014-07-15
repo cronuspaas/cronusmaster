@@ -3,16 +3,16 @@ package jobs;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.lightj.clustering.ClusteringModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import play.jobs.Every;
 import play.jobs.Job;
-import resources.IUserDataDao.DataType;
-import resources.UserDataProvider;
-import resources.job.IntervalJob;
-import resources.job.IntervalJobData;
+
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.job.IntervalJob;
+import com.stackscaling.agentmaster.resources.job.IntervalJobData;
 
 /**
  * this runs on interval and pick up user specified interval based "job" (command or flow)

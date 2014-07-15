@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.ExecuteOption;
 import org.lightj.task.MonitorOption;
@@ -32,15 +31,13 @@ import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import play.mvc.Controller;
-import resources.IUserDataDao;
-import resources.IUserDataDao.DataType;
-import resources.command.CommandImpl;
-import resources.utils.DateUtils;
-import resources.UserDataProvider;
+
+import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.command.CommandImpl;
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
  * 

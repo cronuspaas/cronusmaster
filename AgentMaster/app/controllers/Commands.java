@@ -41,23 +41,21 @@ import org.lightj.util.MapListPrimitiveJsonParser;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.IUserDataDao.DataType;
-import resources.TaskResourcesProvider;
-import resources.UserDataProvider;
-import resources.command.ICommand;
-import resources.command.ICommandData;
-import resources.log.CmdLog;
-import resources.log.IJobLogger;
-import resources.log.ILog;
-import resources.nodegroup.AdhocNodeGroupDataImpl;
-import resources.nodegroup.INodeGroup;
-import resources.nodegroup.INodeGroupData;
-import resources.utils.DataUtil;
-import resources.utils.DateUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.command.ICommand;
+import com.stackscaling.agentmaster.resources.command.ICommandData;
+import com.stackscaling.agentmaster.resources.log.CmdLog;
+import com.stackscaling.agentmaster.resources.log.IJobLogger;
+import com.stackscaling.agentmaster.resources.log.ILog;
+import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
+import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
+import com.stackscaling.agentmaster.resources.utils.DataUtil;
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
  * 

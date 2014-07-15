@@ -5,21 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.IUserDataDao.DataType;
-import resources.UserDataProvider;
-import resources.job.BaseIntervalJob;
-import resources.job.CmdIntervalJobImpl;
-import resources.job.FlowIntervalJobImpl;
-import resources.job.IntervalJob;
-import resources.job.IntervalJobData;
-import resources.log.ILog;
-import resources.utils.DataUtil;
-import resources.utils.DateUtils;
+
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.job.BaseIntervalJob;
+import com.stackscaling.agentmaster.resources.job.CmdIntervalJobImpl;
+import com.stackscaling.agentmaster.resources.job.FlowIntervalJobImpl;
+import com.stackscaling.agentmaster.resources.job.IntervalJob;
+import com.stackscaling.agentmaster.resources.job.IntervalJobData;
+import com.stackscaling.agentmaster.resources.log.ILog;
+import com.stackscaling.agentmaster.resources.utils.DataUtil;
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 public class Jobs extends Controller {
 

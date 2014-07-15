@@ -20,8 +20,9 @@ package controllers;
 import java.util.HashMap;
 
 import play.mvc.Controller;
-import resources.IUserDataDao.DataType;
-import resources.UserDataProvider;
+
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
 
 /**
  * 

@@ -9,10 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.IUserDataDao.DataType;
-import resources.UserDataProvider;
-import resources.log.BaseLog;
-import resources.log.IJobLogger;
+
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.log.BaseLog;
+import com.stackscaling.agentmaster.resources.log.IJobLogger;
 
 /**
  * housekeeping

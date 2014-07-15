@@ -25,6 +25,9 @@ import org.apache.commons.io.FileUtils;
 
 import play.vfs.VirtualFile;
 
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
+import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
+
 /**
  * 20130509 Auto generate TSDB URL.
  * 
@@ -32,7 +35,7 @@ import play.vfs.VirtualFile;
  * @author ypei
  * 
  */
-public class FileIoUtils {
+public class FileIoUtils implements IVirtualFileUtils {
 
 	/**
 	 * Output both This will display all files except for empty.txt refined
@@ -109,6 +112,13 @@ public class FileIoUtils {
 		return fileContentString.toString();
 
 	} // end func.
+
+	
+	@Override
+	public File getRealFileFromRelativePath(String relativePath) {
+		VirtualFile vf = VirtualFile.fromRelativePath(relativePath);
+		return vf.getRealFile(); 
+	}
 
 }// end class
 

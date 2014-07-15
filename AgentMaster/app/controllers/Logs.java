@@ -38,23 +38,22 @@ import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
-import resources.IUserDataDao.DataType;
-import resources.TaskResourcesProvider;
-import resources.UserDataProvider;
-import resources.agent.AgentResourceProvider;
-import resources.log.BaseLog;
-import resources.log.BaseLog.CommandResponse;
-import resources.log.CmdLog;
-import resources.log.FlowLog;
-import resources.log.IJobLogger;
-import resources.log.ILog;
-import resources.log.JobLog;
-import resources.log.LogAggregation;
-import resources.log.LogAggregation.LogAggregationItem;
-import resources.utils.DataUtil;
-import resources.utils.DateUtils;
-import resources.utils.ElasticSearchUtils;
 import resources.utils.FileIoUtils;
+
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
+import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider;
+import com.stackscaling.agentmaster.resources.log.BaseLog;
+import com.stackscaling.agentmaster.resources.log.CmdLog;
+import com.stackscaling.agentmaster.resources.log.FlowLog;
+import com.stackscaling.agentmaster.resources.log.IJobLogger;
+import com.stackscaling.agentmaster.resources.log.ILog;
+import com.stackscaling.agentmaster.resources.log.JobLog;
+import com.stackscaling.agentmaster.resources.log.LogAggregation;
+import com.stackscaling.agentmaster.resources.log.LogAggregation.LogAggregationItem;
+import com.stackscaling.agentmaster.resources.utils.DataUtil;
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
  * 
