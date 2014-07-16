@@ -17,14 +17,10 @@ echo -e "\napp_home is $app_home"
 # the conf folder; has conf
 app_conf_dir="$app_home/conf"
 
-# enter the scripts_dir; this is critical for application log
-cd $scripts_dir
-
-# copy the .conf files 
-echo 'copy the .conf files again during startup (safety) '
+# enter app_home; this is critical for application log
+cd $app_home
 
 # Starting application 
-
 echo 'starting app... (activate step already pre compiled'
 $rt_home/play start $app_home -Dprecompiled=true 
 
