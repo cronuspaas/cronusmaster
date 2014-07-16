@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.lightj.session.FlowInfo;
-import org.lightj.util.DateUtil;
 import org.lightj.util.StringUtil;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.NodeGroupImpl;
+import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.ElasticSearchUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
@@ -24,11 +24,10 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
  */
 public abstract class BaseLog implements ILog {
 
-	public static final String DateFormat = "yyyy.MM.dd.HH.mm.ss.SSSZZZ";
 	public static final int ProgressTotalUnit = 1000;
 
 	/** timestamp of the log */
-	protected String timestamp = DateUtil.format(new Date(), DateFormat);
+	protected String timestamp = DateUtils.getNowDateTimeStrSdsm();
 
 	/** user data */
 	protected Map<String, String> userData;
@@ -186,7 +185,7 @@ public abstract class BaseLog implements ILog {
 		HashMap<String, String> meta = new HashMap<String, String>();
 		String[] tokens = uuid.split("~");
 		meta.put("timeStampDisplay", tokens[0]);
-		meta.put("timeStamp", Long.toString(DateUtil.parse(tokens[0], DateFormat).getTime()));
+		meta.put("timeStamp", Long.toString(DateUtils.fromDateTimeStrSdsm(tokens[0]).getTime()));
 		meta.put("nodeGroupType", tokens[1]);
 		meta.put("nodeGroup", tokens[2]);
 		meta.put("command", tokens[3]);

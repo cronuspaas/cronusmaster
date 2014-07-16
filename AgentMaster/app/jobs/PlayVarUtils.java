@@ -71,7 +71,7 @@ public class PlayVarUtils extends VarUtils {
 		// enable log progress
 		LOG_PROGRESS_ENABLED = getVarBool("agentmaster.logProgressEnabled", true);
 
-		// log an delastic search
+		// elastic search
 		ELASTICSEARCH_DATA = getVarStr("agentmaster.esData", "user_data/elasticsearch_data/data");
 		ELASTICSEARCH_EP = getVarStr("agentmaster.esEp", "localhost");
 		LOCAL_ES_ENABLED = getVarBool("agentmaster.localEsEnabled", true);

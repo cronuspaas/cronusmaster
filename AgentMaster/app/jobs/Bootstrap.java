@@ -55,10 +55,6 @@ public class Bootstrap extends Job {
 		new PlayVarUtils();
 
 		AnnotationConfigApplicationContext resourcesCtx = new AnnotationConfigApplicationContext("com.stackscaling.agentmaster.resources");
-//		resourcesCtx.setClassLoader(Play.classloader);
-//		resourcesCtx.scan("resources");
-//		resourcesCtx.register(AgentResourceProvider.class);
-//		resourcesCtx.refresh();
 
 		SpringContextUtil.registerContext("resources", resourcesCtx);
 

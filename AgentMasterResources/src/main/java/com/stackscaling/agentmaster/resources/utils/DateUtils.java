@@ -17,6 +17,7 @@ limitations under the License.
 */
 package com.stackscaling.agentmaster.resources.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,16 +74,48 @@ public class DateUtils {
 	}
 
 
+	static final String DT_STR_FMT = "yyyy-MM-dd HH:mm:ss.SSSZ";
+	static SimpleDateFormat DT_STR_FMTR; 
+	static final Date EPOCH = new Date(0);
+	
 	public static String getDateTimeStr(Date d) {
 		if (d == null)
 			return "";
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-		//20140317: force the timezone to avoid PLUS
-		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
-		String str = sdf.format(d);
+		if (DT_STR_FMTR == null) {
+			synchronized (DateUtils.class) {
+				DT_STR_FMTR = new SimpleDateFormat(DT_STR_FMT);
+				//20140317: force the timezone to avoid PLUS
+				DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+			}
+		}
+		
+		String str = DT_STR_FMTR.format(d);
 		return str;
 	}
+	
+	public static Date fromDateTimeStr(String dateTimeStr) {
+		
+		try {
+			
+			if (DT_STR_FMTR == null) {
+				synchronized (DateUtils.class) {
+					DT_STR_FMTR = new SimpleDateFormat(DT_STR_FMT);
+					//20140317: force the timezone to avoid PLUS
+					DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+				}
+			}
+
+			return DT_STR_FMTR.parse(dateTimeStr);
+		} catch (ParseException e) {
+			
+			LOG.error(e.getMessage());
+			return EPOCH;
+		}
+	}
+	
+	static final String DTS_STR_FMT = "yyyy.MM.dd.HH.mm.ss.SSSZ";
+	static SimpleDateFormat DTS_STR_FMTR; 
 
 	public static String getDateTimeStrSdsm(Date d) {
 		if (d == null)
@@ -91,11 +124,37 @@ public class DateUtils {
 		if (d.getTime() == 0L)
 			return "Never";
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSSZ");
-		//20140317: force the timezone to avoid PLUS
-		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
-		String str = sdf.format(d);
+		if (DTS_STR_FMTR == null) {
+			synchronized (DateUtils.class) {
+				DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
+				//20140317: force the timezone to avoid PLUS
+				DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+			}
+		}
+		
+		String str = DTS_STR_FMTR.format(d);
 		return str;
+	}
+
+	public static Date fromDateTimeStrSdsm(String dateTimeStr) {
+		
+		try {
+			
+			if (DTS_STR_FMTR == null) {
+				synchronized (DateUtils.class) {
+					DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
+					//20140317: force the timezone to avoid PLUS
+					DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+				}
+			}
+
+			return DTS_STR_FMTR.parse(dateTimeStr);
+			
+		} catch (ParseException e) {
+			
+			LOG.error(e.getMessage());
+			return EPOCH;
+		}
 	}
 
 	public static String getDateTimeStrConcise(Date d) {
@@ -109,10 +168,6 @@ public class DateUtils {
 		String str = sdf.format(d);
 		return str;
 	}
-
-
-
-
 
 	/**
 	 * 20130512
@@ -146,7 +201,7 @@ public class DateUtils {
 
 		return getDateTimeStr(new Date());
 	}
-
+	
 	public static String getNowDateTimeStrSdsm() {
 
 		return getDateTimeStrSdsm(new Date());
