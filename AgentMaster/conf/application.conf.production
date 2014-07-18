@@ -6,8 +6,7 @@ application.name=AgentMaster
 # ~~~~~
 # Set to dev to enable instant reloading and other development help.
 # Otherwise set to prod.
-application.mode=dev
-
+application.mode=prod
 
 # Jobs executor
 # ~~~~~~
@@ -84,10 +83,11 @@ jvm.memory=-Xmx1024M -Xms256M -XX:PermSize=64m -XX:MaxPermSize=256m
 # Specify log level for your application.
 # If you want a very customized log, create a log4j.properties file in the conf directory
 application.log=INFO
+
 #
 # More logging configuration
 application.log.path=/log4j.properties
-application.log.system.out=on
+# application.log.system.out=on
 
 # Database configuration
 # ~~~~~ 
@@ -237,6 +237,7 @@ mail.smtp=mock
 #America/Los_Angeles   America/New_York
 agentmaster.var.LOG_TIME_ZONE=America/Los_Angeles
 
+# length to truncate cmd response
 agentmaster.baseLog.cmdResLength=200
 
 # file | aws_s3 | openstack_swift
@@ -244,7 +245,7 @@ agentmaster.userDataDao=file
 agentmaster.logProgressEnabled=true
 
 # file
-#agentmaster.userDataDao.file.root=CRONUSAPP_HOME
+agentmaster.userDataDao.file.root=CRONUSAPP_HOME
 agentmaster.userDataDao.file.dir=user_data
 
 # s3 related configs

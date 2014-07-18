@@ -4,6 +4,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
@@ -15,6 +17,8 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
  *
  */
 public class EmbeddedESServer {
+	
+	static Logger LOG = LoggerFactory.getLogger(EmbeddedESServer.class); 
 
 	private final Node node;
 	
@@ -25,7 +29,8 @@ public class EmbeddedESServer {
 	public EmbeddedESServer(String dataDirectory) {
 		
 		this.dataDirectory = vf.getRealFileFromRelativePath(dataDirectory).getAbsolutePath();
-
+		LOG.info("embedded es engine using data dir = " + this.dataDirectory);
+		
 		ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings
 				.settingsBuilder()
 				// .put("http.enabled", "false")
@@ -34,36 +39,6 @@ public class EmbeddedESServer {
 		node = new NodeBuilder().local(true)
 				.settings(elasticsearchSettings.build())
 				.data(true).node();
-
-		// now add indices
-		// for logs
-//		HashMap<String, String> settings = new HashMap<String, String>();
-//		settings.put("_ttl", VarUtils.ESLOG_DATA_TTL);
-//		ImmutableSettings.Builder indicesSettings = ImmutableSettings.settingsBuilder().put(settings);
-//
-//		Client client = node.client();
-//		if (!client.admin().indices().prepareExists("log").execute().actionGet().isExists()) {
-//			client.admin().indices().prepareCreate("log").setSettings(indicesSettings).execute().actionGet();
-//		}
-//
-//		// now set the type mappings
-//		try {
-//			XContentBuilder builder = jsonBuilder()
-//					.startObject()
-//					.startObject("CmdLog")
-//					.startObject("properties")
-//					.startObject("host").field("type", "string").endObject()
-//					.startObject("httpStatusCode").field("type", "integer").endObject()
-//					.startObject("timeReceived").field("type", "date").endObject()
-//					.startObject("responseBody").field("type", "string").endObject()
-//					.startObject("status").field("type", "string").endObject()
-//					.endObject().endObject().endObject();
-//
-//			client.admin().indices().preparePutMapping("log")
-//						.setType("CmdLog").setSource(builder).execute().actionGet();
-//		} catch(IOException e) {
-//			e.printStackTrace();
-//		}
 
 	}
 

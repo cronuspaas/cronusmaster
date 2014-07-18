@@ -20,72 +20,48 @@ package resources.utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import play.Play;
 import play.vfs.VirtualFile;
 
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 /**
- * 20130509 Auto generate TSDB URL.
- * 
- * 
- * @author ypei
- * 
  */
-public class FileIoUtils implements IVirtualFileUtils {
+public class CronusFileIoUtils implements IVirtualFileUtils {
 	
-	//System.getenv("PE_CONF_PWD")
+	static Logger LOG = LoggerFactory.getLogger(CronusFileIoUtils.class); 
 
-	/**
-	 * Output both This will display all files except for empty.txt refined
-	 * 20130918
-	 * 
-	 * @param folderName
-	 * @return
-	 */
-	public static void getFileAndDirNamesInFolder(String folderName,
-			List<String> fileNames, List<String> dirNames) {
+	static File root;
 
-		if (fileNames == null) {
-			fileNames = new ArrayList<String>();
-		}
-
-		if (dirNames == null) {
-			dirNames = new ArrayList<String>();
-		}
-
+	static {
 		try {
-
-			VirtualFile virtualDir = VirtualFile.fromRelativePath(folderName);
-			List<VirtualFile> virtualFileList = virtualDir.list();
-
-			if (virtualFileList == null) {
-				play.Logger.error("virtualFileList is NULL! in getFileNamesInFolder()"
-								+ DateUtils.getNowDateTimeStrSdsm());
+			if (VarUtils.userDataRoot == null) {
+				throw new RuntimeException("not in production");
 			}
-
-			play.Logger.info("Under folder: " + folderName + ",  File/dir count is " + virtualFileList.size());
-
-			for (int i = 0; i < virtualFileList.size(); i++) {
-
-				String fileOrDirName = virtualFileList.get(i).getName();
-				if (virtualFileList.get(i).getRealFile().isFile()) {
-					fileNames.add(fileOrDirName);
-				} else if (virtualFileList.get(i).getRealFile().isDirectory()) {
-					play.Logger.info("Directory " + fileOrDirName);
-					dirNames.add(fileOrDirName);
-
-				}
-			}// end for
-
+			String rootPathFromEnv = System.getenv(System.getenv(VarUtils.userDataRoot));
+			LOG.info("user data root dir %s", rootPathFromEnv);
+			root = new File(rootPathFromEnv);
+			assert root.exists() && root.isDirectory() && root.canRead() && root.canWrite();
 		} catch (Throwable t) {
-			t.printStackTrace();
+			// anything wrong, fall back to use play root
+			LOG.error("fail to get user data root %s, fallback to use play path", t.getMessage());
+			root = Play.applicationPath;
 		}
-	}// end func.
-
+	}
+	
+	public CronusFileIoUtils() {
+	}
+	
 	/**
 	 * 20130927 Fixed Memory Leak. Dont use line by line, just use apache
 	 * commons io!! so simple and easy!
@@ -99,8 +75,7 @@ public class FileIoUtils implements IVirtualFileUtils {
 
 		try {
 
-			VirtualFile vf = VirtualFile.fromRelativePath(filePath);
-			File realFile = vf.getRealFile();
+			File realFile = this.getRealFileFromRelativePath(filePath);
 			fileContentString = FileUtils.readFileToString(realFile);
 
 		} catch (java.io.FileNotFoundException e) {
@@ -118,9 +93,9 @@ public class FileIoUtils implements IVirtualFileUtils {
 	
 	@Override
 	public File getRealFileFromRelativePath(String relativePath) {
-		VirtualFile vf = VirtualFile.fromRelativePath(relativePath);
-		return vf.getRealFile(); 
+		File realFile = new File(root, relativePath);
+		return realFile; 
 	}
-
+	
 }// end class
 

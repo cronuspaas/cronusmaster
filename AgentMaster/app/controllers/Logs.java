@@ -54,6 +54,7 @@ import com.stackscaling.agentmaster.resources.log.LogAggregation;
 import com.stackscaling.agentmaster.resources.log.LogAggregation.LogAggregationItem;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 /**
  * 
@@ -352,7 +353,7 @@ public class Logs extends Controller {
 
 		try {
 
-			String fileContent = FileIoUtils.readFileToString(filePath);
+			String fileContent = VarUtils.vf.readFileToString(filePath);
 			renderText(fileContent);
 		} catch (Throwable t) {
 			t.printStackTrace();

@@ -24,6 +24,7 @@ import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 import play.Play;
+import resources.utils.CronusFileIoUtils;
 import resources.utils.FileIoUtils;
 
 
@@ -43,10 +44,12 @@ public class PlayVarUtils extends VarUtils {
 	
 	public void init() {
 		
-		vf = new FileIoUtils();
-		
 		// user data provider
 		userDataDaoType = getVarStr("agentmaster.userDataDao", "file");
+		
+		// file
+		userDataRoot = getVarStr("agentmaster.userDataDao.file.root", null);
+		userDataDir = getVarStr("agentmaster.userDataDao.file.dir", "user_data"); 
 		
 		// s3
 		myAccessKeyID = getVarStr("agentmaster.userDataDao.s3.myAccessKeyID", null);
@@ -78,6 +81,9 @@ public class PlayVarUtils extends VarUtils {
 		BASELOG_CMDRES_LENGTH = getVarInt("agentmaster.baseLog.cmdResLength", 200);
 		ESLOG_DATA_TTL = getVarStr("agentmaster.esLogDataTtl", "1d");
 		ES_DATA_MAPPER = JsonUtil.customMapper("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+
+		// in the end, init file util
+		vf = new CronusFileIoUtils();
 		
 	}
 	

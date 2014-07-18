@@ -37,6 +37,10 @@ public abstract class VarUtils {
 	// user data provider
 	public static String userDataDaoType; // .getProperty("agentmaster.userDataDao").toString();
 	
+	// file
+	public static String userDataRoot;
+	public static String userDataDir;
+	
 	// s3
 	public static String myAccessKeyID;
 	public static String mySecretKey;
