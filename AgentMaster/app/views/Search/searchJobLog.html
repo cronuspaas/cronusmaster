@@ -14,7 +14,7 @@
   
 jQuery(document).ready(function($) {
   $('.facet-view-simple').facetview({
-    search_url: "http://localhost:9200/log/${logType}/_search?",
+    search_url: "http://54.210.50.253:9200/log/${logType}/_search?",
     search_index: 'elasticsearch',
     facets: [
         {'field':'host', 'display': 'host'},

@@ -436,5 +436,14 @@ public class Logs extends Controller {
 	}
 
 
+	/**
+	 * index page
+	 */
+	public static void search() {
+		
+		redirect("http://localhost:9200", true);
+
+	}
+
 
 }

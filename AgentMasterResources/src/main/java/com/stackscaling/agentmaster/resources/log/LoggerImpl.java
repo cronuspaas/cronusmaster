@@ -79,9 +79,10 @@ public abstract class LoggerImpl<T extends ILog> implements IJobLogger<T> {
 			T log = this.readLog(logId);
 			if (log instanceof BaseLog) {
 				for (CommandResponse res : ((BaseLog) log).getCommandResponses()) {
-
-					ElasticSearchUtils.deleteDocumentFromCmdResponse(res.indexMeta);
-					LOG.debug("Completed delete elastic search document %s", res.indexMeta);
+					if (res.indexMeta != null) {
+						ElasticSearchUtils.deleteDocumentFromCmdResponse(res.indexMeta);
+						LOG.debug("Completed delete elastic search document %s", res.indexMeta);
+					}
 				}
 			}
 		} finally {
