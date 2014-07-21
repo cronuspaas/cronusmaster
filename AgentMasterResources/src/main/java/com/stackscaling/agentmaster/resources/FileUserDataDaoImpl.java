@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
-import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 /**
@@ -28,8 +27,6 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	
 	static Logger logger = LoggerFactory.getLogger(FileUserDataDaoImpl.class);
 	
-	private IVirtualFileUtils vf = VarUtils.getVf();
-
 	public FileUserDataDaoImpl() {}
 
 	/**
@@ -40,7 +37,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	public List<String> listNames(DataType dataType)
 	{
 
-		File dir = vf.getRealFileFromRelativePath(dataType.getPath());
+		File dir = VarUtils.vf.getRealFileFromRelativePath(dataType.getPath());
 
 		Collection<File> files = FileUtils.listFiles(dir,
 				new IOFileFilter() {
@@ -86,7 +83,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		BufferedReader reader = null;
 		try {
 
-			reader = new BufferedReader(new FileReader(vf.getRealFileFromRelativePath(configFileLocation)));
+			reader = new BufferedReader(new FileReader(VarUtils.vf.getRealFileFromRelativePath(configFileLocation)));
 			String line = null;
 
 			while ((line = reader.readLine()) != null) {
@@ -132,7 +129,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		try {
 
 			boolean append = false;
-			fw = new FileWriter(vf.getRealFileFromRelativePath(configFileLocation), append);
+			fw = new FileWriter(VarUtils.vf.getRealFileFromRelativePath(configFileLocation), append);
 			fw.write(configFileContent);
 
 			fw.close();
@@ -164,7 +161,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		// in test
 		String configFileLocation = getFilePath(type, fileName);
 
-		vf.getRealFileFromRelativePath(configFileLocation).delete();
+		VarUtils.vf.getRealFileFromRelativePath(configFileLocation).delete();
 		logger.info("Deleted file : "
 					+ type + "/" + fileName + " at "
 					+ DateUtils.getNowDateTimeStr());
