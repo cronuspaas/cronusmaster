@@ -15,7 +15,7 @@ log4j.appender.Console.layout.ConversionPattern=%d{yyyy.MM.dd.HH.mm.ss.SSSZ} %-5
 
 # Rolling files
 log4j.appender.Rolling=org.apache.log4j.RollingFileAppender
-log4j.appender.Rolling.File=log/application.log
+log4j.appender.Rolling.File=logs/application.log
 log4j.appender.Rolling.MaxFileSize=100MB
 log4j.appender.Rolling.MaxBackupIndex=25
 log4j.appender.Rolling.layout=org.apache.log4j.PatternLayout
@@ -23,7 +23,7 @@ log4j.appender.Rolling.layout.ConversionPattern=%d{yyyy.MM.dd.HH.mm.ss.SSSZ} {%t
 
 # JVM logs
 log4j.appender.JVM=org.apache.log4j.RollingFileAppender
-log4j.appender.JVM.File=log/jvm.log
+log4j.appender.JVM.File=logs/jvm.log
 log4j.appender.JVM.MaxFileSize=100MB
 log4j.appender.JVM.MaxBackupIndex=10
 log4j.appender.JVM.layout=org.apache.log4j.PatternLayout
@@ -31,7 +31,7 @@ log4j.appender.JVM.layout.ConversionPattern=%d{yyyy.MM.dd.HH.mm.ss.SSSZ} %-5p ~ 
 
 # HTTP logs
 log4j.appender.HTTP=org.apache.log4j.RollingFileAppender
-log4j.appender.HTTP.File=log/http.log
+log4j.appender.HTTP.File=logs/http.log
 log4j.appender.HTTP.MaxFileSize=100MB
 log4j.appender.HTTP.MaxBackupIndex=10
 log4j.appender.HTTP.layout=org.apache.log4j.PatternLayout

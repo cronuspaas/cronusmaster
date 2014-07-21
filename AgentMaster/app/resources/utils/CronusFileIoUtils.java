@@ -48,7 +48,7 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 			if (VarUtils.userDataRoot == null) {
 				throw new RuntimeException("not in production");
 			}
-			String rootPathFromEnv = System.getenv(System.getenv(VarUtils.userDataRoot));
+			String rootPathFromEnv = System.getenv(VarUtils.userDataRoot);
 			LOG.info("user data root dir " + rootPathFromEnv);
 			root = new File(rootPathFromEnv);
 			assert root.exists() && root.isDirectory() && root.canRead() && root.canWrite();
