@@ -245,7 +245,7 @@ agentmaster.userDataDao=file
 agentmaster.logProgressEnabled=true
 
 # file
-agentmaster.userDataDao.file.root=CRONUSAPP_HOME
+agentmaster.userDataDao.file.root=APPDATA_HOME
 agentmaster.userDataDao.file.dir=user_data
 
 # s3 related configs
@@ -280,7 +280,3 @@ agentmaster.localEsEnabled=true
 agentmaster.esData=user_data/elasticsearch_data/data
 agentmaster.esEp=localhost
 agentmaster.esLogDataTtl=1d
-
-# spring
-play.spring.component-scan=true
-play.spring.component-scan.base-packages=models,resources
