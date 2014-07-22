@@ -246,7 +246,7 @@ agentmaster.logProgressEnabled=true
 
 # file
 agentmaster.userDataDao.file.root=CRONUSAPP_HOME
-agentmaster.userDataDao.file.dir=user_data
+agentmaster.userDataDao.file.dir=.appdata
 
 # s3 related configs
 agentmaster.userDataDao.s3.myAccessKeyID=your_access_key_id

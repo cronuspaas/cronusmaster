@@ -38,7 +38,7 @@ public abstract class VarUtils {
 	public static String userDataDaoType; // .getProperty("agentmaster.userDataDao").toString();
 	
 	// file
-	public static String userDataRoot;
+	public static String appHome;
 	public static String userDataDir;
 	
 	// s3

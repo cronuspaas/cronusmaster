@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import play.Play;
 import play.vfs.VirtualFile;
 
+import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
@@ -41,21 +43,27 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 	
 	static Logger LOG = LoggerFactory.getLogger(CronusFileIoUtils.class); 
 
-	static File root;
+	static File userDataHome;
 
 	static {
 		try {
-			if (VarUtils.userDataRoot == null) {
+			if (VarUtils.appHome == null) {
 				throw new RuntimeException("not in production");
 			}
-			String rootPathFromEnv = System.getenv(VarUtils.userDataRoot);
+			String rootPathFromEnv = System.getenv(VarUtils.appHome);
 			LOG.info("user data root dir " + rootPathFromEnv);
-			root = new File(rootPathFromEnv);
-			assert root.exists() && root.isDirectory() && root.canRead() && root.canWrite();
+			userDataHome = new File(new File(rootPathFromEnv), VarUtils.userDataDir);
+			assert userDataHome.exists() && userDataHome.isDirectory() && userDataHome.canRead() && userDataHome.canWrite();
+			for (DataType dt : DataType.values()) {
+				File dtDir = new File(userDataHome, dt.getPath());
+				if (!dtDir.exists()) {
+					dtDir.mkdir();
+				}
+			}
 		} catch (Throwable t) {
 			// anything wrong, fall back to use play root
 			LOG.error("fail to get user data root %s, fallback to use play path", t.getMessage());
-			root = Play.applicationPath;
+			userDataHome = Play.applicationPath;
 		}
 	}
 	
@@ -93,7 +101,7 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 	
 	@Override
 	public File getRealFileFromRelativePath(String relativePath) {
-		File realFile = new File(root, relativePath);
+		File realFile = new File(userDataHome, relativePath);
 		return realFile; 
 	}
 	

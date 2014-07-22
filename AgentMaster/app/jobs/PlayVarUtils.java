@@ -48,7 +48,7 @@ public class PlayVarUtils extends VarUtils {
 		userDataDaoType = getVarStr("agentmaster.userDataDao", "file");
 		
 		// file
-		userDataRoot = getVarStr("agentmaster.userDataDao.file.root", null);
+		appHome = getVarStr("agentmaster.userDataDao.file.root", null);
 		userDataDir = getVarStr("agentmaster.userDataDao.file.dir", "user_data"); 
 		
 		// s3
