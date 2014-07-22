@@ -20,8 +20,18 @@ app_conf_dir="$app_home/conf"
 # enter app_home; this is critical for application log
 cd $app_home
 
-# Starting application 
-echo 'starting app... (activate step already pre compiled'
-$rt_home/play start $app_home -Dprecompiled=true 
+# cleanup pid if needed
+rm -f "$app_home/server.pid"
 
-echo 'App started! tail -f log/application.log to check logs'
+# Starting application 
+if [ ! -z "$UPSTARTSERVICE" ]; then
+    echo "\nStart service already started by upstart"
+else
+    APPDATA_HOME=$CRONUSAPP_HOME
+    echo $APPDATA_HOME
+    echo 'starting app... (activate step already pre compiled)'
+    setsid $rt_home/play start $app_home -Dprecompiled=true
+fi
+
+echo 'App started!'
+
