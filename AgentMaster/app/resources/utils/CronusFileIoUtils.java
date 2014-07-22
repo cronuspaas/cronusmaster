@@ -53,6 +53,7 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 			String rootPathFromEnv = System.getenv(VarUtils.appHome);
 			LOG.info("user data root dir " + rootPathFromEnv);
 			userDataHome = new File(new File(rootPathFromEnv), VarUtils.userDataDir);
+			LOG.info("user data dir " + userDataHome.getAbsolutePath());
 			assert userDataHome.exists() && userDataHome.isDirectory() && userDataHome.canRead() && userDataHome.canWrite();
 			for (DataType dt : DataType.values()) {
 				File dtDir = new File(userDataHome, dt.getPath());
