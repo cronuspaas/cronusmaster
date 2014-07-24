@@ -1,8 +1,26 @@
 #{include 'Application/top_head_wizard.html'/}
 #{include 'Application/top_nav.html'/}
 
+    <style>
+      .wrapper {
+        width: 90%;
+        height: 90%;
+        margin-top: 10px;
+      }
+    </style>
 
-<div class="span6">
+    <script>
+      $(document).ready(function(){
+        JSONEditor.prototype.ADD_IMG = '/public/images/add.png';
+        JSONEditor.prototype.DELETE_IMG = '/public/images/delete.png';
+
+        var example2 = new JSONEditor($("#var_values"), 200, 200);
+        example2.doTruncation(true);
+        example2.showFunctionButtons(false);
+      });
+    </script>
+
+<div class="span8">
 	<button id="open-wizard" class="btn btn-primary">Command Wizard</button>
  </div>
   
@@ -13,12 +31,7 @@
 				<h3>Customize Command</h3>
 
 				<div class="wizard-input-section">
-					<p>
-						<strong>
-						Now customize the command for user inputs, execution, polling, and throttling settings 
-						</strong>
-					</p>
-    				<div class="tabbable tabs-left">
+    				<div class="tabbable tabs-top">
     					<ul class="nav nav-tabs">
 							<li class="active" value="tab4"><a href="#tab4" data-toggle="tab">User Inputs</a></li>
 							<li value="tab1"><a href="#tab1" data-toggle="tab">Execution</a></li>
@@ -27,8 +40,10 @@
     					</ul>
     					<div class="tab-content">
 							<div class="tab-pane active" id="tab4">
-								<p>Variables in command: something</p>
-								<textarea class="input-large" id="var_values" placeholder='{"key": "value"}' name="var_values" rows="5"></textarea>
+								<div class="wrapper">
+									<textarea class="input-large" id="var_values" placeholder='{"key": "value"}' name="var_values" rows="5"></textarea>
+      								<!--<textarea id="example2" rows="10"></textarea>-->
+    							</div>
 							</div>
 							<div class="tab-pane" id="tab1">
 							    <div class="row">
