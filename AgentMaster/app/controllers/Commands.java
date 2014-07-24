@@ -114,7 +114,7 @@ public class Commands extends Controller {
 	/**
 	 * command wizard
 	 */
-	public static void wizard(String cmdName) {
+	public static void wizard(String dataId, String dataType) {
 
 		String page = "wizard";
 		String topnav = "commands";
@@ -129,7 +129,22 @@ public class Commands extends Controller {
 			}
 			String nodeGroupSourceMetadataListJsonArray = JsonUtil.encode(ngs);
 			
-			render(page, topnav, nodeGroupSourceMetadataListJsonArray, cmdName);
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			
+			ICommand cmd = null;
+			switch (dType) {
+			case COMMAND:
+				cmd = UserDataProvider.getCommandConfigs().getCommandByName(dataId);
+				break;
+
+			case CMDLOG:
+				ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(dataId);
+				String agentCommandType = log.getCommandKey();
+				cmd = UserDataProvider.getCommandConfigs().getCommandByName(agentCommandType);
+			}
+
+			String cmdName = cmd.getName();
+			render(page, topnav, nodeGroupSourceMetadataListJsonArray, cmdName, dataType, dataId);
 		} catch (Throwable t) {
 
 			t.printStackTrace();
@@ -140,14 +155,35 @@ public class Commands extends Controller {
 
 	/**
 	 * options for a command
-	 * @param cmdName
+	 * @param dataId
 	 */
-	public static void getOptions(String cmdName) {
+	public static void getOptions(String dataId, String dataType) {
 		
 		try {
-			ICommand cmd = UserDataProvider.getCommandConfigs().getCommandByName(cmdName);
-			ArrayList<Map<String, String>> result = new ArrayList<Map<String,String>>();
 			
+			DataType dType = DataType.valueOf(dataType.toUpperCase());
+			
+			ArrayList<Map<String, String>> result = new ArrayList<Map<String,String>>();
+			ICommand cmd = null;
+			switch (dType) {
+			case COMMAND:
+				cmd = UserDataProvider.getCommandConfigs().getCommandByName(dataId);
+				if (cmd.getUserData() != null) {
+					result.add(createResultItem("var_values", JsonUtil.encodePretty(cmd.getUserData())));
+				}
+				break;
+
+			case CMDLOG:
+				ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(dataId);
+				String agentCommandType = log.getCommandKey();
+				Map<String, String> options = log.getUserData();
+				ICommandData userConfigs = UserDataProvider.getCommandConfigs();
+
+				// build task
+				cmd = userConfigs.getCommandByName(agentCommandType);
+				result.add(createResultItem("var_values", DataUtil.getOptionValue(options, "var_values", "{}").trim()));
+			}
+
 			HttpTaskRequest req = cmd.createCopy();
 			ExecuteOption eo = req.getExecutionOption()==null ? new ExecuteOption() : req.getExecutionOption();
 			result.add(createResultItem("exe_initde", Long.toString(eo.getInitDelaySec())));
@@ -162,13 +198,11 @@ public class Commands extends Controller {
 			result.add(createResultItem("mon_to", Long.toString(mo.getTimeOutSec())));
 			result.add(createResultItem("mon_retry", Long.toString(mo.getMaxRetry())));
 			result.add(createResultItem("mon_rede", Long.toString(mo.getRetryDelaySec())));
-			
+
 			BatchOption bo = req.getBatchOption()==null ? new BatchOption(0, Strategy.UNLIMITED) : req.getBatchOption();
 			result.add(createResultItem("thrStrategy", bo.getStrategy().name()));
 			result.add(createResultItem("thr_rate", Integer.toString(bo.getConcurrentRate())));
-			if (cmd.getUserData() != null) {
-				result.add(createResultItem("var_values", JsonUtil.encodePretty(cmd.getUserData())));
-			}
+			
 			renderJSON(result);
 			
 		} catch (Throwable t) {

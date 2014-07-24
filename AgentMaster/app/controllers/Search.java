@@ -17,6 +17,8 @@ limitations under the License.
 */
 package controllers;
 
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
+
 import play.mvc.Controller;
 
 /**
@@ -25,18 +27,14 @@ import play.mvc.Controller;
  *
  */
 public class Search extends Controller {
-
+	
 	/**
 	 * elastic search command logs
 	 * @param logId
 	 */
 	public static void searchCmdLog(String logId) {
 
-		String topnav = "commands";
-		String page = "searchCmdLog";
-		String logType = "CmdLog";
-		
-		searchLogs(logId, topnav, page, logType);
+		searchLogs(logId, "commands", "searchCmdLog", "CmdLog", VarUtils.ELASTICSEARCH_EP);
 	}
 
 	/**
@@ -45,7 +43,7 @@ public class Search extends Controller {
 	 */
 	public static void searchJobLog(String logId) {
 
-		searchLogs(logId, "jobs", "searchJobLog", "JobLog");
+		searchLogs(logId, "jobs", "searchJobLog", "JobLog", VarUtils.ELASTICSEARCH_EP);
 
 	}
 	
@@ -55,7 +53,7 @@ public class Search extends Controller {
 	 */
 	public static void searchWfLog(String logId) {
 
-		searchLogs(logId, "workflows", "searchWfLog", "WfLog");
+		searchLogs(logId, "workflows", "searchWfLog", "WfLog", VarUtils.ELASTICSEARCH_EP);
 
 	}
 
@@ -67,11 +65,11 @@ public class Search extends Controller {
 	 * @param page
 	 * @param logType
 	 */
-	private static void searchLogs(String logId, String topnav, String page, String logType) {
+	private static void searchLogs(String logId, String topnav, String page, String logType, String esEp) {
 
 		try {
 			
-			render(page, topnav, logType, logId);
+			render(page, topnav, logType, logId, esEp);
 
 		} catch (Exception e) {
 			e.printStackTrace();

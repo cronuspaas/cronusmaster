@@ -14,7 +14,7 @@ GET     /commands                        		Commands.index
 GET     /commands/common                        Commands.commonCommands
 GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
 GET     /commands/wizard                        Commands.wizard
-GET     /commands/getOptions/{cmdName}			Commands.getOptions
+GET     /commands/getOptions					Commands.getOptions
 GET		/commands/runCmdFromLog					Commands.runCmdFromLog
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
 

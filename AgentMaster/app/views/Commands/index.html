@@ -14,7 +14,6 @@
 					<th>Name</th>
 					<th>URL</th>
 					<th>Method</th>
-					<th class=span2>Variables</th>
 					<th class=span4>User Data</th>
 					<th>Run</th>
 				</tr>
@@ -32,10 +31,9 @@
 					getHttpMethodLabel("${obj.httpMethod}");
 					</script>
 					</td>
-					<td>${obj.variables}</td>
 					<td>${obj.userData}</td>
 					<td>
-					<a href="/commands/wizard?cmdName=${obj.name}" target=_self>
+					<a href="/commands/wizard?dataId=${obj.name}&dataType=command" target=_self>
 					<i class="fa fa-magic fa-lg"></i></a>
 					</td>
 				</tr>

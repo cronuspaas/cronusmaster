@@ -278,5 +278,5 @@ agentmaster.userDataDao.swift.JOBLOG.uuid=am_joblog
 # use local or remote elastic search backend
 agentmaster.localEsEnabled=true
 agentmaster.esData=user_data/elasticsearch_data/data
-agentmaster.esEp=localhost
+agentmaster.esEp=54.210.50.253
 agentmaster.esLogDataTtl=1d

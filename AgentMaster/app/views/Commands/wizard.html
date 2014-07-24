@@ -9,47 +9,6 @@
 	<div class="wizard" id="wizard-commands">
 			<h1>Send REST Requests</h1>
 
-			<div class="wizard-card" data-cardname="name">
-				<h3>Select Target Nodes</h3>
-					<div id="ng_class" class="btn-group" data-toggle="buttons-radio">
-    					<button id="ngp_button" type="button" class="btn btn-primary">Predefined</button>
-					    <button id="nga_button" type="button" class="btn btn-primary">Adhoc</button>
-					    <button id="nge_button" type="button" class="btn btn-primary">Embedded in Cmd</button>
-					</div>
-				
-				<div id="ng_predefined" class="wizard-input-section" style="display: none;">
-					<p>
-						<strong>
-						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/config/showConfigs/nodegroup">here</a>. 
-						</strong>
-					</p>
-
-					<select data-placeholder="Target nodes" style="width:350px;" class="chzn-select" id="target_nodes" >
-		                <option value=""></option>
-		            </select>
-				</div>
-				
-				<div id="ng_adhoc" class="wizard-input-section" style="display: none;">
-					<p>
-						<strong>
-						Please enter target nodes by fqdn line by line (no additional symbols).
-						</strong>
-					</p>
-
-					<textarea class="input-xlarge" id="nodeListFromText" placeholder="host" name="nodeListFromText" rows="5"></textarea>  
-				</div>
-				
-				<div id="ng_embed" class="wizard-input-section" style="display: none;">
-					<p>
-						<strong>
-						Target nodes are defined in command itself. Please VERIFY the target nodes in command <a target="_blank" href="/config/showConfigs/command">here</a>.
-						</strong>
-					</p>
-
-				</div>
-
-			</div>
-
 			<div class="wizard-card" data-onload="" data-cardname="dcn_customize_requests">
 				<h3>Customize Command</h3>
 
@@ -120,6 +79,47 @@
     					</div>
     				</div>					
 				</div>
+			</div>
+
+			<div class="wizard-card" data-cardname="name">
+				<h3>Select Target Nodes</h3>
+					<div id="ng_class" class="btn-group" data-toggle="buttons-radio">
+    					<button id="ngp_button" type="button" class="btn btn-primary">Predefined</button>
+					    <button id="nga_button" type="button" class="btn btn-primary">Adhoc</button>
+					    <button id="nge_button" type="button" class="btn btn-primary">Embedded in Cmd</button>
+					</div>
+				
+				<div id="ng_predefined" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						CAUTION: Please VERIFY the target nodes you selected <a target="_blank" href="/config/showConfigs/nodegroup">here</a>. 
+						</strong>
+					</p>
+
+					<select data-placeholder="Target nodes" style="width:350px;" class="chzn-select" id="target_nodes" >
+		                <option value=""></option>
+		            </select>
+				</div>
+				
+				<div id="ng_adhoc" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						Please enter target nodes by fqdn line by line (no additional symbols).
+						</strong>
+					</p>
+
+					<textarea class="input-xlarge" id="nodeListFromText" placeholder="host" name="nodeListFromText" rows="5"></textarea>  
+				</div>
+				
+				<div id="ng_embed" class="wizard-input-section" style="display: none;">
+					<p>
+						<strong>
+						Target nodes are defined in command itself. Please VERIFY the target nodes in command <a target="_blank" href="/config/showConfigs/command">here</a>.
+						</strong>
+					</p>
+
+				</div>
+
 			</div>
 
 			<div class="wizard-card" data-cardname="dcn_send_requests">
@@ -237,7 +237,7 @@ function fqdn_or_ip(el) {
 
 $(function() {
 	// load command meta
-	var url = "/commands/getOptions/${cmdName}";
+	var url = "/commands/getOptions?dataId=${dataId}&dataType=${dataType}";
 	$.ajax({
 		dataType: "json",
 		url: url,

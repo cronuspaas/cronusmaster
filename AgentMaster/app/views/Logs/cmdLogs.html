@@ -61,7 +61,7 @@
 						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}"><i class="fa fa-file-text-o fa-lg"></i></a> #{/if}   
 					</td>  
 					<td>   
-						<a target=_self href="/commands/runCmdFromLog?logType=${logObj.type}&logId=${logObj.name}">
+						<a target=_self href="/commands/wizard?dataId=${logObj.name}&dataType=${logObj.type}">
 						<i class="fa fa-magic fa-lg"></i></a> 
 					</td>  
 					<td>   
