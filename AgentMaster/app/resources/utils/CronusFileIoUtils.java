@@ -46,25 +46,28 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 	static File userDataHome;
 
 	static {
-		try {
-			if (VarUtils.appHome == null) {
-				throw new RuntimeException("not in production");
-			}
-			LOG.info("user data root dir " + VarUtils.appHome);
-			userDataHome = new File(new File(VarUtils.appHome), VarUtils.userDataDir);
-			LOG.info("user data dir " + userDataHome.getAbsolutePath());
-			assert userDataHome.exists() && userDataHome.isDirectory() && userDataHome.canRead() && userDataHome.canWrite();
-			for (DataType dt : DataType.values()) {
-				File dtDir = new File(userDataHome, dt.getPath());
-				if (!dtDir.exists()) {
-					dtDir.mkdir();
-				}
-			}
-		} catch (Throwable t) {
-			// anything wrong, fall back to use play root
-			LOG.error("fail to get user data root %s, fallback to use play path", t.getMessage());
-			userDataHome = Play.applicationPath;
-		}
+                try {
+                        if (VarUtils.appHome == null) {
+                                throw new RuntimeException("not in production");
+                        }
+                        String rootPathFromEnv =System.getenv(VarUtils.appHome);
+                        LOG.info("user data root dir " + rootPathFromEnv);
+                        userDataHome = new File(new File(rootPathFromEnv), VarUtils.userDataDir);
+                        LOG.info("user data dir " + userDataHome.getAbsolutePath());
+                        assert userDataHome.exists() && userDataHome.isDirectory() && userDataHome.canRead() && userDataHome.canWrite();
+                        for (DataType dt : DataType.values()) {
+                                File dtDir = new File(userDataHome, dt.getPath());
+                                if (!dtDir.exists()) {
+                                        LOG.info("create directory " + dtDir.getAbsolutePath());
+                                        dtDir.mkdir();
+                                }
+                        }
+                } catch (Throwable t) {
+                        // anything wrong, fall back to use play root
+                        LOG.error("fail to get user data root %s, fallback to use play path", t.getMessage());
+                        userDataHome = Play.applicationPath;
+                }
+
 	}
 	
 	public CronusFileIoUtils() {

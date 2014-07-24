@@ -24,9 +24,32 @@ cd $scripts_dir
 # copy the .conf files 
 echo 'copy the .conf files '
 
-# Starting application 
+# create user_data dir if not there
+if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data" ]; then
+  echo "create user_data directory $CRONUSAPP_HOME/.appdata/user_data"
+  mkdir -p $CRONUSAPP_HOME/.appdata/user_data
+fi
+
+# copy predefined commands if not there
+if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/commands" ]; then
+  echo "create predefined commands"
+  mkdir -p $CRONUSAPP_HOME/.appdata/user_data/commands
+  cp $app_home/user_data/commands/* $CRONUSAPP_HOME/.appdata/user_data/commands/
+fi
+
+# copy predefined nodegroups if not there
+if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups" ]; then
+  echo "create predefined nodegroups"
+  mkdir -p $CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups
+  cp $app_home/user_data/predefined_nodegroups/* $CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups/
+fi
+
+APPDATA_HOME=$CRONUSAPP_HOME/.appdata
+
+# Starting application
 
 echo 'precomiling app...'
 $rt_home/play precompile $app_home; sleep 1;
 
 echo 'precomiled app... Activation completed.'
+
