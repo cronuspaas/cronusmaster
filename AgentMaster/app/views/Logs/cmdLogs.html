@@ -16,8 +16,8 @@
 					<th>No.</th>
 					<th>Command</th>
 					<th>NodeGroup</th>
+					<th>UserData</th>
 					<th>TimeStamp</th>
-					<th>Progress</th>
 					<th>Status</th>
 					<th>S:F:Other</th>
 					<th>Result</th>
@@ -36,10 +36,12 @@
 						<a target=_blank href="/config/viewConfigItem/command/${logObj.command}" >${logObj.command}</a> 
 					</td>
 					<td>
-					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a> 
+					    <!--<a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a>-->
+					    ${logObj.nodeGroup} 
+					</td>
+					<td><a href="#" rel="tooltip" data-original-title="${logObj.userData}">${logObj.userDataConcise}</a>
 					</td>
 					<td>${logObj.timeStampDisplay}</td>					
-					<td>${logObj.progress}</td>
 					<td>
 					<script type="text/javascript">	
 						getLabel("${logObj.status}", ["Success","Failed"]);
@@ -53,12 +55,12 @@
 					<td>   
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
 					</td>   
-					<td>   
+					<td>
 						<a target=_self href="/search/searchCmdLog?logId=${logObj.name}" >
 						<i class="fa fa-search fa-lg"></i></a> 
 					</td>  
 					<td>
-						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}"><i class="fa fa-file-text-o fa-lg"></i></a> #{/if}   
+						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}" title="Fetch raw logs"><i class="fa fa-file-text-o fa-lg"></i></a> #{/if}   
 					</td>  
 					<td>   
 						<a target=_self href="/commands/wizard?dataId=${logObj.name}&dataType=${logObj.type}">
@@ -79,6 +81,10 @@
 		</table>
 
 	</div>
+
+<script type="text/javascript">
+$('[rel=tooltip]').tooltip({placement : 'right'});
+</script> 
 
 #{include 'tags/refresh.html'/}
 </div>

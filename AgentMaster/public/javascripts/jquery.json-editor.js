@@ -45,7 +45,7 @@
       if (options == null) {
         options = {};
       }
-      this.builderShowing = true;
+      this.builderShowing = options.showBuilder;
       this.ADD_IMG || (this.ADD_IMG = options.ADD_IMG || 'lib/images/add.png');
       this.DELETE_IMG || (this.DELETE_IMG = options.DELETE_IMG || 'lib/images/delete.png');
       this.functionButtonsEnabled = false;
@@ -64,6 +64,9 @@
       this.doAutoFocus = false;
       this.editingUnfocused();
       this.rebuild();
+      if (!this.builderShowing) {
+    	  this.showText();
+      }
     }
 
     JSONEditor.prototype.braceUI = function(key, struct) {
@@ -328,7 +331,7 @@
         this.wrapped.get(0).value = this.wrapped.get(0).value.replace(/((^|[^\\])(\\\\)*)\\n/g, '$1\\\\n').replace(/((^|[^\\])(\\\\)*)\\t/g, '$1\\\\t');
         return this.json = JSON.parse(this.wrapped.get(0).value);
       } catch (e) {
-        return alert("Got bad JSON from text.");
+        //return alert("Got bad JSON from text.");
       }
     };
 
@@ -544,7 +547,7 @@
         bq.append($('<div class="bracers">}</div>'));
         node.append(bq);
       } else {
-        elem = this.editable(json.toString(), key, parent, root, 'value').wrap('<span class="val"></span>').parent();
+        elem = this.editable(json!=null?json.toString():"", key, parent, root, 'value').wrap('<span class="val"></span>').parent();
         node.append(elem);
         node.prepend(this.braceUI(key, parent));
         node.prepend(this.bracketUI(key, parent));

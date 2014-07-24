@@ -12,14 +12,12 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/status/guidoutput/<guid>",
       "method" : "GET",
-      "body" : {
-      },
+      "body" : { },
       "headers" : {
         "content-type" : "application/json",
         "Authorization" : "Basic <agentAuthKey>"
       },
-      "parameters" : {
-      }
+      "parameters" : { }
     },
     "resProcessorName" : "agentProcessor",
     "globalContext" : "agentAuthKeyContext"
@@ -27,5 +25,6 @@
   "aggRegexs" : [ "status/(.*?)\"" ],
   "userData" : {
     "guid" : "guid"
-  }
+  },
+  "hasRawLogs" : false
 }

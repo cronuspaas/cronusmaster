@@ -12,27 +12,20 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/services/<serviceName>",
       "method" : "POST",
-      "body" : {},
+      "body" : { },
       "headers" : {
+        "content-type" : "application/json",
         "Authorization" : "Basic <agentAuthKey>",
-        "X-CORRELATIONID": "<correlationId>",
-        "content-type" : "application/json"
+        "X-CORRELATIONID" : "<correlationId>"
       },
-      "parameters" : {
-      }
+      "parameters" : { }
     },
-    "hostTemplateValues" : null,
-    "templateValuesForAllHosts" : null,
-    "hosts" : null,
-    "monitorOption" : null,
-    "pollTemplate" : null,
     "resProcessorName" : "agentProcessor",
-    "customHandler" : null,
-    "globalContext" : "agentAuthKeyContext",
-    "batchOption" : null
+    "globalContext" : "agentAuthKeyContext"
   },
   "aggRegexs" : [ "status/(.*?)\"" ],
   "userData" : {
     "serviceName" : "myservice"
-  }
+  },
+  "hasRawLogs" : false
 }

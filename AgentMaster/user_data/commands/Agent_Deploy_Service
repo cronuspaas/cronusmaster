@@ -15,16 +15,15 @@
       "body" : {
         "cos" : "<cos>",
         "upstartService" : "<upstartService>",
-        "manifest" : "<manifestName>",
-        "package" : "<package>"
+        "package" : "<package>",
+        "manifest" : "<manifestName>"
       },
       "headers" : {
         "content-type" : "application/json",
         "Authorization" : "Basic <agentAuthKey>",
         "X-CORRELATIONID" : "<correlationId>"
       },
-      "parameters" : {
-      }
+      "parameters" : { }
     },
     "monitorOption" : {
       "timeOutSec" : 0,
@@ -36,13 +35,11 @@
     "pollTemplate" : {
       "url" : "https://<host>:12020/status/<uuid>",
       "method" : "GET",
-      "body" : {
-      },
+      "body" : { },
       "headers" : {
         "content-type" : "application/json"
       },
-      "parameters" : {
-      }
+      "parameters" : { }
     },
     "resProcessorName" : "agentPollProcessor",
     "globalContext" : "agentAuthKeyContext"

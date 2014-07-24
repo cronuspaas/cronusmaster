@@ -181,7 +181,8 @@ public class Commands extends Controller {
 
 				// build task
 				cmd = userConfigs.getCommandByName(agentCommandType);
-				result.add(createResultItem("var_values", DataUtil.getOptionValue(options, "var_values", "{}").trim()));
+				String userData = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+				result.add(createResultItem("var_values", userData));
 			}
 
 			HttpTaskRequest req = cmd.createCopy();

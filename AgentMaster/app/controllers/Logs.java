@@ -35,6 +35,7 @@ import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
 import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.task.asynchttp.UrlTemplate;
+import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
@@ -130,7 +131,10 @@ public class Logs extends Controller {
 					ILog logImpl = logger.readLog(logName);
 					log.put("status", logImpl.getStatus());
 					log.put("statusdetail", logImpl.getStatusDetail());
-					log.put("progress", logImpl.getDisplayProgress());
+					String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
+					log.put("userData", userData);
+					log.put("userDataConcise", StringUtil.trimToLength(userData, 20) + "...");
+//					log.put("progress", logImpl.getDisplayProgress());
 					if (logImpl.isHasRawLogs()) {
 						log.put("fetch", "true");
 					}
@@ -138,7 +142,9 @@ public class Logs extends Controller {
 				else {
 					log.put("status", "-");
 					log.put("statusdetail", "-");
-					log.put("progress", "-");
+					log.put("userData", "...");
+					log.put("userDataConcise", "...");
+//					log.put("progress", "-");
 					log.put("fetch", "false");
 				}
 				logFiles.add(log);

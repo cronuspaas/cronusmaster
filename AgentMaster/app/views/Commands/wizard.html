@@ -14,10 +14,11 @@
         JSONEditor.prototype.ADD_IMG = '/public/images/add.png';
         JSONEditor.prototype.DELETE_IMG = '/public/images/delete.png';
 
-        var example2 = new JSONEditor($("#var_values"), 200, 200);
+        var example2 = new JSONEditor($("#var_values"));
         example2.doTruncation(true);
         example2.showFunctionButtons(false);
       });
+
     </script>
 
 <div class="span8">
@@ -80,11 +81,11 @@
 							    <div class="row">
 								<label class="span2" for="thrStrategy">Throttle Strategy</label>
 								<select data-placeholder="Throttling Strategy" style="width:350px;" class="chzn-select" id="thrStrategy" >
-		    					    <option value="UNLIMITED">UNLIMITED</option>
+		    					    <option value="UNLIMITED" >UNLIMITED</option>
 		    			        	<option value="MAX_CONCURRENT_RATE_SLIDING">MAX_CONCURRENT_RATE_SLIDING</option>
 		            			</select>
 							    </div>						
-							    <div class="row">
+							    <div class="row" id="thr_rate_row">
 								<label class="span2" for="thr_rate">Throttle Rate</label>
 								<input id="thr_rate" class="input-small" type="text" placeholder="0">
 							    </div>						
@@ -424,6 +425,16 @@ $("#nge_button").on('click',function(){
   $('#ng_embed').show();
 
 });
+
+$("#thrStrategy").on('change', function() {
+	if ($("#thrStrategy")[0].selectedIndex == 0) {
+		$("#thr_rate_row").hide();
+	}
+	else {
+		$("#thr_rate_row").show();
+	}	
+});
+$("#thr_rate_row").hide();
 
 </script>
 

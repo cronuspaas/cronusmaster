@@ -12,19 +12,17 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/agent/shutdown",
       "method" : "POST",
-      "body" : {
-      },
+      "body" : { },
       "headers" : {
         "content-type" : "application/json",
-        "X-CORRELATIONID": "<correlationId>",
-        "Authorization" : "Basic <agentAuthKey>"
+        "Authorization" : "Basic <agentAuthKey>",
+        "X-CORRELATIONID" : "<correlationId>"
       },
-      "parameters" : {
-      }
+      "parameters" : { }
     },
     "resProcessorName" : "agentProcessor",
     "globalContext" : "agentAuthKeyContext"
   },
-  "userData" : {
-  }
+  "userData" : { },
+  "hasRawLogs" : false
 }
