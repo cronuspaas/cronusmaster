@@ -27,8 +27,6 @@ rm -f "$app_home/server.pid"
 if [ ! -z "$UPSTARTSERVICE" ]; then
     echo "\nStart service already started by upstart"
 else
-    APPDATA_HOME=$CRONUSAPP_HOME
-    echo $APPDATA_HOME
     echo 'starting app... (activate step already pre compiled)'
     setsid $rt_home/play start $app_home -Dprecompiled=true
 fi

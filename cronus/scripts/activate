@@ -44,8 +44,6 @@ if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/predef
   cp $app_home/user_data/predefined_nodegroups/* $CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups/
 fi
 
-APPDATA_HOME=$CRONUSAPP_HOME/.appdata
-
 # Starting application
 
 echo 'precomiling app...'
