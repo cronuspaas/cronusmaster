@@ -12,18 +12,19 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/services/<serviceName>",
       "method" : "POST",
-      "body" : { },
+      "body" : {
+      },
       "headers" : {
         "content-type" : "application/json",
         "Authorization" : "Basic <agentAuthKey>",
         "X-CORRELATIONID" : "<correlationId>"
       },
-      "parameters" : { }
+      "parameters" : {
+      }
     },
     "resProcessorName" : "agentProcessor",
     "globalContext" : "agentAuthKeyContext"
   },
-  "aggRegexs" : [ "status/(.*?)\"" ],
   "userData" : {
     "serviceName" : "myservice"
   },

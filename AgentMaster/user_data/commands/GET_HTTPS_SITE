@@ -12,12 +12,15 @@
     "urlTemplate" : {
       "url" : "https://<host>/",
       "method" : "GET",
-      "body" : { },
-      "headers" : { },
-      "parameters" : { }
+      "body" : {
+      },
+      "headers" : {
+      },
+      "parameters" : {
+      }
     }
   },
-  "aggRegexs" : [ ".*<title>(.*)</title>.*" ],
-  "userData" : { },
+  "userData" : {
+  },
   "hasRawLogs" : false
 }

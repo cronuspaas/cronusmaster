@@ -3,17 +3,29 @@
   "httpTaskRequest" : {
     "taskType" : "async",
     "httpClientType" : "httpClient",
+    "executionOption" : null,
     "urlTemplate" : {
       "url" : "http://<host>/q?s=<symbol>&ql=1",
       "method" : "GET",
-      "body" : { },
-      "headers" : { },
-      "parameters" : { }
+      "body" : {
+      },
+      "headers" : {
+      },
+      "parameters" : {
+      }
     },
-    "hosts" : [ "finance.yahoo.com" ]
+    "hostTemplateValues" : null,
+    "templateValuesForAllHosts" : null,
+    "hosts" : [ "finance.yahoo.com" ],
+    "monitorOption" : null,
+    "pollTemplate" : null,
+    "resProcessorName" : null,
+    "customHandler" : null,
+    "globalContext" : null,
+    "batchOption" : null
   },
+  "aggRegexs" : null,
   "userData" : {
     "symbol" : "ebay"
-  },
-  "hasRawLogs" : false
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "name" : "Agent_Service_UserAction",
+  "name" : "Delete_Manifest",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
@@ -10,8 +10,8 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/useraction/<action>",
-      "method" : "POST",
+      "url" : "https://<host>:12020/services/<serviceName>/manifests/<manifestName>",
+      "method" : "DELETE",
       "body" : {
       },
       "headers" : {
@@ -44,8 +44,8 @@
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
-    "serviceName" : "myservice",
-    "action" : "action"
+    "serviceName" : "serviceName",
+    "manifestName" : "manifestName"
   },
   "hasRawLogs" : true
 }

@@ -12,19 +12,20 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/status/<uuid>",
       "method" : "DELETE",
-      "body" : { },
+      "body" : {
+      },
       "headers" : {
         "content-type" : "application/json",
-        "Authorization" : "Basic <agentAuthKey>",
-        "X-CORRELATIONID" : "<correlationId>"
+        "X-CORRELATIONID": "<correlationId>",
+        "Authorization" : "Basic <agentAuthKey>"
       },
-      "parameters" : { }
+      "parameters" : {
+      }
     },
     "resProcessorName" : "agentProcessor",
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
     "uuid" : "job uuid"
-  },
-  "hasRawLogs" : false
+  }
 }

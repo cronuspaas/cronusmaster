@@ -18,10 +18,11 @@
       },
       "headers" : {
         "content-type" : "application/json",
-        "Authorization" : "Basic <agentAuthKey>",
-        "X-CORRELATIONID" : "<correlationId>"
+        "X-CORRELATIONID": "<correlationId>",
+        "Authorization" : "Basic <agentAuthKey>"
       },
-      "parameters" : { }
+      "parameters" : {
+      }
     },
     "monitorOption" : {
       "timeOutSec" : 0,
@@ -33,11 +34,13 @@
     "pollTemplate" : {
       "url" : "https://<host>:12020/status/<uuid>",
       "method" : "GET",
-      "body" : { },
+      "body" : {
+      },
       "headers" : {
         "content-type" : "application/json"
       },
-      "parameters" : { }
+      "parameters" : {
+      }
     },
     "resProcessorName" : "agentPollProcessor",
     "globalContext" : "agentAuthKeyContext"
@@ -45,6 +48,5 @@
   "userData" : {
     "source" : "source http location (e.g. http://somerepo/)",
     "agentVersion" : "target agent version (e.g. 0.1.22)"
-  },
-  "hasRawLogs" : false
+  }
 }

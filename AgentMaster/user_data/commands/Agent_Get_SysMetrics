@@ -12,16 +12,19 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/modules/sysmetrics/getSysMetrics",
       "method" : "GET",
-      "body" : { },
+      "body" : {
+      },
       "headers" : {
         "content-type" : "application/json",
         "Authorization" : "Basic <agentAuthKey>"
       },
-      "parameters" : { }
+      "parameters" : {
+      }
     },
     "resProcessorName" : "agentProcessor",
     "globalContext" : "agentAuthKeyContext"
   },
-  "userData" : { },
+  "userData" : {
+  },
   "hasRawLogs" : false
 }
