@@ -71,7 +71,7 @@
 
     JSONEditor.prototype.braceUI = function(key, struct) {
       var _this = this;
-      return $('<a class="icon" href="#"><strong>{</strong></a>').click(function(e) {
+      return $('<a class="icon" href="#"><strong>+Map</strong></a>').click(function(e) {
         e.preventDefault();
         struct[key] = {
           "??": struct[key]
@@ -83,7 +83,7 @@
 
     JSONEditor.prototype.bracketUI = function(key, struct) {
       var _this = this;
-      return $('<a class="icon" href="#"><strong>[</a>').click(function(e) {
+      return $('<a class="icon" href="#"><strong>+Array</a>').click(function(e) {
         e.preventDefault();
         struct[key] = [struct[key]];
         _this.doAutoFocus = true;
@@ -215,7 +215,7 @@
           e.preventDefault();
           return _this.redo();
         }));
-        this.functionButtons.append($('<a id="toggle_view" href="#" style="padding-right: 10px; float: right;">Toggle View</a>').click(function(e) {
+        this.functionButtons.append($('<a id="toggle_view" href="#" style="padding-right: 10px; float: right;">Toggle Json Editor</a>').click(function(e) {
           e.preventDefault();
           return _this.toggleBuilder();
         }));

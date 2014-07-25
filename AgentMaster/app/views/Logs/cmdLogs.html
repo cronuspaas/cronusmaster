@@ -16,7 +16,7 @@
 					<th>No.</th>
 					<th>Command</th>
 					<th>NodeGroup</th>
-					<th>UserData</th>
+					<th>User Data</th>
 					<th>TimeStamp</th>
 					<th>Status</th>
 					<th>S:F:Other</th>
@@ -33,13 +33,13 @@
 				<tr>
 					<td>${logObj_index}</td>
 					<td>
-						<a target=_blank href="/config/viewConfigItem/command/${logObj.command}" >${logObj.command}</a> 
+						<a target=_blank href="/config/viewConfigItem/command/${logObj.command}" >${logObj.command}</a>
 					</td>
 					<td>
-					    <!--<a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a>-->
-					    ${logObj.nodeGroup} 
+					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a>
 					</td>
-					<td><a href="#" rel="tooltip" data-original-title="${logObj.userData}">${logObj.userDataConcise}</a>
+					<td>
+						<a href="#" rel="tooltip" data-original-title="${logObj.userData}">Hover for User Data</a>						 
 					</td>
 					<td>${logObj.timeStampDisplay}</td>					
 					<td>
