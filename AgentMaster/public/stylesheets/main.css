@@ -1,3 +1,5 @@
 p:first-letter {
     text-transform: uppercase;
 }
+
+.tooltip-inner {background-color:#555;font-size:12px;}

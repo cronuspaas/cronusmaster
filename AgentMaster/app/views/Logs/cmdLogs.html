@@ -16,16 +16,16 @@
 					<th>No.</th>
 					<th>Command</th>
 					<th>NodeGroup</th>
-					<th>User Data</th>
 					<th>TimeStamp</th>
 					<th>Status</th>
 					<th>S:F:Other</th>
-					<th>Result</th>
-					<th>Search</th>
-					<th>Logs</th>
-					<th>Rerun</th>
-					<th>Schedule</th>
-					<th>Remove</th>
+					<th><span rel="tooltip" data-original-title="Hover over to see user provided parameters">User Data</span></th>
+					<th><span rel="tooltip" data-original-title="Result summary">Result</span></th>
+					<th><span rel="tooltip" data-original-title="Search raw logs">Search</span></th>
+					<th><span rel="tooltip" data-original-title="Fetch raw logs">Logs</span></th>
+					<th><span rel="tooltip" data-original-title="Run same command again">Rerun</span></th>
+					<th><span rel="tooltip" data-original-title="Schedule run same command">Schedule</span></th>
+					<th><span rel="tooltip" data-original-title="Delete log entry">Remove</span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -38,9 +38,6 @@
 					<td>
 					    <a target=_blank href="/config/viewConfigItem/${logObj.nodeGroupType}/${logObj.nodeGroup}" >${logObj.nodeGroup}</a>
 					</td>
-					<td>
-						<a href="#" rel="tooltip" data-original-title="${logObj.userData}">Hover for User Data</a>						 
-					</td>
 					<td>${logObj.timeStampDisplay}</td>					
 					<td>
 					<script type="text/javascript">	
@@ -51,6 +48,9 @@
 					<script type="text/javascript">	
 						getStatusDetail("${logObj.statusdetail}");
 					</script>
+					</td>
+					<td>
+						<a target="#" rel="tooltip" data-original-title="${logObj.userData}"><i class="fa fa-users fa-lg"></i></a>						 
 					</td>
 					<td>   
 						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 

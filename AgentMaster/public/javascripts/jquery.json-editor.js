@@ -83,7 +83,7 @@
 
     JSONEditor.prototype.bracketUI = function(key, struct) {
       var _this = this;
-      return $('<a class="icon" href="#"><strong>+Array</a>').click(function(e) {
+      return $('<a class="icon" href="#"><strong>+List</a>').click(function(e) {
         e.preventDefault();
         struct[key] = [struct[key]];
         _this.doAutoFocus = true;
