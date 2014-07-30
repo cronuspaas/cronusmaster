@@ -1,0 +1,1 @@
+{"name":"DELETE_CMDLOG","intervalInMinute":60,"enabled":false,"cmdName":"LOCAL_DELETE_LOGS","nodeGroupName":"NG-EMPTY","userData":{"thrStrategy":"UNLIMITED","var_values":"{\n  \"dataType\" : \"CMDLOG\",\n  \"retainFactor\" : \"name\",\n  \"numToKeep\" : \"1\"\n}"},"description":"Run LOCAL_DELETE_LOGS on NG-EMPTY every 60 minute"}
