@@ -34,15 +34,22 @@ fi
 if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/commands" ]; then
   echo "create predefined commands"
   mkdir -p $CRONUSAPP_HOME/.appdata/user_data/commands
-  cp $app_home/user_data/commands/* $CRONUSAPP_HOME/.appdata/user_data/commands/
 fi
+cp -n $app_home/user_data/commands/* $CRONUSAPP_HOME/.appdata/user_data/commands/
 
 # copy predefined nodegroups if not there
 if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups" ]; then
   echo "create predefined nodegroups"
   mkdir -p $CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups
-  cp $app_home/user_data/predefined_nodegroups/* $CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups/
 fi
+cp -n $app_home/user_data/predefined_nodegroups/* $CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups/
+
+# copy predefined jobs if not there
+if [ -n "$CRONUSAPP_HOME" ] && [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/cmd_jobs" ]; then
+  echo "create predefined cmd jobs"
+  mkdir -p $CRONUSAPP_HOME/.appdata/user_data/cmd_jobs
+fi
+cp -n $app_home/user_data/cmd_jobs/* $CRONUSAPP_HOME/.appdata/user_data/cmd_jobs/
 
 # Starting application
 

@@ -1,5 +1,5 @@
 {
-  "name" : "Delete_Manifest",
+  "name" : "Agent_Delete_Manifest",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
