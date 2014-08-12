@@ -4,13 +4,21 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lightj.example.task.HostTemplateValues;
+import org.lightj.example.task.HttpTaskBuilder;
+import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.session.FlowContext;
 import org.lightj.session.FlowEvent;
 import org.lightj.session.FlowSession;
 import org.lightj.session.IFlowEventListener;
 import org.lightj.session.step.IFlowStep;
 import org.lightj.session.step.StepTransition;
+import org.lightj.task.BatchOption;
+import org.lightj.task.ExecutableTask;
+import org.lightj.task.ExecuteOption;
 import org.lightj.task.SimpleTaskEventHandler;
+import org.lightj.task.StandaloneTaskExecutor;
+import org.lightj.task.StandaloneTaskListener;
 import org.lightj.task.Task;
 import org.lightj.task.TaskResult;
 import org.lightj.task.TaskResultEnum;
@@ -18,6 +26,8 @@ import org.lightj.task.asynchttp.IHttpPollProcessor;
 import org.lightj.task.asynchttp.SimpleHttpResponse;
 import org.lightj.task.asynchttp.SimpleHttpTask;
 import org.lightj.task.asynchttp.UrlRequest;
+import org.lightj.task.asynchttp.UrlTemplate;
+import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +39,7 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
 import com.ning.http.client.Response;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
 import com.stackscaling.agentmaster.resources.log.BaseLog.CommandResponse;
 import com.stackscaling.agentmaster.resources.log.FlowLog;
@@ -82,7 +93,7 @@ public class TaskResourcesProvider {
 	}
 
 	/**
-	 * run a task and handle task event, save result in memory for other to access
+	 * run task to fetch raw log for a task and add it to elastic search index
 	 *
 	 * @author binyu
 	 *
@@ -167,6 +178,24 @@ public class TaskResourcesProvider {
 			jobLog.setStatus(status.name());
 			jobLog.setStatusDetail(suc, fail, other);
 			jobLog.setProgress(jobLog.ProgressTotalUnit);
+			
+			// if job has raw log, fetch logs and add to elastic search index
+			if (jobLog.isHasRawLogs()) {
+				HttpTaskRequest taskReq = new HttpTaskRequest();
+				UrlTemplate urlTemplate = new UrlTemplate("https://<host>:12020/status/guidoutput/<guid>", HttpMethod.GET);
+				taskReq.setSyncTaskOptions(TaskResourcesProvider.HTTP_CLIENT, urlTemplate, new ExecuteOption(), AgentResourceProvider.AGENT_PROCESSOR);
+				taskReq.setHosts(jobLog.getNodeGroup().getHosts());
+				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue("guid", jobLog.uuid()));
+				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
+
+				StandaloneTaskListener listener = new StandaloneTaskListener();
+				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(jobLog));
+				
+				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
+				jobLog.setRawLogsFetched(true);
+			}
+
+			
 			saveLog(true);
 			return super.executeOnCompleted(ctx, results);
 		}

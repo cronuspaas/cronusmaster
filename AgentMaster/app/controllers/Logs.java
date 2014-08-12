@@ -66,6 +66,7 @@ public class Logs extends Controller {
 	
 	/**
 	 * fetch raw script logs
+	 * @deprecated: we always fetch raw logs if it's available when cmd completes
 	 * @param logId
 	 */
 	public static void fetchRawLogs(String logId) {
@@ -134,10 +135,11 @@ public class Logs extends Controller {
 					String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
 					log.put("userData", userData);
 					log.put("userDataConcise", StringUtil.trimToLength(userData, 20) + "...");
+					log.put("fetched", "true");
 //					log.put("progress", logImpl.getDisplayProgress());
-					if (logImpl.isHasRawLogs()) {
-						log.put("fetch", "true");
-					}
+//					if (logImpl.isRawLogsFetched()) {
+//						log.put("fetched", "true");
+//					}
 				}
 				else {
 					log.put("status", "-");
@@ -145,7 +147,7 @@ public class Logs extends Controller {
 					log.put("userData", "...");
 					log.put("userDataConcise", "...");
 //					log.put("progress", "-");
-					log.put("fetch", "false");
+					log.put("fetched", "false");
 				}
 				logFiles.add(log);
 			}

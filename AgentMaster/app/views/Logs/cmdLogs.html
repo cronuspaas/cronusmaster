@@ -19,10 +19,10 @@
 					<th>TimeStamp</th>
 					<th>Status</th>
 					<th>S:F:Other</th>
-					<th><span rel="tooltip" data-original-title="Hover over to see user provided parameters">User Data</span></th>
+					<th><span rel="tooltip" data-original-title="Hover over to see user provided parameters">Input</span></th>
 					<th><span rel="tooltip" data-original-title="Result summary">Result</span></th>
-					<th><span rel="tooltip" data-original-title="Search raw logs">Search</span></th>
-					<th><span rel="tooltip" data-original-title="Fetch raw logs">Logs</span></th>
+					<th><span rel="tooltip" data-original-title="Search raw logs">Search Logs</span></th>
+					<!--<th><span rel="tooltip" data-original-title="Fetch raw logs">Fetch Logs</span></th>-->
 					<th><span rel="tooltip" data-original-title="Run same command again">Rerun</span></th>
 					<th><span rel="tooltip" data-original-title="Schedule run same command">Schedule</span></th>
 					<th><span rel="tooltip" data-original-title="Delete log entry">Remove</span></th>
@@ -50,18 +50,18 @@
 					</script>
 					</td>
 					<td>
-						<a target="#" rel="tooltip" data-original-title="${logObj.userData}"><i class="fa fa-users fa-lg"></i></a>						 
+						<a target="#" rel="tooltip" data-original-title="${logObj.userData}"><i class="fa fa-user fa-lg"></i></a>						 
 					</td>
 					<td>   
-						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-download fa-lg"></i></a> 
+						<a target=_blank href="/logs/download?type=${logObj.type}&name=${logObj.name}" ><i class="fa fa-check-square-o fa-lg"></i></a> 
 					</td>   
 					<td>
-						<a target=_self href="/search/searchCmdLog?logId=${logObj.name}" >
-						<i class="fa fa-search fa-lg"></i></a> 
+						#{if (logObj.fetched == "true")} <a target=_self href="/search/searchCmdLog?logId=${logObj.name}" >
+						<i class="fa fa-file-text-o fa-lg"></i></a> #{/if}
 					</td>  
-					<td>
-						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}" title="Fetch raw logs"><i class="fa fa-file-text-o fa-lg"></i></a> #{/if}   
-					</td>  
+					<!--<td>
+						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}" title="Fetch raw logs"><i class="fa fa-download fa-lg"></i></a> #{/if}   
+					</td>-->  
 					<td>   
 						<a target=_self href="/commands/wizard?dataId=${logObj.name}&dataType=${logObj.type}">
 						<i class="fa fa-magic fa-lg"></i></a> 
