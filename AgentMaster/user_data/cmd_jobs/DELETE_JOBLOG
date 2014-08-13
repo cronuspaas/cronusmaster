@@ -1,1 +1,0 @@
-{"name":"DELETE_JOBLOG","intervalInMinute":60,"enabled":false,"cmdName":"LOCAL_DELETE_LOGS","nodeGroupName":"LOCALHOST","userData":{"thrStrategy":"UNLIMITED","var_values":"{\n  \"dataType\" : \"JOBLOG\",\n  \"retainFactor\" : \"name\",\n  \"numToKeep\" : \"1\"\n}"},"description":"Run LOCAL_DELETE_LOGS on LOCALHOST every 60 minute"}

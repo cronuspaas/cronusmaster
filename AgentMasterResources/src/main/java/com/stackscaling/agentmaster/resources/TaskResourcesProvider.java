@@ -194,8 +194,10 @@ public class TaskResourcesProvider {
 				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
 				jobLog.setRawLogsFetched(true);
 			}
+			else {
+				jobLog.setRawLogsFetched(true);
+			}
 
-			
 			saveLog(true);
 			return super.executeOnCompleted(ctx, results);
 		}

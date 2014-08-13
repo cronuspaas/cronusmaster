@@ -135,11 +135,10 @@ public class Logs extends Controller {
 					String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
 					log.put("userData", userData);
 					log.put("userDataConcise", StringUtil.trimToLength(userData, 20) + "...");
-					log.put("fetched", "true");
 //					log.put("progress", logImpl.getDisplayProgress());
-//					if (logImpl.isRawLogsFetched()) {
-//						log.put("fetched", "true");
-//					}
+					if (logImpl.isRawLogsFetched()) {
+						log.put("fetched", "true");
+					}
 				}
 				else {
 					log.put("status", "-");
