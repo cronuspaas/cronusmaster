@@ -52,7 +52,7 @@ Commander is powerful to send (1) the same request to different servers; (2) dif
 
 ###[Run Instructions](http://www.restsuperman.com/get-started.html#a_zero_installation)<a name="a_runInstructions"></a>
 
-#### Directly Under Windows/Linux With Zero Installation: 
+#### In Dev Directly on Windows/Linux With Zero Installation: 
 * Assuming have Java (JDK or most time just JRE) pre-installed.
 
 ##### WINDOWS
@@ -64,7 +64,7 @@ Commander is powerful to send (1) the same request to different servers; (2) dif
 * Note that for Linux/Mac user: need to chmod +x for play-1.2.4/play
 * Run start_application_linux.sh
 
-#### Run/Debug With Eclipse:
+##### Run/Debug With Eclipse:
 * Clone project in Git from: https://github.com/eBay/restcommander
 * Extract to a folder, e.g., S:\GitSources\AgentMaster\AgentMaster. In command line run: S:\GitSources\AgentMaster\AgentMaster>play-1.2.4\play eclipsify AgentMaster
 	* Note that for Linux/Mac user: need to chmod +x for play-1.2.4/play
@@ -74,7 +74,7 @@ Commander is powerful to send (1) the same request to different servers; (2) dif
 * Then open browser: [localhost:9000](http://localhost:9000/)
 
 
-### Settings
+##### Settings
 Key files are under *conf* folder
 * agentcommand.conf : defines commands
 * nodegroup.conf : defines the node list: ad hoc; from ODB; from Statehub.
@@ -83,7 +83,7 @@ Key files are under *conf* folder
 * actorconfig.conf : Akka settings
 * routes : MVC settings as dispatcher
 
-### Troubleshooting
+##### Troubleshooting
 * Under windows: shutdown in the middle of sending requests or many requests: No buffer space available (maximum connections reached ?)
 	* http://rwatsh.blogspot.com/2012/04/resolution-for-no-buffer-space.html
 	* The resolution is to open the registry editor and locate the registry subkey: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters and add a new entry as shown below:
@@ -92,6 +92,12 @@ Key files are under *conf* folder
 		* Value data: 65534
 
 
+#### In Production integrated with Cronus Agent
+
+* Install cronus agent
+* Pull source from Git
+* Run ./package.sh 
+* Install using Cronus Agent curl -k -H "content-type:application/json" -X POST -d '{"package": ["http://host/<cronus_package>"], "manifest": "0.0.1", "env": "production"}' https://localhost:12020/services/cronusmaster/action/deployservice
 
 ### About REST Commander
 
