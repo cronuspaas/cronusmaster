@@ -13,10 +13,10 @@
       "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
       "method" : "POST",
       "body" : {
-        "cos" : "<cos>",
         "upstartService" : "<upstartService>",
+        "package" : "<package>",
         "manifest" : "<manifestName>",
-        "package" : "<package>"
+        "env" : "<env>"
       },
       "headers" : {
         "content-type" : "application/json",
@@ -48,11 +48,11 @@
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
-    "serviceName" : "myservice",
+    "serviceName" : "serviceName",
     "manifestName" : "manifestName",
-    "package" : "[\"http pkg locations\"]",
-    "upstartService" : "yims",
-    "cos" : "prod"
+    "package" : "[\"http_pkgs\"]",
+    "upstartService" : "true",
+    "env" : "env"
   },
   "hasRawLogs" : true
 }

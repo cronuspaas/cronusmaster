@@ -18,8 +18,8 @@
       },
       "headers" : {
         "content-type" : "application/json",
-        "X-CORRELATIONID": "<correlationId>",
-        "Authorization" : "Basic <agentAuthKey>"
+        "Authorization" : "Basic <agentAuthKey>",
+        "X-CORRELATIONID" : "<correlationId>"
       },
       "parameters" : {
       }
@@ -46,7 +46,8 @@
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
-    "source" : "source http location (e.g. http://somerepo/)",
-    "agentVersion" : "target agent version (e.g. 0.1.22)"
-  }
+    "agentVersion" : "0.1.45",
+    "source" : "http_agent_repo"
+  },
+  "hasRawLogs" : false
 }

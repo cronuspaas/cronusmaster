@@ -1,0 +1,26 @@
+{
+  "name" : "GET_HTTP_SITE",
+  "httpTaskRequest" : {
+    "taskType" : "async",
+    "httpClientType" : "httpClient",
+    "executionOption" : {
+      "timeOutSec" : 0,
+      "initDelaySec" : 0,
+      "maxRetry" : 0,
+      "retryDelaySec" : 0
+    },
+    "urlTemplate" : {
+      "url" : "http://<host>",
+      "method" : "GET",
+      "body" : {
+      },
+      "headers" : {
+      },
+      "parameters" : {
+      }
+    }
+  },
+  "userData" : {
+  },
+  "hasRawLogs" : false
+}
