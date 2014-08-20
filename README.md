@@ -97,6 +97,7 @@ Key files are under *conf* folder
 * Install [cronusagent](https://github.com/yubin154/cronusagent)
 * Pull source from Git
 * Run ./install.sh 
+* Service is available at http://localhost:9000
 
 ### About REST Commander
 
