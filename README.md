@@ -94,10 +94,9 @@ Key files are under *conf* folder
 
 #### In Production integrated with Cronus Agent
 
-* Install cronus agent
+* Install [cronusagent](https://github.com/yubin154/cronusagent)
 * Pull source from Git
-* Run ./package.sh 
-* Install using Cronus Agent curl -k -H "content-type:application/json" -X POST -d '{"package": ["http://host/<cronus_package>"], "manifest": "0.0.1", "env": "production"}' https://localhost:12020/services/cronusmaster/action/deployservice
+* Run ./install.sh 
 
 ### About REST Commander
 
