@@ -19,4 +19,23 @@ echo "will install $PKG"
 CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"manifest\": \"0.0.1\", \"env\": \"$env\"}"
 echo "use cronus cmd $CMD_BODY"
 curl -k -H "content-type:application/json" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deployservice
+echo 
+
+echo "verify installation"
+validation_url="http://localhost:9000/"
+# poll until the application started completely
+while true;
+do
+   export status=$(curl -s -L --head -o /dev/null -w "%{http_code}" $validation_url)
+   # check if the status has a non-zero length
+   if [ "$status" == 000 ]
+   then
+      echo "Application has yet started. status=$status"
+      sleep 1
+   else
+      echo "Application has started!! status=$status"
+      break
+   fi
+done
+
 cd ..
