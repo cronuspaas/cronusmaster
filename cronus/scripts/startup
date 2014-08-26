@@ -24,10 +24,11 @@ cd $app_home
 rm -f "$app_home/server.pid"
 
 # Starting application 
-if [ ! -z "$UPSTARTSERVICE" ]; then
-    echo "\nStart service already started by upstart"
+if [ ! -z "$1" ]; then
+    echo "starting app nodaemon"
+    $rt_home/play run $app_home -Dprecompiled=true
 else
-    echo 'starting app... (activate step already pre compiled)'
+    echo 'starting app'
     setsid $rt_home/play start $app_home -Dprecompiled=true
 fi
 

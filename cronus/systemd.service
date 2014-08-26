@@ -1,0 +1,12 @@
+[Unit]
+Description=Cronus Master
+
+[Service]
+TimeoutStartSec=0
+User=APP_USER
+ExecStart=PATH_TO_PACKAGE/cronus/scripts/startup nodaemon
+ExecStopPost=-PATH_TO_PACKAGE/cronus/scripts/shutdown
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

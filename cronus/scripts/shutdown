@@ -17,14 +17,9 @@ echo -e "\napp_home is $app_home"
 # the conf folder; has conf
 app_conf_dir="$app_home/conf"
 
-# 20140528 shutdown LB to disable traffic and sleep 10 seconds
-#echo 'shutdown LB to disable traffic as soft mark down and sleep 15 seconds. Assuming on 8080 with http'
-#curl -sS http://localhost:8080/config/setEnableLoadBalancer?enableLoadBalancer=false
-#sleep 15
-
 # Stopping the current play application: safety meature. make the startup idempotent
 echo 'stopping app'
-$rt_home/play stop $app_home
+$rt_home/play stop $app_home > /dev/null 2>&1
 
 echo 'removing pid'
 rm -f "$app_home/server.pid"
