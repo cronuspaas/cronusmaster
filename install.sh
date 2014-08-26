@@ -7,6 +7,11 @@ else
 fi
 echo "deploy environment $env"
 
+daemon=""
+if [[ ! -z "$2" ]]; then
+  daemon=", \"daemon\": \"$2\""
+fi
+
 echo "package cronus"
 ./package.sh
 
@@ -16,7 +21,7 @@ cp cronusmaster*.cronus /var/cronus/software/packages/
 chmod 666 /var/cronus/software/packages/cronusmaster*.cronus
 echo "will install $PKG"
 
-CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"manifest\": \"0.0.1\", \"env\": \"$env\"}"
+CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"manifest\": \"0.0.1\", \"env\": \"$env\" $daemon}"
 echo "use cronus cmd $CMD_BODY"
 curl -k -H "content-type:application/json" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deployservice
 echo 
