@@ -1,7 +1,20 @@
 #!/bin/bash
 
 echo "Checking availability of java runtime"
+echo "authztoken=$AUTHZTOKEN"
 
 JAVA_VER=$(java -version 2>&1 | sed 's/.* version "\(.*\)\.\(.*\)\..*"/\1\2/; 1q')
-[ "$JAVA_VER" -ge 15 ] && echo "ok, java is 1.5 or newer"; exit 0 || echo "java is not availble or too old"; exit -1
+[ "$JAVA_VER" -ge 15 ] && echo "ok, java is 1.5 or newer"; exit 0;
+
+if [[ ! -z "$AUTHZTOKEN" ]]; then
+  echo "Installing openjdk7 JRE"
+  curl -k -H "Authorization:Basic $AUTHZTOKEN" -H "content-type:application/json" -X POST -d '{"cmd": "apt-get", "params": "-q -y install openjdk-7-jre", "sudoUser": "root"}' https://localhost:12020/admin/executeCmd
+
+  for i in {1..10}; do
+    JAVA_VER=$(java -version 2>&1 | sed 's/.* version "\(.*\)\.\(.*\)\..*"/\1\2/; 1q')
+    [ "$JAVA_VER" -ge 15 ] && echo "ok, java is 1.5 or newer"; exit 0;
+    sleep 10
+  done
+
+fi
 
