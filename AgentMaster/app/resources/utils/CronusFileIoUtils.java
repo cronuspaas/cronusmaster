@@ -52,9 +52,9 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 			}
 //			String rootPathFromEnv = System.getenv(VarUtils.appHome);
 //			LOG.info("user data root dir " + rootPathFromEnv);
-			String pathToManifestRoot = ".." + File.separator + "..";
+			String pathToPackageRoot = "..";
 			File manifestRoot = new File(Play.applicationPath,
-					pathToManifestRoot);
+					pathToPackageRoot);
 			userDataHome = new File(manifestRoot, VarUtils.userDataDir);
 			LOG.info("user data dir " + userDataHome.getAbsolutePath());
 			assert userDataHome.exists() && userDataHome.isDirectory()
