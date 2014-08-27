@@ -49,7 +49,7 @@ public class PlayVarUtils extends VarUtils {
 		
 		// file
 		appHome = getVarStr("agentmaster.userDataDao.file.root", null);
-		userDataDir = getVarStr("agentmaster.userDataDao.file.dir", "user_data"); 
+		userDataDir = getVarStr("agentmaster.userDataDao.file.dir", null); 
 		
 		// s3
 		myAccessKeyID = getVarStr("agentmaster.userDataDao.s3.myAccessKeyID", null);

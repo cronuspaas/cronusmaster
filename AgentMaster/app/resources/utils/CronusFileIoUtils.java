@@ -40,39 +40,44 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
 /**
  */
 public class CronusFileIoUtils implements IVirtualFileUtils {
-	
-	static Logger LOG = LoggerFactory.getLogger(CronusFileIoUtils.class); 
+
+	static Logger LOG = LoggerFactory.getLogger(CronusFileIoUtils.class);
 
 	static File userDataHome;
 
 	static {
-                try {
-                        if (VarUtils.appHome == null) {
-                                throw new RuntimeException("not in production");
-                        }
-                        String rootPathFromEnv =System.getenv(VarUtils.appHome);
-                        LOG.info("user data root dir " + rootPathFromEnv);
-                        userDataHome = new File(new File(rootPathFromEnv), VarUtils.userDataDir);
-                        LOG.info("user data dir " + userDataHome.getAbsolutePath());
-                        assert userDataHome.exists() && userDataHome.isDirectory() && userDataHome.canRead() && userDataHome.canWrite();
-                        for (DataType dt : DataType.values()) {
-                                File dtDir = new File(userDataHome, dt.getPath());
-                                if (!dtDir.exists()) {
-                                        LOG.info("create directory " + dtDir.getAbsolutePath());
-                                        dtDir.mkdir();
-                                }
-                        }
-                } catch (Throwable t) {
-                        // anything wrong, fall back to use play root
-                        LOG.error("fail to get user data root %s, fallback to use play path", t.getMessage());
-                        userDataHome = Play.applicationPath;
-                }
+		try {
+			if (VarUtils.userDataDir == null) {
+				throw new RuntimeException("not in production");
+			}
+//			String rootPathFromEnv = System.getenv(VarUtils.appHome);
+//			LOG.info("user data root dir " + rootPathFromEnv);
+			String pathToManifestRoot = ".." + File.separator + "..";
+			File manifestRoot = new File(Play.applicationPath,
+					pathToManifestRoot);
+			userDataHome = new File(manifestRoot, VarUtils.userDataDir);
+			LOG.info("user data dir " + userDataHome.getAbsolutePath());
+			assert userDataHome.exists() && userDataHome.isDirectory()
+					&& userDataHome.canRead() && userDataHome.canWrite();
+			for (DataType dt : DataType.values()) {
+				File dtDir = new File(userDataHome, dt.getPath());
+				if (!dtDir.exists()) {
+					LOG.info("create directory " + dtDir.getAbsolutePath());
+					dtDir.mkdir();
+				}
+			}
+		} catch (Throwable t) {
+			// anything wrong, fall back to use play root
+			LOG.warn("not in production, fallback to use default",
+					t.getMessage());
+			userDataHome = Play.applicationPath;
+		}
 
 	}
-	
+
 	public CronusFileIoUtils() {
 	}
-	
+
 	/**
 	 * 20130927 Fixed Memory Leak. Dont use line by line, just use apache
 	 * commons io!! so simple and easy!
@@ -91,22 +96,24 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 
 		} catch (java.io.FileNotFoundException e) {
 			play.Logger.error("File Not Found exception.", e);
-			fileContentString = "File Not Found exception. This file may have been removed. " + filePath;
+			fileContentString = "File Not Found exception. This file may have been removed. "
+					+ filePath;
 		} catch (Throwable e) {
-			play.Logger.error("Error in readConfigFile.", e.getLocalizedMessage());
+			play.Logger.error("Error in readConfigFile.",
+					e.getLocalizedMessage());
 			e.printStackTrace();
-			fileContentString = "File Not Found exception. This file may have been removed. " + filePath;
+			fileContentString = "File Not Found exception. This file may have been removed. "
+					+ filePath;
 		}
 		return fileContentString.toString();
 
 	} // end func.
 
-	
 	@Override
 	public File getRealFileFromRelativePath(String relativePath) {
 		File realFile = new File(userDataHome, relativePath);
-		return realFile; 
+		return realFile;
 	}
-	
+
 }// end class
 
