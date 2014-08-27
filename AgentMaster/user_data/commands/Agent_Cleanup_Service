@@ -1,5 +1,5 @@
 {
-  "name" : "Agent_Delete_Manifest",
+  "name" : "Agent_Cleanup_Service",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
@@ -10,7 +10,7 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/manifests/<manifestName>",
+      "url" : "https://<host>:12020/services/<serviceName>/action/cleanupservice",
       "method" : "DELETE",
       "body" : {
       },
@@ -44,8 +44,7 @@
     "globalContext" : "agentAuthKeyContext"
   },
   "userData" : {
-    "serviceName" : "serviceName",
-    "manifestName" : "manifestName"
+    "serviceName" : "serviceName"
   },
   "hasRawLogs" : true
 }
