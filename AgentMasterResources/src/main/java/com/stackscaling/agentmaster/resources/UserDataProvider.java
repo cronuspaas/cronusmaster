@@ -39,17 +39,9 @@ public class UserDataProvider {
 			return new FileUserDataDaoImpl();
 		}
 		else if (StringUtil.equalIgnoreCase("aws_s3", VarUtils.userDataDaoType)) {
-			// set bucket uuid if it is different from enum name
-			for (DataType dt : DataType.values()) {
-				dt.setUuid(VarUtils.s3Buckets.get(dt.name()));
-			}
 			return new S3UserDataDaoImpl();
 		}
 		else if (StringUtil.equalIgnoreCase("openstack_swift", VarUtils.userDataDaoType)) {
-			// set container uuid if it is different from enum name
-			for (DataType dt : DataType.values()) {
-				dt.setUuid(VarUtils.swiftBuckets.get(dt.name()));
-			}
 			return new SwiftUserDataDaoImpl();
 		}
 		throw new RuntimeException("undefined user data dao type " + VarUtils.userDataDaoType);

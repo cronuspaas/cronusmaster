@@ -17,9 +17,6 @@ limitations under the License.
 */
 package com.stackscaling.agentmaster.resources.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -31,9 +28,6 @@ public abstract class VarUtils {
 	// virtual file util
 	public static IVirtualFileUtils vf;
 
-	// agent private key
-	public static String AGENT_CRT_LOCATION = "conf/park.der";
-	
 	// user data provider
 	public static String userDataDaoType; // .getProperty("agentmaster.userDataDao").toString();
 	
@@ -44,8 +38,6 @@ public abstract class VarUtils {
 	// s3
 	public static String myAccessKeyID;
 	public static String mySecretKey;
-	// s3 buckets
-	public static Map<String, String> s3Buckets = new HashMap<String, String>();
 	
 	// swift
 	public static String tenantId; //	.getProperty("agentmaster.userDataDao.swift.tenantId");
@@ -53,35 +45,29 @@ public abstract class VarUtils {
 	public static String username; //	.getProperty("agentmaster.userDataDao.swift.username");
 	public static String password; //	.getProperty("agentmaster.userDataDao.swift.password");
 	public static String authenticationUrl; //	.getProperty("agentmaster.userDataDao.swift.authenticationUrl");
-	// swift buckets
-	public static Map<String, String> swiftBuckets = new HashMap<String, String>();
 	
 	// date util
-	public static String LOG_TIME_ZONE; // .getProperty("LOG_TIME_ZONE", "America/Los_Angeles");    
+	public static String logTimeZone; // .getProperty("LOG_TIME_ZONE", "America/Los_Angeles");    
 
 	// log progress
-	public static boolean LOG_PROGRESS_ENABLED;
+	public static boolean isLogProgEnabled;
 
 	// log and elastic search
-	public static String ELASTICSEARCH_DATA;
-	public static String ELASTICSEARCH_EP;
-	public static boolean LOCAL_ES_ENABLED;
-	public static int BASELOG_CMDRES_LENGTH;
-	public static String ESLOG_DATA_TTL;
-	public static ObjectMapper ES_DATA_MAPPER;
+	public static String esDataPath;
+	public static String esEp;
+	public static boolean isLocalEsEnabled;
+	public static int cmdResLength;
+	public static ObjectMapper esDataMapper;
+	
+	// agent
+	public static String agentPassword;
+	public static String agentPasswordBase64;
+	// agent private key
+	public static String agentPkiCert;
+	
 	
 	public VarUtils() {}
 
-	public final void initS3Uuid(String dataType) {
-		String key = String.format("agentmaster.userDataDao.s3.%s.uuid", dataType);
-		s3Buckets.put(dataType, getVarStr(key, null));
-	}
-
-	public final void initSwiftUuid(String dataType) {
-		String key = String.format("agentmaster.userDataDao.swift.%s.uuid", dataType);
-		swiftBuckets.put(dataType, getVarStr(key, null));
-	}
-	
 	public static final IVirtualFileUtils getVf() {
 		return vf;
 	}

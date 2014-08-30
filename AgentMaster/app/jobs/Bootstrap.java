@@ -74,7 +74,7 @@ public class Bootstrap extends Job {
 		initializer.initialize();
 
 		// initialize local elastic search
-		if (PlayVarUtils.LOCAL_ES_ENABLED) {
+		if (PlayVarUtils.isLocalEsEnabled) {
 			EsResourceProvider.getEmbeddedEsServer();
 		}
 

@@ -40,7 +40,8 @@ public interface IUserDataDao {
 		FLOWLOG("Workflow Logs", "user_data/flow_logs", FlowLog.class),
 		CMDLOG("Command Logs", "user_data/cmd_logs", CmdLog.class),
 		CMDJOB("Command Job", "user_data/cmd_jobs", CmdIntervalJobImpl.class),
-		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class);
+		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class),
+		;
 
 		private final String path;
 		private final Class doKlass;
@@ -59,9 +60,6 @@ public interface IUserDataDao {
 		}
 		public String getUuid() {
 			return uuid==null ? name() : uuid;
-		}
-		public void setUuid(String uuid) {
-			this.uuid = uuid;
 		}
 		public String getLabel() {
 			return label;

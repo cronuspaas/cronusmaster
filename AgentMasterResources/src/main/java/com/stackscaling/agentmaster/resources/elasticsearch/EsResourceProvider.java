@@ -21,7 +21,7 @@ public class EsResourceProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") @Lazy(true) EmbeddedESServer embeddedEsServer() {
-		return new EmbeddedESServer(VarUtils.ELASTICSEARCH_DATA);
+		return new EmbeddedESServer(VarUtils.esDataPath);
 	}
 
 	/**
@@ -29,12 +29,12 @@ public class EsResourceProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") @Lazy(true) Client esClient() {
-		if (VarUtils.LOCAL_ES_ENABLED) {
+		if (VarUtils.isLocalEsEnabled) {
 			return getEmbeddedEsServer().getClient();
 		}
 		else {
 			Client client = new TransportClient().addTransportAddress(
-					new InetSocketTransportAddress(VarUtils.ELASTICSEARCH_EP, 9300));
+					new InetSocketTransportAddress(VarUtils.esEp, 9300));
 			return client;
 		}
 	}
@@ -54,12 +54,12 @@ public class EsResourceProvider {
 	 */
 	public synchronized static Client getEsClient() {
 		if (esClient == null) {
-			if (VarUtils.LOCAL_ES_ENABLED) {
+			if (VarUtils.isLocalEsEnabled) {
 				esClient = getEmbeddedEsServer().getClient();
 			}
 			else {
 				esClient = new TransportClient().addTransportAddress(
-						new InetSocketTransportAddress(VarUtils.ELASTICSEARCH_EP, 9300));
+						new InetSocketTransportAddress(VarUtils.esEp, 9300));
 			}
 		}
 		return esClient;

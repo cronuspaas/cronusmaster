@@ -34,7 +34,7 @@ public class Search extends Controller {
 	 */
 	public static void searchCmdLog(String logId) {
 
-		searchLogs(logId, "commands", "searchCmdLog", "CmdLog", VarUtils.ELASTICSEARCH_EP);
+		searchLogs(logId, "commands", "searchCmdLog", "CmdLog", VarUtils.esEp);
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class Search extends Controller {
 	 */
 	public static void searchJobLog(String logId) {
 
-		searchLogs(logId, "jobs", "searchJobLog", "JobLog", VarUtils.ELASTICSEARCH_EP);
+		searchLogs(logId, "jobs", "searchJobLog", "JobLog", VarUtils.esEp);
 
 	}
 	
@@ -53,7 +53,7 @@ public class Search extends Controller {
 	 */
 	public static void searchWfLog(String logId) {
 
-		searchLogs(logId, "workflows", "searchWfLog", "WfLog", VarUtils.ELASTICSEARCH_EP);
+		searchLogs(logId, "workflows", "searchWfLog", "WfLog", VarUtils.esEp);
 
 	}
 

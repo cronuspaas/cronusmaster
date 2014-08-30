@@ -20,10 +20,12 @@ package jobs;
 import org.lightj.util.JsonUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ning.http.util.Base64;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 import play.Play;
+import play.libs.Crypto;
 import resources.utils.CronusFileIoUtils;
 import resources.utils.FileIoUtils;
 
@@ -62,25 +64,26 @@ public class PlayVarUtils extends VarUtils {
 		password = getVarStr("agentmaster.userDataDao.swift.password", null);
 		authenticationUrl = getVarStr("agentmaster.userDataDao.swift.authenticationUrl", null);
 		
-		// s3 and swift buckets
-		for (DataType dt : DataType.values()) {
-			initS3Uuid(dt.name());
-			initSwiftUuid(dt.name());
-		}
-		
 		// date util
-		LOG_TIME_ZONE = getVarStr("LOG_TIME_ZONE", "America/Los_Angeles");    
+		logTimeZone = getVarStr("LOG_TIME_ZONE", "America/Los_Angeles");    
 		
 		// enable log progress
-		LOG_PROGRESS_ENABLED = getVarBool("agentmaster.logProgressEnabled", true);
+		isLogProgEnabled = getVarBool("agentmaster.logProgressEnabled", true);
 
 		// elastic search
-		ELASTICSEARCH_DATA = getVarStr("agentmaster.esData", "user_data/elasticsearch_data/data");
-		ELASTICSEARCH_EP = getVarStr("agentmaster.esEp", "localhost");
-		LOCAL_ES_ENABLED = getVarBool("agentmaster.localEsEnabled", true);
-		BASELOG_CMDRES_LENGTH = getVarInt("agentmaster.baseLog.cmdResLength", 200);
-		ESLOG_DATA_TTL = getVarStr("agentmaster.esLogDataTtl", "1d");
-		ES_DATA_MAPPER = JsonUtil.customMapper("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+		esDataPath = getVarStr("agentmaster.esData", "user_data/elasticsearch_data/data");
+		esEp = getVarStr("agentmaster.esEp", "localhost");
+		isLocalEsEnabled = getVarBool("agentmaster.localEsEnabled", true);
+		cmdResLength = getVarInt("agentmaster.baseLog.cmdResLength", 200);
+		esDataMapper = JsonUtil.customMapper("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+		
+		// agent related
+		String agentPasswordEncrypted = getVarStr("agentmaster.cronusagent.password", null);
+		if (agentPasswordEncrypted != null) {
+			agentPassword = Crypto.decryptAES(agentPasswordEncrypted);
+			agentPasswordBase64 = Base64.encode(agentPassword.getBytes());
+		}
+		agentPkiCert = getVarStr("agentmaster.cronusagent.pkicert", null);
 
 		// in the end, init file util
 		vf = new CronusFileIoUtils();

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import org.apache.commons.codec.binary.Base64;
 import org.lightj.task.IGlobalContext;
 import org.lightj.task.Task;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Scope;
 
 import com.stackscaling.agentmaster.resources.security.SecurityUtil;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
-
 import com.ning.http.client.Response;
 
 @Configuration
@@ -33,7 +31,7 @@ public class AgentResourceProvider {
 	public static final String AGENT_PROCESSOR = "agentProcessor";
 	public static final String AGENT_POLL_PROCESSOR = "agentPollProcessor";
 	public static final String AGENT_AUTHKEY_BEAN = "agentAuthKeyContext";
-
+	
 	/**
 	 * global context to keep all agent auth key (pki based)
 	 * @return
@@ -42,12 +40,11 @@ public class AgentResourceProvider {
 
 		return new IGlobalContext() {
 
-			private final String BaseAuthKey = "YWdlbnQ6dG95YWdlbnQ=";
 			private final HashMap<String, String> PkiAuthKeys = new HashMap<String, String>();
 
 			@Override
 			public String getValueByName(String pivotValue, String name) {
-				return PkiAuthKeys.containsKey(pivotValue) ? PkiAuthKeys.get(pivotValue) : BaseAuthKey;
+				return PkiAuthKeys.containsKey(pivotValue) ? PkiAuthKeys.get(pivotValue) : VarUtils.agentPasswordBase64;
 			}
 
 			@Override
@@ -97,7 +94,7 @@ public class AgentResourceProvider {
 						if (agentStatus.result != null) {
 							if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
 								String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
-								String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.AGENT_CRT_LOCATION);
+								String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
 								String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
 								gContext.setValueForName(req.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
 							}
@@ -174,7 +171,7 @@ public class AgentResourceProvider {
 						if (agentStatus.result != null) {
 							if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
 								String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
-								String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.AGENT_CRT_LOCATION);
+								String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
 								String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
 								gContext.setValueForName(pollReq.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
 							}

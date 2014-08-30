@@ -207,7 +207,7 @@ public class TaskResourcesProvider {
 		 * @param isResult
 		 */
 		private void saveLog(boolean isResult) {
-			if (isResult || VarUtils.LOG_PROGRESS_ENABLED) {
+			if (isResult || VarUtils.isLogProgEnabled) {
 				try {
 					logger.saveLog(jobLog);
 				} catch (IOException e) {

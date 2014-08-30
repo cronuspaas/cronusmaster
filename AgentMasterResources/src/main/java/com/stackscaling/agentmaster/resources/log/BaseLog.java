@@ -77,7 +77,7 @@ public abstract class BaseLog implements ILog {
 		try {
 			// add logId for elastic search only
 			commandResponse.logId = this.uuid();
-			String jsonStr = VarUtils.ES_DATA_MAPPER.writeValueAsString(commandResponse);
+			String jsonStr = VarUtils.esDataMapper.writeValueAsString(commandResponse);
 
 			// Index name
 			String _index = "log";
@@ -95,7 +95,7 @@ public abstract class BaseLog implements ILog {
 		}
 
 		// trim response length so we don't persist too much
-		commandResponse.trimBodyToLength(VarUtils.BASELOG_CMDRES_LENGTH);
+		commandResponse.trimBodyToLength(VarUtils.cmdResLength);
 		// reset logId back to null before we persisted it as part of user data
 		commandResponse.logId = null;
 		this.commandResponses.add(commandResponse);

@@ -56,7 +56,7 @@ public class DateUtils {
 	public static String getDateStr(Date d) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		//20140317: force the timezone to avoid PLUS
-		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 		String str = sdf.format(d);
 		return str;
 	}
@@ -68,7 +68,7 @@ public class DateUtils {
 	public static String getDateStrNoSpace(Date d) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		//20140317: force the timezone to avoid PLUS
-		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 		String str = sdf.format(d);
 		return str;
 	}
@@ -86,7 +86,7 @@ public class DateUtils {
 			synchronized (DateUtils.class) {
 				DT_STR_FMTR = new SimpleDateFormat(DT_STR_FMT);
 				//20140317: force the timezone to avoid PLUS
-				DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+				DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 			}
 		}
 		
@@ -102,7 +102,7 @@ public class DateUtils {
 				synchronized (DateUtils.class) {
 					DT_STR_FMTR = new SimpleDateFormat(DT_STR_FMT);
 					//20140317: force the timezone to avoid PLUS
-					DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+					DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 				}
 			}
 
@@ -128,7 +128,7 @@ public class DateUtils {
 			synchronized (DateUtils.class) {
 				DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
 				//20140317: force the timezone to avoid PLUS
-				DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+				DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 			}
 		}
 		
@@ -144,7 +144,7 @@ public class DateUtils {
 				synchronized (DateUtils.class) {
 					DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
 					//20140317: force the timezone to avoid PLUS
-					DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+					DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 				}
 			}
 
@@ -164,7 +164,7 @@ public class DateUtils {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
 		//20140317: force the timezone to avoid PLUS
-		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 		String str = sdf.format(d);
 		return str;
 	}
@@ -186,7 +186,7 @@ public class DateUtils {
 			SimpleDateFormat sdf = new SimpleDateFormat(
 					"yyyyMMddHHmmssSSSZ");
 			//20140317: force the timezone to avoid PLUS
-			sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.LOG_TIME_ZONE));
+			sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
 			d = sdf.parse(str);
 		} catch (Exception ex) {
 			LOG.error("%s, %s, %s", ex.getMessage(), "Exception while converting string to date : "
