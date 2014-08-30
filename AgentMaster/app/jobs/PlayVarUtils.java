@@ -19,15 +19,11 @@ package jobs;
 
 import org.lightj.util.JsonUtil;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ning.http.util.Base64;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
-import com.stackscaling.agentmaster.resources.utils.VarUtils;
-
 import play.Play;
-import play.libs.Crypto;
 import resources.utils.CronusFileIoUtils;
-import resources.utils.FileIoUtils;
+
+import com.ning.http.util.Base64;
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 
 
@@ -78,9 +74,8 @@ public class PlayVarUtils extends VarUtils {
 		esDataMapper = JsonUtil.customMapper("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
 		
 		// agent related
-		String agentPasswordEncrypted = getVarStr("agentmaster.cronusagent.password", null);
-		if (agentPasswordEncrypted != null) {
-			agentPassword = Crypto.decryptAES(agentPasswordEncrypted);
+		agentPassword = getVarStr("agentmaster.cronusagent.password", null);
+		if (agentPassword != null) {
 			agentPasswordBase64 = Base64.encode(agentPassword.getBytes());
 		}
 		agentPkiCert = getVarStr("agentmaster.cronusagent.pkicert", null);
