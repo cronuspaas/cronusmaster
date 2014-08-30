@@ -1,7 +1,7 @@
 #!/bin/bash -ae
 
 if [[ -z "$1" ]]; then
-  env="production"
+  env="prod"
 else
   env="$1"
 fi
