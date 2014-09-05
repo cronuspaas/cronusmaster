@@ -371,69 +371,6 @@ public class Logs extends Controller {
 	}
 
 	/**
-	 * aggregate result
-	 */
-	public static void aggregate(
-							String logType,
-							String logId,
-							String aggField,
-							String aggRegEx,
-							String nav) 
-	{
-		String page = "cmdLogs";
-		String topnav = StringUtil.isNullOrEmpty(nav) ? "logs" : nav;
-		
-		String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-		
-		try {
-			DataType type = DataType.valueOf(logType.toUpperCase());
-			ILog alog = UserDataProvider.getJobLoggerOfType(type).readLog(logId);
-			String agentCommandType = null;
-			String nodeGroupType = null;
-			String dataType = null;
-			List<String> regExs = null;
-			LogAggregation logAggregation = null;
-			
-			if (alog instanceof CmdLog) {
-				CmdLog log = (CmdLog) alog;
-				agentCommandType = log.getCommandKey();
-				nodeGroupType = log.getNodeGroup().getName();
-				dataType = log.getNodeGroup().getType();
-				regExs = UserDataProvider.getCommandConfigs().getCommandByName(log.getCommandKey()).getAggRegexs();
-				logAggregation = log.aggregate(aggField, aggRegEx);
-			}
-			else if (alog instanceof JobLog)  {
-				JobLog log = (JobLog) alog;
-				agentCommandType = log.getCommandKey();
-				nodeGroupType = log.getNodeGroup().getName();
-				dataType = log.getNodeGroup().getType();
-				regExs = UserDataProvider.getCommandConfigs().getCommandByName(log.getCommandKey()).getAggRegexs();
-				logAggregation = log.aggregate(aggField, aggRegEx);
-			}
-			
-			ArrayList<Map<String, String>> aggList = new ArrayList<Map<String,String>>();
-			for (Entry<String, LogAggregationItem> aggEntry : logAggregation.getAggregations().entrySet()) {
-				Map<String, String> agg = new HashMap<String, String>();
-				agg.put("value", aggEntry.getKey());
-				agg.put("matchField", aggField);
-				agg.put("matchRegEx", aggRegEx);
-				agg.put("nodeCount", Integer.toString(aggEntry.getValue().count));
-				agg.put("nodes", StringUtil.join(aggEntry.getValue().hosts, "\n"));
-				aggList.add(agg);
-			}
-			HashMap<String, String> logMeta = new HashMap<String, String>();
-			logMeta.put("logType", logType);
-			logMeta.put("logId", logId);
-			logMeta.put("aggField", aggField);
-			render(page, topnav, aggList, lastRefreshed, agentCommandType, nodeGroupType, dataType, regExs, logMeta);
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			error(e);
-		}
-	}
-
-	/**
 	 * index page
 	 */
 	public static void index() {

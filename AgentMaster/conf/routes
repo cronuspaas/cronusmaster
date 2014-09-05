@@ -11,12 +11,15 @@ GET		/jsonedit								Application.jsonedit
 
 #commands 
 GET     /commands                        		Commands.index
+GET     /commands/oneclick                 		Commands.oneclick
 GET     /commands/common                        Commands.commonCommands
 GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
 GET     /commands/wizard                        Commands.wizard
 GET     /commands/getOptions					Commands.getOptions
 GET		/commands/runCmdFromLog					Commands.runCmdFromLog
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
+GET		/commands/oneclickSave					Commands.onclickSave
+GET		/commands/oneclickRun					Commands.onclickRun
 
 # workflows
 GET		/workflows								Workflows.index

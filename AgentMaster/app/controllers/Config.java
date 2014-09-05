@@ -145,12 +145,9 @@ public class Config extends Controller {
 						command.setHttpTaskRequest(sampleReq);
 						
 						command.addUserData("variableInHttpTemplate", "sample value");
-						command.setAggRegexs(Arrays.asList(new String[] {"regex for response aggregation"}));
-						
 						HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
 						cmdMap.put("httpTaskRequest", command.createCopy());
 						cmdMap.put("userData", command.getUserData());
-						cmdMap.put("aggRegexs", command.getAggRegexs());
 						
 						content = JsonUtil.encodePretty(cmdMap);
 					}
@@ -197,6 +194,9 @@ public class Config extends Controller {
 			switch(dType) {
 			case COMMAND:
 				UserDataProvider.getCommandConfigs().save(configName, content);
+				break;
+			case CMD_ONECLICK:
+				UserDataProvider.getOneClickCommandConfigs().save(configName, content);
 				break;
 			case NODEGROUP:
 				UserDataProvider.getNodeGroupOfType(dType).save(configName, content);

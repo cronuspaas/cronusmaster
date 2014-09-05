@@ -26,10 +26,10 @@ rm -f "$app_home/server.pid"
 # Starting application 
 if [ ! -z "$1" ]; then
     echo "starting app nodaemon"
-    $rt_home/play run $app_home -Dprecompiled=true
+    $rt_home/play run $app_home -Dprecompiled=true -Dhttps.port=9443
 else
     echo 'starting app'
-    setsid $rt_home/play start $app_home -Dprecompiled=true
+    setsid $rt_home/play start $app_home -Dprecompiled=true -Dhttps.port=9443
 fi
 
 echo 'App started!'

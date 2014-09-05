@@ -19,6 +19,8 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,9 @@ import com.stackscaling.agentmaster.resources.log.IJobLogger;
 import com.stackscaling.agentmaster.resources.log.ILog;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
+import com.stackscaling.agentmaster.resources.oneclickcommand.IOneClickCommand;
+import com.stackscaling.agentmaster.resources.oneclickcommand.IOneClickCommandData;
+import com.stackscaling.agentmaster.resources.oneclickcommand.OneClickCommandImpl;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
@@ -101,7 +106,16 @@ public class Commands extends Controller {
 				values.put("parameters", parameters.toString());
 				commands.add(values);
 			}
+			
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(commands, new Comparator<Map<String, String>>(){
+
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return o1.get("name").compareTo(o2.get("name"));
+					
+				}});
 
 			render(page, topnav, commands, lastRefreshed);
 		} catch (Exception e) {
@@ -111,6 +125,46 @@ public class Commands extends Controller {
 
 	}
 
+	/**
+	 * show one click commands
+	 */
+	public static void oneclick() {
+
+		String page = "oneclick";
+		String topnav = "commands";
+
+		try {
+			Map<String, IOneClickCommand> cmds = UserDataProvider.getOneClickCommandConfigs().getAllCommands();
+			List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
+			for (Entry<String, IOneClickCommand> entry : cmds.entrySet()) {
+				Map<String, String> values = new HashMap<String, String>();
+				IOneClickCommand cmd = entry.getValue();
+				values.put("name", entry.getKey());
+				values.put("command", cmd.getCommandKey());
+				values.put("nodeGroup", cmd.getNodeGroupKey());
+				String userData = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
+				values.put("userData", userData);
+				commands.add(values);
+			}
+			
+			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			Collections.sort(commands, new Comparator<Map<String, String>>(){
+
+				@Override
+				public int compare(Map<String, String> o1,
+						Map<String, String> o2) {
+					return o1.get("name").compareTo(o2.get("name"));
+					
+				}});
+
+			render(page, topnav, commands, lastRefreshed);
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+	}
+
+	
 	/**
 	 * command wizard
 	 */
@@ -287,6 +341,98 @@ public class Commands extends Controller {
 		}
 
 	}
+
+	/**
+	 * rerun the same command from a cmd log
+	 * @param logType
+	 * @param logId
+	 */
+	public static void oneclickSave(String logType, String logId) {
+
+		try {
+			
+			DataType lType = DataType.valueOf(logType.toUpperCase());
+			ILog log = UserDataProvider.getJobLoggerOfType(lType).readLog(logId);
+			
+			IOneClickCommandData oneClickDao = UserDataProvider.getOneClickCommandConfigs();
+			IOneClickCommand oneClickCmd = new OneClickCommandImpl();
+			oneClickCmd.setCommandKey(log.getCommandKey());
+			oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
+			oneClickCmd.setUserData(log.getUserData());
+			String cmdName = DateUtils.getNowDateTimeStrConcise();
+			oneClickCmd.setName(cmdName);
+			oneClickDao.save(cmdName, JsonUtil.encode(oneClickCmd));
+		
+			String alert = String.format("One click command %s saved successfully ", cmdName);
+			redirect("Commands.oneclick", alert);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error occur in save one click command, %s", e.getLocalizedMessage()));
+		}
+
+	}
+	
+	/**
+	 * run oneclick command
+	 * @param logType
+	 * @param logId
+	 */
+	public static void onclickRun(String dataId) {
+
+		try {
+			
+			IOneClickCommand oneclickCmd = UserDataProvider.getOneClickCommandConfigs().getCommandByName(dataId);
+			
+			ICommandData userConfigs = UserDataProvider.getCommandConfigs();
+			INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP);
+
+			// build task
+			ICommand cmd = userConfigs.getCommandByName(oneclickCmd.getCommandKey());
+			String[] hosts = null;
+			INodeGroup ng = null;
+			if (!StringUtil.isNullOrEmpty(oneclickCmd.getNodeGroupKey())) {
+				ng = ngConfigs.getNodeGroupByName(oneclickCmd.getNodeGroupKey());
+				hosts = ng.getHosts();
+			}
+			else {
+				ng = INodeGroupData.NG_EMPTY;
+			}
+
+			Map<String, String> options = oneclickCmd.getUserData();
+			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
+			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
+
+			// prepare log
+			CmdLog jobLog = new CmdLog();
+			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
+			jobLog.setUserData(optionCleanup);
+			jobLog.setCommandKey(cmd.getName());
+			jobLog.setNodeGroup(ng);
+			jobLog.setHasRawLogs(cmd.isHasRawLogs());
+			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			logger.saveLog(jobLog);
+			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
+			
+			// fire task
+			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+			StandaloneTaskListener listener = new StandaloneTaskListener();
+			int numOfHost = hosts!=null ? hosts.length : 1;
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
+			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+			
+			String alert = String.format("%s fired on %s successfully ", oneclickCmd.getCommandKey(), oneclickCmd.getNodeGroupKey());
+			
+			redirect("Logs.cmdLogs", alert);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(String.format("Error occur in job wizard, %s", e.getLocalizedMessage()));
+		}
+
+	}
+
 
 	/**
 	 * execute a command on a node group

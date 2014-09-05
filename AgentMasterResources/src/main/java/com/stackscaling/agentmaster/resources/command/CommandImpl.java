@@ -1,7 +1,6 @@
 package com.stackscaling.agentmaster.resources.command;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.lightj.example.task.HttpTaskRequest;
@@ -19,9 +18,6 @@ public class CommandImpl implements ICommand {
 	/** http request template */
 	private HttpTaskRequest httpTaskRequest;
 
-	/** list of aggregation regex */
-	private List<String> aggRegexs;
-
 	/** user inputs */
 	private Map<String, String> userData = new HashMap<String, String>();
 
@@ -34,14 +30,6 @@ public class CommandImpl implements ICommand {
 
 	public void setHasRawLogs(boolean hasRawLogs) {
 		this.hasRawLogs = hasRawLogs;
-	}
-
-	public List<String> getAggRegexs() {
-		return aggRegexs;
-	}
-
-	public void setAggRegexs(List<String> aggRegexs) {
-		this.aggRegexs = aggRegexs;
 	}
 
 	/**

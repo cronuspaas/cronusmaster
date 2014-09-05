@@ -157,15 +157,12 @@ public class DateUtils {
 		}
 	}
 
+	static String DTS_CONCISE_STR_FMTR = "yyyyMMddHHmmss";
+	static final SimpleDateFormat DTS_CONCISE = new SimpleDateFormat(DTS_CONCISE_STR_FMTR);
 	public static String getDateTimeStrConcise(Date d) {
 		if (d == null)
 			return "";
-
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSSZ");
-		//20140317: force the timezone to avoid PLUS
-		sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
-		String str = sdf.format(d);
+		String str = DTS_CONCISE.format(d);
 		return str;
 	}
 
@@ -183,11 +180,7 @@ public class DateUtils {
 			return null;
 
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat(
-					"yyyyMMddHHmmssSSSZ");
-			//20140317: force the timezone to avoid PLUS
-			sdf.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
-			d = sdf.parse(str);
+			d = DTS_CONCISE.parse(str);
 		} catch (Exception ex) {
 			LOG.error("%s, %s, %s", ex.getMessage(), "Exception while converting string to date : "
 					+ str);

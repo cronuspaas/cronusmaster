@@ -2,7 +2,7 @@
 #{include 'Application/top_nav.html'/}
 
 
-#{if (dataType == "command")}
+#{if (dataType == "command" || dataType == "cmd_oneclick")}
     <style>
       .wrapper {
         width: 60%;
@@ -33,12 +33,14 @@
        <p> </p>
 
       <form class="form-horizontal" action="/config/editConfigUpdate/${dataType}/${configName}" method="post" >  
-        <p><input id="textfield" class="input-large" type="text" placeholder="Name" name="configNameNew" #{if (configName != "new")} disabled value="${configName}" #{/if}></p>
-		#{if (dataType == "command")}
+        <p><input id="textfield" class="input-large" type="text" placeholder="Name" name="configNameNew" 
+        #{if (configName != "new")} disabled value="${configName}" #{/if}></p>
+		
+		#{if (dataType == "command" || dataType == "cmd_oneclick")}
 		<div class="wrapper">
 	    #{/if}
 	       	<textarea class="field span6" id="config" rows="30" placeholder="Content" name="content">${content}</textarea>
-    	#{if (dataType == "command")}
+    	#{if (dataType == "command" || dataType == "cmd_oneclick")}
 		</div>
 		#{/if}
        	<input type="hidden" name="nav" value="${topnav}"/>

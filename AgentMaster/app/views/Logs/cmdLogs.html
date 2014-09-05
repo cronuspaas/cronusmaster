@@ -24,6 +24,7 @@
 					<th><span rel="tooltip" data-original-title="Search raw logs">Logs</span></th>
 					<!--<th><span rel="tooltip" data-original-title="Fetch raw logs">Fetch Logs</span></th>-->
 					<th><span rel="tooltip" data-original-title="Run same command again">Rerun</span></th>
+					<th><span rel="tooltip" data-original-title="Run same command again">Oneclick</span></th>
 					<th><span rel="tooltip" data-original-title="Schedule run same command">Schedule</span></th>
 					<th><span rel="tooltip" data-original-title="Delete log entry">Remove</span></th>
 				</tr>
@@ -67,9 +68,13 @@
 						<i class="fa fa-magic fa-lg"></i></a> 
 					</td>  
 					<td>   
+						<a target=_self href="/commands/oneclickSave?logId=${logObj.name}&logType=${logObj.type}" >
+						<i class="fa fa-bolt fa-lg"></i></a> 
+					</td>
+					<td>   
 						<a target=_self href="/jobs/wizard?logType=${logObj.type}&logId=${logObj.name}" >
 						<i class="fa fa-calendar fa-lg"></i></a> 
-					</td>  
+					</td>
 					<td>   
 						<a target=_self href="/logs/delete?type=${logObj.type}&name=${logObj.name}" >
 						<i class="fa fa-trash-o fa-lg"></i></a> 

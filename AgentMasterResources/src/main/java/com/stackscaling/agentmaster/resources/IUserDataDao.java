@@ -11,6 +11,7 @@ import com.stackscaling.agentmaster.resources.log.FlowLog;
 import com.stackscaling.agentmaster.resources.log.JobLog;
 import com.stackscaling.agentmaster.resources.nodegroup.AdhocNodeGroupDataImpl;
 import com.stackscaling.agentmaster.resources.nodegroup.NodeGroupImpl;
+import com.stackscaling.agentmaster.resources.oneclickcommand.OneClickCommandImpl;
 import com.stackscaling.agentmaster.resources.script.ScriptImpl;
 import com.stackscaling.agentmaster.resources.workflow.WorkflowMetaImpl;
 
@@ -39,6 +40,7 @@ public interface IUserDataDao {
 		JOBLOG("Job Logs", "user_data/job_logs", JobLog.class),
 		FLOWLOG("Workflow Logs", "user_data/flow_logs", FlowLog.class),
 		CMDLOG("Command Logs", "user_data/cmd_logs", CmdLog.class),
+		CMD_ONECLICK("One Click Command", "user_data/cmd_oneclick", OneClickCommandImpl.class),
 		CMDJOB("Command Job", "user_data/cmd_jobs", CmdIntervalJobImpl.class),
 		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class),
 		;

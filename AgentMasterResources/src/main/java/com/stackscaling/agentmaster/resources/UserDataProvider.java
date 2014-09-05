@@ -21,6 +21,8 @@ import com.stackscaling.agentmaster.resources.log.JobLogger;
 import com.stackscaling.agentmaster.resources.nodegroup.AdhocNodeGroupDataImpl;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
 import com.stackscaling.agentmaster.resources.nodegroup.NodeGroupDataImpl;
+import com.stackscaling.agentmaster.resources.oneclickcommand.IOneClickCommandData;
+import com.stackscaling.agentmaster.resources.oneclickcommand.OneClickCommandDataImpl;
 import com.stackscaling.agentmaster.resources.script.IScriptData;
 import com.stackscaling.agentmaster.resources.script.PredefinedScriptData;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
@@ -48,12 +50,23 @@ public class UserDataProvider {
 	}
 
 	/**
-	 * IUserConfigsDao
+	 * Command DAO
 	 * @return
 	 * @throws IOException
 	 */
 	public @Bean(name="commandConfigs") @Scope("singleton") ICommandData commandConfigs() throws IOException {
 		CommandDataImpl dao = new CommandDataImpl();
+		return dao;
+	}
+
+	/**
+	 * OneClickCommand DAO
+	 * @return
+	 * @throws IOException
+	 */
+	public @Bean(name="oneClickCommandConfigs") @Scope("singleton") 
+	IOneClickCommandData oneClickCommandConfigs() throws IOException {
+		OneClickCommandDataImpl dao = new OneClickCommandDataImpl();
 		return dao;
 	}
 
@@ -132,11 +145,19 @@ public class UserDataProvider {
 	}
 
 	/**
-	 * return current IUserConfigsDao
+	 * return current Command DAO
 	 * @return
 	 */
 	public static ICommandData getCommandConfigs() {
 		return SpringContextUtil.getBean("resources", "commandConfigs", ICommandData.class);
+	}
+
+	/**
+	 * return current OneClickCommand DAO
+	 * @return
+	 */
+	public static IOneClickCommandData getOneClickCommandConfigs() {
+		return SpringContextUtil.getBean("resources", "oneClickCommandConfigs", IOneClickCommandData.class);
 	}
 
 	/**
@@ -241,6 +262,7 @@ public class UserDataProvider {
 	public static void reloadAllConfigs() throws IOException {
 		getNodeGroupOfType(DataType.NODEGROUP).load();
 		getCommandConfigs().load();
+		getOneClickCommandConfigs().load();
 		getWorkflowConfigs().load();
 	}
 

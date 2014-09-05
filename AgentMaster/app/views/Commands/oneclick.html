@@ -4,10 +4,7 @@
 
 #{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
 
-<h3 style="text-transform: uppercase">Commands Defined</h3>		 
-
-<a target=_self href="/config/editConfig/command/create/new?nav=${topnav}" class="btn btn-small btn-primary">Create New</a> 
-<a target=_self href="/config/reloadConfig/command?nav=${topnav}" class="btn btn-small btn-primary">Reload</a>
+<h3 style="text-transform: uppercase">One Click Command</h3>		 
 
 	<div  id="list-all-row">
 		<br/>
@@ -16,8 +13,8 @@
 				<tr>
 					<th>No.</th>
 					<th>Name</th>
-					<th>URL</th>
-					<th>Method</th>
+					<th>Command</th>
+					<th>NodeGroup</th>
 					<th class=span4>User Data</th>
 					<th>Run</th>
 					<th>Edit</th>
@@ -30,31 +27,31 @@
 				<tr>
 					<td>${obj_index}</td>
 					<td>   
-						<a target=_blank href="config/viewConfigItem/command/${obj.name}" >${obj.name}</a> 
+						<a target=_blank href="/config/viewConfigItem/cmd_oneclick/${obj.name}" >${obj.name}</a> 
 					</td>   
-					<td>${obj.url}</td>
 					<td>
-					<script type="text/javascript">	
-					getHttpMethodLabel("${obj.httpMethod}");
-					</script>
+						<a target=_blank href="/config/viewConfigItem/command/${obj.command}" >${obj.command}
+					</td>
+					<td>
+						<a target=_blank href="/config/viewConfigItem/nodegroup/${obj.nodeGroup}" >${obj.nodeGroup}
 					</td>
 					<td>${obj.userData}</td>
 					<td>
-					<a href="/commands/wizard?dataId=${obj.name}&dataType=command" target=_self>
+					<a href="/commands/oneclickRun?dataId=${obj.name}" target=_self>
 					<i class="fa fa-magic fa-lg"></i></a>
 					</td>
 					<td>   
-						<a target=_self href="/config/editConfig/command/update/${obj.name}?nav=${topnav}">
+						<a target=_self href="/config/editConfig/cmd_oneclick/update/${obj.name}?nav=${topnav}">
 						<i class="fa fa-wrench fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>   
-						<a target=_self href="/config/editConfig/command/create/${obj.name}?nav=${topnav}">
+						<a target=_self href="/config/editConfig/cmd_oneclick/create/${obj.name}?nav=${topnav}">
 						<i class="fa fa-copy fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>
-						<a target=_self href="/config/deleteConfig/command/${obj.name}?nav=${topnav}">
+						<a target=_self href="/config/deleteConfig/cmd_oneclick/${obj.name}?nav=${topnav}">
 						<i class="fa fa-trash-o fa-lg"></i></a>
 						</a> 
 					</td>   
