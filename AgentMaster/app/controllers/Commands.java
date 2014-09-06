@@ -68,6 +68,27 @@ import com.stackscaling.agentmaster.resources.utils.DateUtils;
  *
  */
 public class Commands extends Controller {
+	
+	static Comparator<Map<String, String>> cmdComparator = new Comparator<Map<String, String>>(){
+
+		@Override
+		public int compare(Map<String, String> o1,
+				Map<String, String> o2) {
+			return o1.get("name").compareTo(o2.get("name"));
+			
+		}
+	};
+		
+		
+	static Comparator<Map<String, String>> oneclickComparator = new Comparator<Map<String, String>>(){
+
+		@Override
+		public int compare(Map<String, String> o1,
+				Map<String, String> o2) {
+			return o1.get("displayName").compareTo(o2.get("displayName"));
+			
+		}
+	};
 
 	// command wizard
 	public static void index() {
@@ -108,14 +129,7 @@ public class Commands extends Controller {
 			}
 			
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-			Collections.sort(commands, new Comparator<Map<String, String>>(){
-
-				@Override
-				public int compare(Map<String, String> o1,
-						Map<String, String> o2) {
-					return o1.get("name").compareTo(o2.get("name"));
-					
-				}});
+			Collections.sort(commands, cmdComparator);
 
 			render(page, topnav, commands, lastRefreshed);
 		} catch (Exception e) {
@@ -140,6 +154,7 @@ public class Commands extends Controller {
 				Map<String, String> values = new HashMap<String, String>();
 				IOneClickCommand cmd = entry.getValue();
 				values.put("name", entry.getKey());
+				values.put("displayName", cmd.getDisplayName());
 				values.put("command", cmd.getCommandKey());
 				values.put("nodeGroup", cmd.getNodeGroupKey());
 				String userData = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
@@ -148,14 +163,7 @@ public class Commands extends Controller {
 			}
 			
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-			Collections.sort(commands, new Comparator<Map<String, String>>(){
-
-				@Override
-				public int compare(Map<String, String> o1,
-						Map<String, String> o2) {
-					return o1.get("name").compareTo(o2.get("name"));
-					
-				}});
+			Collections.sort(commands, oneclickComparator);
 
 			render(page, topnav, commands, lastRefreshed);
 		} catch (Exception e) {
@@ -361,6 +369,7 @@ public class Commands extends Controller {
 			oneClickCmd.setUserData(log.getUserData());
 			String cmdName = DateUtils.getNowDateTimeStrConcise();
 			oneClickCmd.setName(cmdName);
+			oneClickCmd.setDisplayName(cmdName);
 			oneClickDao.save(cmdName, JsonUtil.encode(oneClickCmd));
 		
 			String alert = String.format("One click command %s saved successfully ", cmdName);
@@ -378,7 +387,7 @@ public class Commands extends Controller {
 	 * @param logType
 	 * @param logId
 	 */
-	public static void onclickRun(String dataId) {
+	public static void oneclickRun(String dataId) {
 
 		try {
 			
@@ -401,6 +410,7 @@ public class Commands extends Controller {
 
 			Map<String, String> options = oneclickCmd.getUserData();
 			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+			varValues = varValues.replaceAll("\\\\n", " ");
 			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
 			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
 

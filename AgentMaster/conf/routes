@@ -18,8 +18,8 @@ GET     /commands/wizard                        Commands.wizard
 GET     /commands/getOptions					Commands.getOptions
 GET		/commands/runCmdFromLog					Commands.runCmdFromLog
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
-GET		/commands/oneclickSave					Commands.onclickSave
-GET		/commands/oneclickRun					Commands.onclickRun
+GET		/commands/oneclickSave					Commands.oneclickSave
+GET		/commands/oneclickRun					Commands.oneclickRun
 
 # workflows
 GET		/workflows								Workflows.index

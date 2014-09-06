@@ -6,9 +6,15 @@ public interface IOneClickCommand {
 
 	/** name of the command */
 	public String getName();
-
+	
 	/** name of the command */
 	public void setName(String name);
+
+	/** user defined display name */
+	public String getDisplayName();
+	
+	/** user defined display name */
+	public void setDisplayName(String displayName);
 
 	/** user data */
 	public void setUserData(Map<String, String> userData);

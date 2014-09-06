@@ -12,6 +12,9 @@ public class OneClickCommandImpl implements IOneClickCommand {
 	
 	/** name of the command */
 	private String name;
+	
+	/** user defined display name */
+	private String displayName;
 
 	/** user inputs */
 	private Map<String, String> userData = new HashMap<String, String>();
@@ -60,6 +63,16 @@ public class OneClickCommandImpl implements IOneClickCommand {
 	@Override
 	public void setNodeGroupKey(String nodeGroupKey) {
 		this.nodeGroupKey = nodeGroupKey;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	@Override
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 	
 }
