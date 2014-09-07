@@ -1,0 +1,13 @@
+{
+  "name" : "20140907071619",
+  "displayName" : "delete_local_perlserver",
+  "userData" : {
+    "mon_int" : "10",
+    "exe_retry" : "3",
+    "mon_retry" : "3",
+    "thrStrategy" : "UNLIMITED",
+    "var_values" : "{  \"serviceName\" : \"perlserver\" }"
+  },
+  "commandKey" : "Agent_Cleanup_Service",
+  "nodeGroupKey" : "LOCALHOST"
+}
