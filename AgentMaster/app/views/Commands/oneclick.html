@@ -11,7 +11,6 @@
 			#{table-declare tableName:'list-all' /}
 			<thead>
 				<tr>
-					<th>No.</th>
 					<th>Display Name</th>
 					<th>Command</th>
 					<th>NodeGroup</th>
@@ -24,7 +23,6 @@
 			<tbody>
 				#{list items:commands, as:'obj'}
 				<tr>
-					<td>${obj_index}</td>
 					<td>   
 						<a target=_blank href="/config/viewConfigItem/cmd_oneclick/${obj.name}" >${obj.displayName}</a> 
 					</td>   

@@ -11,7 +11,6 @@
 			#{table-declare tableName:'list-all' /}
 			<thead>
 				<tr>
-					<th>No.</th>
 					<th>Name</th>
 					<th>Type</th>
 					<th>Interval</th>
@@ -25,7 +24,6 @@
 			<tbody>
 				#{list items:jobDetails, as:'obj'}
 				<tr>
-					<td>${obj_index}</td>
 					<td>   
 						<a target=_self href="config/viewConfigItem/${obj.type}/${obj.name}" >${obj.name}</a> 
 					</td>   

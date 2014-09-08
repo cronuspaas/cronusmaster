@@ -14,7 +14,6 @@
 			#{table-declare tableName:'list-all' /}
 			<thead>
 				<tr>
-					<th>No.</th>
 					<th>Name</th>
 					<th>Edit</th>
 					<th>Copy</th>
@@ -24,7 +23,6 @@
 			<tbody>
 				#{list items:cfgNames, as:'obj'}
 				<tr>
-					<td>${obj_index}</td>
 					<td>   
 						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
 					</td>   
