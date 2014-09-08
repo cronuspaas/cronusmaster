@@ -1,0 +1,13 @@
+{
+  "name" : "20140908070151",
+  "displayName" : "delete_local_cronusmaster",
+  "userData" : {
+    "exe_retry" : "3",
+    "mon_retry" : "3",
+    "thrStrategy" : "UNLIMITED",
+    "var_values" : "{\"serviceName\":\"cronusmaster\"}",
+    "mon_int" : "10"
+  },
+  "commandKey" : "Agent_Cleanup_Service",
+  "nodeGroupKey" : "LOCALHOST"
+}
