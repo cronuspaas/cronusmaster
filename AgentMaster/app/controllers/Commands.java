@@ -366,7 +366,12 @@ public class Commands extends Controller {
 			IOneClickCommand oneClickCmd = new OneClickCommandImpl();
 			oneClickCmd.setCommandKey(log.getCommandKey());
 			oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
-			oneClickCmd.setUserData(log.getUserData());
+			Map<String, String> options = log.getUserData();
+			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
+			String rebuildVarValues = MapListPrimitiveJsonParser.buildJson(userData);
+			options.put("var_values", rebuildVarValues);
+			oneClickCmd.setUserData(options);
 			String cmdName = DateUtils.getNowDateTimeStrConcise();
 			oneClickCmd.setName(cmdName);
 			oneClickCmd.setDisplayName(cmdName);

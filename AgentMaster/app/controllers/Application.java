@@ -40,6 +40,8 @@ public class Application extends Controller {
 					Integer.toString(UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getNodeCount()));
 			metricMap.put("totalCmdCount",
 					Integer.toString(UserDataProvider.getCommandConfigs().getAllCommands().size()));
+			metricMap.put("totalOneclickCount", 
+					Integer.toString(UserDataProvider.getOneClickCommandConfigs().getAllCommands().size()));
 			metricMap.put("totalWfCount",
 					Integer.toString(UserDataProvider.getWorkflowConfigs().getAllFlows().size()));
 			metricMap.put("totalJobCount",
