@@ -6,7 +6,7 @@
 
 <h3 style="text-transform: uppercase">Commands Defined</h3>		 
 
-<a target=_self href="/config/editConfig/command/create/new?nav=${topnav}" class="btn btn-small btn-primary">Create New</a> 
+<a target=_self href="/config/editConfig/command/create/new?nav=${topnav}&topage=Commands.index" class="btn btn-small btn-primary">Create New</a> 
 <a target=_self href="/config/reloadConfig/command?nav=${topnav}" class="btn btn-small btn-primary">Reload</a>
 
 	<div  id="list-all-row">
@@ -42,17 +42,17 @@
 					<i class="fa fa-magic fa-lg"></i></a>
 					</td>
 					<td>   
-						<a target=_self href="/config/editConfig/command/update/${obj.name}?nav=${topnav}">
+						<a target=_self href="/config/editConfig/command/update/${obj.name}?topage=Commands.index&nav=${topnav}">
 						<i class="fa fa-wrench fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>   
-						<a target=_self href="/config/editConfig/command/create/${obj.name}?nav=${topnav}">
+						<a target=_self href="/config/editConfig/command/create/${obj.name}?topage=Commands.index&nav=${topnav}">
 						<i class="fa fa-copy fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>
-						<a target=_self href="/config/deleteConfig/command/${obj.name}?nav=${topnav}">
+						<a target=_self href="/config/deleteConfig/command/${obj.name}?page=Commands.index">
 						<i class="fa fa-trash-o fa-lg"></i></a>
 						</a> 
 					</td>   

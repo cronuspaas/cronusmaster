@@ -43,6 +43,7 @@ import org.lightj.util.MapListPrimitiveJsonParser;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
+import resources.utils.JsonResponse;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -89,87 +90,133 @@ public class Commands extends Controller {
 			
 		}
 	};
+	
+	/**
+	 * commands index
+	 * @throws Exception
+	 */
+	private static List<Map<String, String>> indexInternal() throws Exception 
+	{
+		Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
+		List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
+		for (Entry<String, ICommand> entry : cmds.entrySet()) {
+			Map<String, String> values = new HashMap<String, String>();
+			ICommand cmd = entry.getValue();
+			values.put("name", entry.getKey());
+			UrlTemplate req = cmd.createCopy().getUrlTemplate();
+			values.put("url", req.getUrl());
+			values.put("httpMethod", req.getMethod().name());
+			StringBuffer headers = new StringBuffer();
+			if (req.getHeaders() != null) {
+				for (Entry<String, String> header : req.getHeaders().entrySet()) {
+					headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append(",");
+				}
+			}
+			values.put("headers", headers.toString());
+			if (req.getBody()!=null && !req.getBody().isEmpty()) {
+				values.put("body", JsonUtil.encode(req.getBody()));
+			}
+			values.put("variables", StringUtil.join(req.getVariableNames(), ", "));
+			values.put("userData", JsonUtil.encode(cmd.getUserData()));
+			StringBuffer parameters = new StringBuffer();
+			if (req.getParameters() != null) {
+				for (Entry<String, String> param : req.getParameters().entrySet()) {
+					parameters.append(String.format("%s=%s", param.getKey(), param.getValue())).append(",");
+				}
+			}
+			values.put("parameters", parameters.toString());
+			commands.add(values);
+		}
+		
+		Collections.sort(commands, cmdComparator);
+		return commands;
+	}
 
-	// command wizard
-	public static void index() {
+	/**
+	 * commands json
+	 */
+	public static void indexJson() {
+
+		try {
+			renderJSON(JsonResponse.successResponse(null).addResult("commands", indexInternal()));
+		} catch (Exception e) {
+			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
+		}
+
+	}
+	
+	/**
+	 * list of commands
+	 */
+	public static void index(String alert) {
 
 		String page = "index";
 		String topnav = "commands";
 
 		try {
-			Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
-			List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
-			for (Entry<String, ICommand> entry : cmds.entrySet()) {
-				Map<String, String> values = new HashMap<String, String>();
-				ICommand cmd = entry.getValue();
-				values.put("name", entry.getKey());
-				UrlTemplate req = cmd.createCopy().getUrlTemplate();
-				values.put("url", req.getUrl());
-				values.put("httpMethod", req.getMethod().name());
-				StringBuffer headers = new StringBuffer();
-				if (req.getHeaders() != null) {
-					for (Entry<String, String> header : req.getHeaders().entrySet()) {
-						headers.append(String.format("%s=%s", header.getKey(), header.getValue())).append(",");
-					}
-				}
-				values.put("headers", headers.toString());
-				if (req.getBody()!=null && !req.getBody().isEmpty()) {
-					values.put("body", JsonUtil.encode(req.getBody()));
-				}
-				values.put("variables", StringUtil.join(req.getVariableNames(), ", "));
-				values.put("userData", JsonUtil.encode(cmd.getUserData()));
-				StringBuffer parameters = new StringBuffer();
-				if (req.getParameters() != null) {
-					for (Entry<String, String> param : req.getParameters().entrySet()) {
-						parameters.append(String.format("%s=%s", param.getKey(), param.getValue())).append(",");
-					}
-				}
-				values.put("parameters", parameters.toString());
-				commands.add(values);
-			}
-			
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-			Collections.sort(commands, cmdComparator);
-
-			render(page, topnav, commands, lastRefreshed);
+			List<Map<String, String>> commands = indexInternal(); 
+			render(page, topnav, commands, lastRefreshed, alert);
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
 		}
 
 	}
+	
+	/**
+	 * oneclick commands
+	 * @return
+	 */
+	private static List<Map<String, String>> oneclickInternal() throws Exception {
+		Map<String, IOneClickCommand> cmds = UserDataProvider.getOneClickCommandConfigs().getAllCommands();
+		List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
+		for (Entry<String, IOneClickCommand> entry : cmds.entrySet()) {
+			Map<String, String> values = new HashMap<String, String>();
+			IOneClickCommand cmd = entry.getValue();
+			values.put("name", entry.getKey());
+			values.put("displayName", cmd.getDisplayName());
+			values.put("command", cmd.getCommandKey());
+			values.put("nodeGroup", cmd.getNodeGroupKey());
+			String userData = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
+			values.put("userData", userData);
+			commands.add(values);
+		}
+		
+		Collections.sort(commands, oneclickComparator);
+		return commands;
+		
+	}
 
 	/**
 	 * show one click commands
 	 */
-	public static void oneclick() {
+	public static void oneclick(String alert) {
 
 		String page = "oneclick";
 		String topnav = "commands";
 
 		try {
-			Map<String, IOneClickCommand> cmds = UserDataProvider.getOneClickCommandConfigs().getAllCommands();
-			List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
-			for (Entry<String, IOneClickCommand> entry : cmds.entrySet()) {
-				Map<String, String> values = new HashMap<String, String>();
-				IOneClickCommand cmd = entry.getValue();
-				values.put("name", entry.getKey());
-				values.put("displayName", cmd.getDisplayName());
-				values.put("command", cmd.getCommandKey());
-				values.put("nodeGroup", cmd.getNodeGroupKey());
-				String userData = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
-				values.put("userData", userData);
-				commands.add(values);
-			}
-			
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-			Collections.sort(commands, oneclickComparator);
-
-			render(page, topnav, commands, lastRefreshed);
+			List<Map<String, String>> commands = oneclickInternal(); 
+			render(page, topnav, commands, lastRefreshed, alert);
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
 		}
+	}
+	
+	/**
+	 * one click commands
+	 */
+	public static void oneclickJson() {
+
+		try {
+			renderJSON(JsonResponse.successResponse(null).addResult("commands", oneclickInternal()));
+		} catch (Exception e) {
+			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
+		}
+
 	}
 
 	
@@ -349,35 +396,56 @@ public class Commands extends Controller {
 		}
 
 	}
+	
+	/**
+	 * save as one click command internal
+	 * @param logType
+	 * @param logId
+	 */
+	private static Map<String, String> oneclickSaveInternal(String logType, String logId) throws Exception {
+		
+		DataType lType = DataType.valueOf(logType.toUpperCase());
+		ILog log = UserDataProvider.getJobLoggerOfType(lType).readLog(logId);
+		
+		IOneClickCommandData oneClickDao = UserDataProvider.getOneClickCommandConfigs();
+		IOneClickCommand oneClickCmd = new OneClickCommandImpl();
+		oneClickCmd.setCommandKey(log.getCommandKey());
+		oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
+		Map<String, String> options = log.getUserData();
+		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+		Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
+		String rebuildVarValues = MapListPrimitiveJsonParser.buildJson(userData);
+		options.put("var_values", rebuildVarValues);
+		oneClickCmd.setUserData(options);
+		String cmdName = DateUtils.getNowDateTimeStrConcise();
+		oneClickCmd.setName(cmdName);
+		oneClickCmd.setDisplayName(cmdName);
+		oneClickDao.save(cmdName, JsonUtil.encode(oneClickCmd));
+
+		// now read it back for json response
+		Map<String, String> values = new HashMap<String, String>();
+		IOneClickCommand cmd = oneClickDao.getCommandByName(cmdName);
+		values.put("name", cmd.getName());
+		values.put("displayName", cmd.getDisplayName());
+		values.put("command", cmd.getCommandKey());
+		values.put("nodeGroup", cmd.getNodeGroupKey());
+		String ud = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
+		values.put("userData", ud);
+		
+		return values;
+	}
 
 	/**
-	 * rerun the same command from a cmd log
+	 * save as one click command
 	 * @param logType
 	 * @param logId
 	 */
 	public static void oneclickSave(String logType, String logId) {
 
 		try {
-			
-			DataType lType = DataType.valueOf(logType.toUpperCase());
-			ILog log = UserDataProvider.getJobLoggerOfType(lType).readLog(logId);
-			
-			IOneClickCommandData oneClickDao = UserDataProvider.getOneClickCommandConfigs();
-			IOneClickCommand oneClickCmd = new OneClickCommandImpl();
-			oneClickCmd.setCommandKey(log.getCommandKey());
-			oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
-			Map<String, String> options = log.getUserData();
-			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
-			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-			String rebuildVarValues = MapListPrimitiveJsonParser.buildJson(userData);
-			options.put("var_values", rebuildVarValues);
-			oneClickCmd.setUserData(options);
-			String cmdName = DateUtils.getNowDateTimeStrConcise();
-			oneClickCmd.setName(cmdName);
-			oneClickCmd.setDisplayName(cmdName);
-			oneClickDao.save(cmdName, JsonUtil.encode(oneClickCmd));
 		
-			String alert = String.format("One click command %s saved successfully ", cmdName);
+			Map<String, String> cmdValues = oneclickSaveInternal(logType, logId);
+			String alert = String.format("One click command %s saved successfully ", cmdValues.get("name"));
 			redirect("Commands.oneclick", alert);
 
 		} catch (Exception e) {
@@ -388,6 +456,73 @@ public class Commands extends Controller {
 	}
 	
 	/**
+	 * save as one click command
+	 * @param logType
+	 * @param logId
+	 */
+	public static void oneclickSaveJson(String logType, String logId) {
+
+		try {
+		
+			Map<String, String> cmdValues = oneclickSaveInternal(logType, logId);
+			renderJSON(JsonResponse.successResponse(null).addResult("command", cmdValues));
+			
+		} catch (Exception e) {
+			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
+		}
+
+	}
+
+	/**
+	 * run oneclick command
+	 * @param logType
+	 * @param logId
+	 */
+	private static String oneclickRunInternal(String dataId) throws Exception {
+		IOneClickCommand oneclickCmd = UserDataProvider.getOneClickCommandConfigs().getCommandByName(dataId);
+		
+		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
+		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP);
+
+		// build task
+		ICommand cmd = userConfigs.getCommandByName(oneclickCmd.getCommandKey());
+		String[] hosts = null;
+		INodeGroup ng = null;
+		if (!StringUtil.isNullOrEmpty(oneclickCmd.getNodeGroupKey())) {
+			ng = ngConfigs.getNodeGroupByName(oneclickCmd.getNodeGroupKey());
+			hosts = ng.getHosts();
+		}
+		else {
+			ng = INodeGroupData.NG_EMPTY;
+		}
+
+		Map<String, String> options = oneclickCmd.getUserData();
+		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+		Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
+		HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
+
+		// prepare log
+		CmdLog jobLog = new CmdLog();
+		Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
+		jobLog.setUserData(optionCleanup);
+		jobLog.setCommandKey(cmd.getName());
+		jobLog.setNodeGroup(ng);
+		jobLog.setHasRawLogs(cmd.isHasRawLogs());
+		IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+		logger.saveLog(jobLog);
+		reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
+		
+		// fire task
+		ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+		StandaloneTaskListener listener = new StandaloneTaskListener();
+		int numOfHost = hosts!=null ? hosts.length : 1;
+		listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
+		new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+
+		return jobLog.uuid();
+	}
+
+	/**
 	 * run oneclick command
 	 * @param logType
 	 * @param logId
@@ -395,50 +530,9 @@ public class Commands extends Controller {
 	public static void oneclickRun(String dataId) {
 
 		try {
-			
-			IOneClickCommand oneclickCmd = UserDataProvider.getOneClickCommandConfigs().getCommandByName(dataId);
-			
-			ICommandData userConfigs = UserDataProvider.getCommandConfigs();
-			INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP);
 
-			// build task
-			ICommand cmd = userConfigs.getCommandByName(oneclickCmd.getCommandKey());
-			String[] hosts = null;
-			INodeGroup ng = null;
-			if (!StringUtil.isNullOrEmpty(oneclickCmd.getNodeGroupKey())) {
-				ng = ngConfigs.getNodeGroupByName(oneclickCmd.getNodeGroupKey());
-				hosts = ng.getHosts();
-			}
-			else {
-				ng = INodeGroupData.NG_EMPTY;
-			}
-
-			Map<String, String> options = oneclickCmd.getUserData();
-			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
-			varValues = varValues.replaceAll("\\\\n", " ");
-			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
-
-			// prepare log
-			CmdLog jobLog = new CmdLog();
-			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
-			jobLog.setUserData(optionCleanup);
-			jobLog.setCommandKey(cmd.getName());
-			jobLog.setNodeGroup(ng);
-			jobLog.setHasRawLogs(cmd.isHasRawLogs());
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
-			logger.saveLog(jobLog);
-			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
-			
-			// fire task
-			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
-			StandaloneTaskListener listener = new StandaloneTaskListener();
-			int numOfHost = hosts!=null ? hosts.length : 1;
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
-			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
-			
-			String alert = String.format("%s fired on %s successfully ", oneclickCmd.getCommandKey(), oneclickCmd.getNodeGroupKey());
-			
+			String uuid = oneclickRunInternal(dataId);
+			String alert = String.format("%s launched successfully.", uuid);
 			redirect("Logs.cmdLogs", alert);
 
 		} catch (Exception e) {
@@ -448,6 +542,23 @@ public class Commands extends Controller {
 
 	}
 
+	/**
+	 * run oneclick command
+	 * @param logType
+	 * @param logId
+	 */
+	public static void oneclickRunJson(String dataId) {
+
+		try {
+
+			String uuid = oneclickRunInternal(dataId);
+			renderJSON(JsonResponse.successResponse(null).addResult("logUuid", uuid));
+			
+		} catch (Exception e) {
+			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
+		}
+
+	}
 
 	/**
 	 * execute a command on a node group

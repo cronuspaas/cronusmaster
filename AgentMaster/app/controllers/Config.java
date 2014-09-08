@@ -109,7 +109,7 @@ public class Config extends Controller {
 	 * @param dataType
 	 */
 	static final String NEW_CONFIG_NAME = "new";
-	public static void editConfig(String dataType, String action, String configName, String nav) {
+	public static void editConfig(String dataType, String action, String configName, String topage, String nav) {
 
 		String page = "editConfig";
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
@@ -163,7 +163,7 @@ public class Config extends Controller {
 			
 			String alert = null;
 
-			render(page, topnav, dataType, configName, content, alert);
+			render(page, topnav, dataType, configName, content, topage, alert);
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
@@ -176,9 +176,10 @@ public class Config extends Controller {
 	 * @param dataType
 	 * @param content
 	 */
-	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content, String nav) {
+	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content, String page, String nav) {
 
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
+		String topage = StringUtil.isNullOrEmpty(page) ? "Config.showConfigs" : page;
 
 		try {
 			if (dataType == null) {
@@ -208,12 +209,17 @@ public class Config extends Controller {
 				throw new RuntimeException("Invalid datatype " + dataType);
 			}
 			
-			String alert = "Config was successfully updated at " + DateUtils.getNowDateTimeStrSdsm();
+			String alert = String.format("%s %s was successfully updated at %s", dType.getLabel(), configName, DateUtils.getNowDateTimeStrSdsm());
 
 			// reload after
 			UserDataProvider.reloadAllConfigs();
 			
-			redirect("Config.showConfigs", dataType, alert, topnav);
+			if ("Config.showConfigs".equalsIgnoreCase(topage)) {
+				redirect("Config.showConfigs", dataType, alert, topnav);
+			}
+			else {
+				redirect(topage, alert);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -227,9 +233,10 @@ public class Config extends Controller {
 	 * @param dataType
 	 * @param configName
 	 */
-	public static void deleteConfig(String dataType, String configName, String nav) {
+	public static void deleteConfig(String dataType, String configName, String nav, String page) {
 
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
+		String topage = StringUtil.isNullOrEmpty(page) ? "Config.showConfigs" : page;
 
 		try {
 			if (dataType == null) {
@@ -244,7 +251,11 @@ public class Config extends Controller {
 			// reload after
 			UserDataProvider.reloadAllConfigs();
 			
-			redirect("Config.showConfigs", dataType, alert, topnav);
+			if ("Config.showConfigs".equals(topage)) {
+				redirect(topage, dataType, alert, topnav);
+			} else {
+				redirect(topage, alert);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

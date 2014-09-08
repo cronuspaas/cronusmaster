@@ -11,15 +11,17 @@ GET		/jsonedit								Application.jsonedit
 
 #commands 
 GET     /commands                        		Commands.index
+GET     /commandsJson                      		Commands.indexJson
 GET     /commands/oneclick                 		Commands.oneclick
-GET     /commands/common                        Commands.commonCommands
-GET     /commands/agentCommandType/{agentCommandType}                        Commands.getAgentCommandMetadata
+GET     /commands/oneclickJson             		Commands.oneclickJson
 GET     /commands/wizard                        Commands.wizard
 GET     /commands/getOptions					Commands.getOptions
 GET		/commands/runCmdFromLog					Commands.runCmdFromLog
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
 GET		/commands/oneclickSave					Commands.oneclickSave
+GET		/commands/oneclickSaveJson				Commands.oneclickSaveJson
 GET		/commands/oneclickRun					Commands.oneclickRun
+GET		/commands/oneclickRunJson				Commands.oneclickRunJson
 
 # workflows
 GET		/workflows								Workflows.index
@@ -27,22 +29,20 @@ GET		/workflows/getOptions/{wfName}			Workflows.getOptions
 POST	/workflows/runWfOnNodeGroup				Workflows.runWfOnNodeGroup
 
 
-# Manage configs
+# manage configs
 GET     /config                                       Config.index
 GET		/config/viewConfigItem/{configType}/{configKey}			Config.viewConfigItem
 GET     /config/agentCommand                                    Config.getAgentCommand
-GET     /config/aggregation                                     Config.getAggregation
-GET     /config/nodeGroup                                       Config.getNodeGroup
 GET     /config/reloadConfig/{dataType}							Config.reloadConfig
 GET		/config/showConfigs/{dataType}							Config.showConfigs
-GET     /config/editConfig/{dataType}/{action}/{configName}				Config.editConfig
+GET     /config/editConfig/{dataType}/{action}/{configName}		Config.editConfig
 GET     /config/deleteConfig/{dataType}/{configName}			Config.deleteConfig
 POST    /config/editConfigUpdate/{dataType}/{configName}		Config.editConfigUpdate
 
 # housekeeping
 POST	/housekeeping/runGC							HouseKeeping.runGC
 POST	/housekeeping/setRunCronJob					HouseKeeping.setRunCronJob	
-POST     /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
+POST    /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
 
 # logs page
 GET     /logs                                       Logs.index
@@ -66,12 +66,6 @@ POST	/jobs/saveJob										Jobs.saveJob
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
-
-# Monitoring
-GET		/monitor/memory											Monitor.index
-GET		/monitor											Monitor.index
-GET		/monitor/threads										Monitor.threads
-GET		/monitor/disk										Monitor.disk
 
 # elastic search
 GET		/search/searchCmdLog								Search.searchCmdLog
