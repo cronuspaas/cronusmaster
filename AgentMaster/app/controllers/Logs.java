@@ -17,6 +17,7 @@ limitations under the License.
 */
 package controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,6 +41,7 @@ import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 import resources.utils.FileIoUtils;
+import resources.utils.JsonResponse;
 
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
@@ -104,7 +106,49 @@ public class Logs extends Controller {
 			renderJSON("Error occured in index of logs");
 		}
 
-}
+	}
+	
+	/**
+	 * show logs
+	 * @return
+	 * @throws IOException
+	 */
+	private static List<Map<String, String>> cmdLogsInternal() throws IOException {
+		IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+		List<String> logs = logger.listLogs();
+		ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
+		
+		int idx = 0;
+		for (String logName : logs) {
+			Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
+			HashMap<String, String> log = new HashMap<String, String>();
+			log.putAll(logMeta);
+			log.put("name", logName);
+			log.put("type", DataType.CMDLOG.name());
+			if (idx++ <= 50) {
+				ILog logImpl = logger.readLog(logName);
+				log.put("status", logImpl.getStatus());
+				log.put("statusdetail", logImpl.getStatusDetail());
+				String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
+				log.put("userData", userData);
+//				log.put("userDataConcise", StringUtil.trimToLength(userData, 20) + "...");
+				log.put("progress", logImpl.getDisplayProgress());
+				if (logImpl.isRawLogsFetched()) {
+					log.put("fetched", "true");
+				}
+			}
+			else {
+				log.put("status", "-");
+				log.put("statusdetail", "-");
+				log.put("userData", "...");
+//				log.put("userDataConcise", "...");
+				log.put("progress", "-");
+				log.put("fetched", "false");
+			}
+			logFiles.add(log);
+		}
+		return logFiles;
+	}
 
 	/**
 	 * show logs
@@ -116,48 +160,31 @@ public class Logs extends Controller {
 		String topnav = "commands";
 
 		try {
-			
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
-			List<String> logs = logger.listLogs();
-			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
-			
-			int idx = 0;
-			for (String logName : logs) {
-				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
-				HashMap<String, String> log = new HashMap<String, String>();
-				log.putAll(logMeta);
-				log.put("name", logName);
-				log.put("type", DataType.CMDLOG.name());
-				if (idx++ <= 50) {
-					ILog logImpl = logger.readLog(logName);
-					log.put("status", logImpl.getStatus());
-					log.put("statusdetail", logImpl.getStatusDetail());
-					String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
-					log.put("userData", userData);
-					log.put("userDataConcise", StringUtil.trimToLength(userData, 20) + "...");
-//					log.put("progress", logImpl.getDisplayProgress());
-					if (logImpl.isRawLogsFetched()) {
-						log.put("fetched", "true");
-					}
-				}
-				else {
-					log.put("status", "-");
-					log.put("statusdetail", "-");
-					log.put("userData", "...");
-					log.put("userDataConcise", "...");
-//					log.put("progress", "-");
-					log.put("fetched", "false");
-				}
-				logFiles.add(log);
-			}
-			// List<>
 
 			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
-
+			List<Map<String, String>> logFiles = cmdLogsInternal();
 			render(page, topnav, logFiles, lastRefreshed, alert);
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderJSON("Error occured in index of logs");
+		}
+
+	}
+
+	/**
+	 * show logs
+	 * @param date
+	 */
+	public static void cmdLogsJson() {
+
+		try {
+
+			List<Map<String, String>> logFiles = cmdLogsInternal();
+			renderJSON(JsonResponse.successResponse(null).addResult("logs", logFiles));
+
+		} catch (Exception e) {
+			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
 		}
 
 	}

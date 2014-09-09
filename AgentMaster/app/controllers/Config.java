@@ -32,6 +32,7 @@ import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
+import resources.utils.JsonResponse;
 
 import com.stackscaling.agentmaster.resources.IUserDataDao;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
@@ -76,6 +77,22 @@ public class Config extends Controller {
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
+		}
+
+	}
+
+	/**
+	 * reload all config
+	 * @param dataType
+	 */
+	public static void reloadConfigsJson() {
+
+		try {
+			UserDataProvider.reloadAllConfigs();
+			renderJSON(JsonResponse.successResponse(null));
+			
+		} catch (Exception e) {
+			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
 		}
 
 	}
