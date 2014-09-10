@@ -5,9 +5,7 @@
 # Home page
 GET     /                                       Application.index
 GET		/whatsnew								Application.whatsnew
-GET		/whatsold								Application.whatsold
 GET		/introVideo								Application.introVideo
-GET		/jsonedit								Application.jsonedit
 
 #commands 
 GET     /commands                        		Commands.index

@@ -62,11 +62,6 @@ public class Application extends Controller {
     	render(topnav);
     }
 
-    public static void whatsold() {
-    	String topnav = "new";
-    	render(topnav);
-    }
-    
     public static void introVideo() {
     	String topnav = "introVideo";
     	render(topnav);
