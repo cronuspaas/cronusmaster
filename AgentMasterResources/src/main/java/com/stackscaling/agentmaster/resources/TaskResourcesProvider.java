@@ -100,8 +100,10 @@ public class TaskResourcesProvider {
 	 */
 	public static final class LogTaskEventUpdater extends SimpleTaskEventHandler<FlowContext> {
 
-		private ILog log;
-		public LogTaskEventUpdater(ILog log) {
+		private final ILog log;
+		private final IJobLogger logger;
+		public LogTaskEventUpdater(IJobLogger logger, ILog log) {
+			this.logger = logger;
 			this.log = log;
 		}
 
@@ -117,6 +119,12 @@ public class TaskResourcesProvider {
 					ElasticSearchUtils.updateDocument("log", log.getClass().getSimpleName(), id, values);
 				}
 			}
+			try {
+				logger.saveLog(log);
+			} catch (IOException e) {
+				LOG.error(e.getMessage());
+			}
+			
 		}
 	}
 
@@ -131,6 +139,8 @@ public class TaskResourcesProvider {
 		private final BaseLog jobLog;
 		private final IJobLogger logger;
 		private final int hostProgInc;
+		private int suc=0, fail=0, other=0;
+
 		public LogTaskEventHandler(DataType logType, BaseLog jobLog, int hostProgInc) {
 			this.jobLog = jobLog;
 			this.logger = UserDataProvider.getJobLoggerOfType(logType);
@@ -150,6 +160,19 @@ public class TaskResourcesProvider {
 				else {
 					jobLog.addCommandResponse(new CommandResponse(host, result.getStatus().name(), -1, String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
 				}
+				switch (result.getStatus()) {
+				case Success:
+					suc++;
+					other--;
+					break;
+				case Failed:
+					fail++;
+					other--;
+					break;
+				default:
+					break;
+				}
+				jobLog.setStatusDetail(suc, fail, other);
 				saveLog(false);
 			}
 		}
@@ -158,26 +181,9 @@ public class TaskResourcesProvider {
 		public TaskResultEnum executeOnCompleted(FlowContext ctx, Map<String, TaskResult> results)
 		{
 			TaskResultEnum status = TaskResultEnum.Success;
-			int suc=0, fail=0, other=0;
-			for (TaskResult res : results.values()) {
-				if (res.getStatus().getSeverity() > status.getSeverity()) {
-					status = res.getStatus();
-				}
-				switch (res.getStatus()) {
-				case Success:
-					suc++;
-					break;
-				case Failed:
-					fail++;
-					break;
-				default:
-					other++;
-					break;
-				}
-			}
 			jobLog.setStatus(status.name());
-			jobLog.setStatusDetail(suc, fail, other);
 			jobLog.setProgress(jobLog.ProgressTotalUnit);
+			saveLog(true);
 			
 			// if job has raw log, fetch logs and add to elastic search index
 			if (jobLog.isHasRawLogs()) {
@@ -186,19 +192,15 @@ public class TaskResourcesProvider {
 				taskReq.setSyncTaskOptions(TaskResourcesProvider.HTTP_CLIENT, urlTemplate, new ExecuteOption(), AgentResourceProvider.AGENT_PROCESSOR);
 				taskReq.setHosts(jobLog.getNodeGroup().getHosts());
 				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue("guid", jobLog.uuid()));
-				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
 
+				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
 				StandaloneTaskListener listener = new StandaloneTaskListener();
-				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(jobLog));
+				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(logger, jobLog));
 				
 				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
-				jobLog.setRawLogsFetched(true);
 			}
-			else {
-				jobLog.setRawLogsFetched(true);
-			}
+			jobLog.setRawLogsFetched(true);
 
-			saveLog(true);
 			return super.executeOnCompleted(ctx, results);
 		}
 
