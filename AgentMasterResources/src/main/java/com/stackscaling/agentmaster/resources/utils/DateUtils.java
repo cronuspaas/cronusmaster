@@ -20,6 +20,7 @@ package com.stackscaling.agentmaster.resources.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.lightj.util.StringUtil;
 import org.slf4j.Logger;
@@ -34,8 +35,21 @@ public class DateUtils {
 
 	static final Date EPOCH = new Date(0);
 
+	// standard
 	static final String DT_STR_FMT = "yyyy-MM-dd HH:mm:ss";
 	static SimpleDateFormat DT_STR_FMTR = new SimpleDateFormat(DT_STR_FMT);
+	// dot notation
+	static final String DTS_STR_FMT = "yyyy.MM.dd.HH.mm.ss";
+	static SimpleDateFormat DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
+	// concise
+	static String DTC_STR_FMT = "yyyyMMddHHmmss";
+	static final SimpleDateFormat DTC_STR_FMTR = new SimpleDateFormat(DTC_STR_FMT);
+
+	static {
+		DT_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
+		DTS_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
+		DTC_STR_FMTR.setTimeZone(TimeZone.getTimeZone(VarUtils.logTimeZone));
+	}
 
 	public static String getDateTimeStr(Date d) {
 		if (d == null) return "";
@@ -54,9 +68,6 @@ public class DateUtils {
 			return EPOCH;
 		}
 	}
-
-	static final String DTS_STR_FMT = "yyyy.MM.dd.HH.mm.ss";
-	static SimpleDateFormat DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
 
 	public static String getDateTimeDotStr(Date d) {
 		if (d == null) return "";
@@ -77,13 +88,10 @@ public class DateUtils {
 		}
 	}
 
-	static String DTS_CONCISE_STR_FMTR = "yyyyMMddHHmmss";
-	static final SimpleDateFormat DTS_CONCISE = new SimpleDateFormat(DTS_CONCISE_STR_FMTR);
-
 	public static String getDateTimeStrConcise(Date d) {
 		if (d == null)
 			return "";
-		String str = DTS_CONCISE.format(d);
+		String str = DTC_STR_FMTR.format(d);
 		return str;
 	}
 
@@ -100,7 +108,7 @@ public class DateUtils {
 			return null;
 
 		try {
-			d = DTS_CONCISE.parse(str);
+			d = DTC_STR_FMTR.parse(str);
 		} catch (Exception ex) {
 			LOG.error("%s, %s, %s", ex.getMessage(),
 					"Exception while converting string to date : " + str);
