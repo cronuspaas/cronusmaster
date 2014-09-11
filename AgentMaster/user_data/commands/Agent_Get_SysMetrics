@@ -1,30 +1,33 @@
 {
-  "name" : "Agent_Get_SysMetrics",
-  "httpTaskRequest" : {
-    "taskType" : "async",
-    "httpClientType" : "httpClient",
-    "executionOption" : {
-      "timeOutSec" : 0,
-      "initDelaySec" : 0,
-      "maxRetry" : 0,
-      "retryDelaySec" : 0
+  "name": "Agent_Get_SysMetrics",
+  "httpTaskRequest": {
+    "taskType": "async",
+    "httpClientType": "httpClient",
+    "executionOption": {
+      "timeOutSec": 0,
+      "initDelaySec": 0,
+      "maxRetry": 0,
+      "retryDelaySec": 0
     },
-    "urlTemplate" : {
-      "url" : "https://<host>:12020/modules/sysmetrics/getSysMetrics",
-      "method" : "GET",
-      "body" : {
+    "urlTemplate": {
+      "url": "https://<host>:12020/modules/sysmetrics/getSysMetrics",
+      "method": "GET",
+      "body": {},
+      "headers": {
+        "content-type": "application/json",
+        "Authorization": "Basic <agentAuthKey>"
       },
-      "headers" : {
-        "content-type" : "application/json",
-        "Authorization" : "Basic <agentAuthKey>"
-      },
-      "parameters" : {
+      "parameters": {
+        "disks": "<disks>",
+        "ifcs": "<ifcs>"
       }
     },
-    "resProcessorName" : "agentProcessor",
-    "globalContext" : "agentAuthKeyContext"
+    "resProcessorName": "agentProcessor",
+    "globalContext": "agentAuthKeyContext"
   },
-  "userData" : {
+  "userData": {
+    "disks": "comma-sep-blkdev",
+    "ifcs": "comma-sep-ifcs"
   },
-  "hasRawLogs" : false
+  "hasRawLogs": false
 }
