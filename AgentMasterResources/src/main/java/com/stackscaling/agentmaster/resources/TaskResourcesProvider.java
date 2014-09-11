@@ -61,6 +61,7 @@ public class TaskResourcesProvider {
 	 * @author biyu
 	 *
 	 */
+	@SuppressWarnings("rawtypes")
 	public static class LogFlowEventListener implements IFlowEventListener {
 
 		FlowLog flowLog;
@@ -98,6 +99,7 @@ public class TaskResourcesProvider {
 	 * @author binyu
 	 *
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final class LogTaskEventUpdater extends SimpleTaskEventHandler<FlowContext> {
 
 		private final ILog log;
@@ -134,17 +136,16 @@ public class TaskResourcesProvider {
 	 * @author binyu
 	 *
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final class LogTaskEventHandler extends SimpleTaskEventHandler<FlowContext> {
 
 		private final BaseLog jobLog;
 		private final IJobLogger logger;
-		private final int hostProgInc;
 		private int suc=0, fail=0, other=0;
 
 		public LogTaskEventHandler(BaseLog jobLog, int numOfHosts) {
 			this.jobLog = jobLog;
 			this.logger = UserDataProvider.getJobLoggerOfType(jobLog.getLogType());
-			this.hostProgInc = BaseLog.ProgressTotalUnit/numOfHosts;
 			this.other = numOfHosts;
 		}
 
@@ -153,7 +154,6 @@ public class TaskResourcesProvider {
 				TaskResult result) {
 			if (task instanceof SimpleHttpTask) {
 				String host = ((SimpleHttpTask) task).getReq().getHost();
-				jobLog.incProgress(hostProgInc);
 				if (result.getStatus() == TaskResultEnum.Success) {
 					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
 					jobLog.addCommandResponse(new CommandResponse(host, result.getStatus().name(), res.getStatusCode(), res.getResponseBody()));
@@ -166,11 +166,9 @@ public class TaskResourcesProvider {
 					suc++;
 					other--;
 					break;
-				case Failed:
+				default:
 					fail++;
 					other--;
-					break;
-				default:
 					break;
 				}
 				saveLog(false);
@@ -180,9 +178,8 @@ public class TaskResourcesProvider {
 		@Override
 		public TaskResultEnum executeOnCompleted(FlowContext ctx, Map<String, TaskResult> results)
 		{
-			TaskResultEnum status = TaskResultEnum.Success;
-			jobLog.setStatus(status.name());
-			jobLog.setProgress(BaseLog.ProgressTotalUnit);
+			jobLog.setStatus(TaskResultEnum.Success.name());
+			jobLog.setDone();
 			saveLog(true);
 			
 			// if job has raw log, fetch logs and add to elastic search index

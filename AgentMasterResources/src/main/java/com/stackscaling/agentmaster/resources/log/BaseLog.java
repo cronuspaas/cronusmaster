@@ -25,8 +25,6 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
  */
 public abstract class BaseLog implements ILog {
 
-	public static final int ProgressTotalUnit = 1000;
-
 	/** timestamp of the log */
 	protected String timestamp = DateUtils.getNowDateTimeDotStr();
 
@@ -52,16 +50,16 @@ public abstract class BaseLog implements ILog {
 	/** status */
 	protected String status = TaskResultEnum.Running.name();
 
-	/** progress 1 unit = 0.1%, et. 1000 = 100%*/
-	protected int progress;
-
 	/** status detail of #success-#failure-#other */
 	protected String statusDetail;
+	
+	/** percentile progress */
+	protected float progress;
 
 	/** whether this task have more raw logs */
 	protected boolean hasRawLogs;
 
-	/** wether raw logs for this task is already fetched */
+	/** whether raw logs for this task is already fetched */
 	protected boolean rawLogsFetched;
 
 	public BaseLog(DataType commandType, DataType logType) {
@@ -138,17 +136,8 @@ public abstract class BaseLog implements ILog {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public int getProgress() {
-		return progress;
-	}
 	public String getDisplayProgress() {
-		return String.format("%.1f%%", (((float) progress/ProgressTotalUnit) * 100));
-	}
-	public void setProgress(int progress) {
-		this.progress = progress;
-	}
-	public void incProgress(int progDelta) {
-		this.progress = Math.min(ProgressTotalUnit, this.progress + progDelta);
+		return String.format("%.1f%%", this.progress);
 	}
 	public String getStatusDetail() {
 		return statusDetail;
@@ -156,8 +145,12 @@ public abstract class BaseLog implements ILog {
 	public void setStatusDetail(String statusDetail) {
 		this.statusDetail = statusDetail;
 	}
-	public void setStatusDetail(int numSuccess, int numFail, int numOther) {
-		this.statusDetail = String.format("%s:%s:%s", numSuccess, numFail, numOther);
+	public void setStatusDetail(int numSuccess, int numFail, int numRunning) {
+		this.statusDetail = String.format("%s:%s:%s", numSuccess, numFail, numRunning);
+		this.progress = (((float) (numSuccess+numFail) / (numSuccess+numFail+numRunning))) * 100;
+	}
+	public void setDone() {
+		this.progress = 100;
 	}
 	public boolean isHasRawLogs() {
 		return hasRawLogs;
