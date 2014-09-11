@@ -173,7 +173,6 @@ public class TaskResourcesProvider {
 				default:
 					break;
 				}
-				jobLog.setStatusDetail(suc, fail, other);
 				saveLog(false);
 			}
 		}
@@ -183,7 +182,7 @@ public class TaskResourcesProvider {
 		{
 			TaskResultEnum status = TaskResultEnum.Success;
 			jobLog.setStatus(status.name());
-			jobLog.setProgress(jobLog.ProgressTotalUnit);
+			jobLog.setProgress(BaseLog.ProgressTotalUnit);
 			saveLog(true);
 			
 			// if job has raw log, fetch logs and add to elastic search index
@@ -210,6 +209,7 @@ public class TaskResourcesProvider {
 		 * @param isResult
 		 */
 		public void saveLog(boolean isResult) {
+			jobLog.setStatusDetail(suc, fail, other);
 			if (isResult || VarUtils.isLogProgEnabled) {
 				try {
 					logger.saveLog(jobLog);
