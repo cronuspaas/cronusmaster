@@ -7,6 +7,7 @@ import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.ExecutableTask;
 import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
+import org.lightj.task.TaskResultEnum;
 import org.lightj.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +54,14 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			HttpTaskRequest reqTemplate = CommandDataImpl.createTaskByRequest(hosts, cmd, userData, realUserData);
 
 			// builg log
+			int numOfHost = hosts!=null ? hosts.length : 1;
 			JobLog jobLog = new JobLog();
 			jobLog.setUserData(DataUtil.removeNullAndZero(userData));
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
 			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			jobLog.setJobId(getName());
+			jobLog.setStatusDetail(0, 0, numOfHost);
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.JOBLOG);
 			logger.saveLog(jobLog);
 			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
@@ -66,8 +69,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			// fire
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			int numOfHost = hosts!=null ? hosts.length : 1;
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
+			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog, numOfHost));
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 
 		} catch (Throwable t) {

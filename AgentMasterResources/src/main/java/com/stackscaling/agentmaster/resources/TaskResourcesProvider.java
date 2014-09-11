@@ -141,10 +141,11 @@ public class TaskResourcesProvider {
 		private final int hostProgInc;
 		private int suc=0, fail=0, other=0;
 
-		public LogTaskEventHandler(DataType logType, BaseLog jobLog, int hostProgInc) {
+		public LogTaskEventHandler(DataType logType, BaseLog jobLog, int numOfHosts) {
 			this.jobLog = jobLog;
 			this.logger = UserDataProvider.getJobLoggerOfType(logType);
-			this.hostProgInc = hostProgInc;
+			this.hostProgInc = BaseLog.ProgressTotalUnit/numOfHosts;
+			this.other = numOfHosts;
 		}
 
 		@Override
