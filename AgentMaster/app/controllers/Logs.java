@@ -71,42 +71,42 @@ public class Logs extends Controller {
 	 * @deprecated: we always fetch raw logs if it's available when cmd completes
 	 * @param logId
 	 */
-	public static void fetchRawLogs(String logId) {
-		
-		try {
-			
-			String alert = null;
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
-			ILog log = logger.readLog(logId);
-			if (log.isRawLogsFetched()) {
-				alert = String.format("Raw logs for job %s are already available in full text search", log.uuid());
-			}
-			else {
-				HttpTaskRequest taskReq = new HttpTaskRequest();
-				UrlTemplate urlTemplate = new UrlTemplate("https://<host>:12020/status/guidoutput/<guid>", HttpMethod.GET);
-				taskReq.setSyncTaskOptions(TaskResourcesProvider.HTTP_CLIENT, urlTemplate, new ExecuteOption(), AgentResourceProvider.AGENT_PROCESSOR);
-				taskReq.setHosts(log.getNodeGroup().getHosts());
-				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue("guid", log.uuid()));
-				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
-
-				StandaloneTaskListener listener = new StandaloneTaskListener();
-				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(log));
-				
-				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
-				
-				log.setRawLogsFetched(true);
-				logger.saveLog(log);
-				alert = String.format("Fetch raw script logs for job %s, it will be available in full text search", log.uuid());
-			}
-			
-			redirect("Logs.cmdLogs", alert);
-			
-		} catch (Throwable t) {
-			t.printStackTrace();
-			renderJSON("Error occured in index of logs");
-		}
-
-	}
+//	public static void fetchRawLogs(String logId) {
+//		
+//		try {
+//			
+//			String alert = null;
+//			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+//			ILog log = logger.readLog(logId);
+//			if (log.isRawLogsFetched()) {
+//				alert = String.format("Raw logs for job %s are already available in full text search", log.uuid());
+//			}
+//			else {
+//				HttpTaskRequest taskReq = new HttpTaskRequest();
+//				UrlTemplate urlTemplate = new UrlTemplate("https://<host>:12020/status/guidoutput/<guid>", HttpMethod.GET);
+//				taskReq.setSyncTaskOptions(TaskResourcesProvider.HTTP_CLIENT, urlTemplate, new ExecuteOption(), AgentResourceProvider.AGENT_PROCESSOR);
+//				taskReq.setHosts(log.getNodeGroup().getHosts());
+//				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue("guid", log.uuid()));
+//				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
+//
+//				StandaloneTaskListener listener = new StandaloneTaskListener();
+//				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(log));
+//				
+//				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
+//				
+//				log.setRawLogsFetched(true);
+//				logger.saveLog(log);
+//				alert = String.format("Fetch raw script logs for job %s, it will be available in full text search", log.uuid());
+//			}
+//			
+//			redirect("Logs.cmdLogs", alert);
+//			
+//		} catch (Throwable t) {
+//			t.printStackTrace();
+//			renderJSON("Error occured in index of logs");
+//		}
+//
+//	}
 	
 	/**
 	 * show logs
