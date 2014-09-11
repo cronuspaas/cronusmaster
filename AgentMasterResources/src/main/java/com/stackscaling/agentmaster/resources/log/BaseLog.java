@@ -136,9 +136,6 @@ public abstract class BaseLog implements ILog {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getDisplayProgress() {
-		return String.format("%.1f%%", this.progress);
-	}
 	public String getStatusDetail() {
 		return statusDetail;
 	}
@@ -147,10 +144,6 @@ public abstract class BaseLog implements ILog {
 	}
 	public void setStatusDetail(int numSuccess, int numFail, int numRunning) {
 		this.statusDetail = String.format("%s:%s:%s", numSuccess, numFail, numRunning);
-		this.progress = (((float) (numSuccess+numFail) / (numSuccess+numFail+numRunning))) * 100;
-	}
-	public void setDone() {
-		this.progress = 100;
 	}
 	public boolean isHasRawLogs() {
 		return hasRawLogs;

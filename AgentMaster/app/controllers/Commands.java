@@ -179,6 +179,7 @@ public class Commands extends Controller {
 			values.put("displayName", cmd.getDisplayName());
 			values.put("command", cmd.getCommandKey());
 			values.put("nodeGroup", cmd.getNodeGroupKey());
+			values.put("description", cmd.getDescription());
 			String userData = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
 			values.put("userData", userData);
 			commands.add(values);

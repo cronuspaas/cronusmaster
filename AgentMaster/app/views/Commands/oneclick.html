@@ -11,7 +11,7 @@
 			#{table-declare tableName:'list-all' /}
 			<thead>
 				<tr>
-					<th>Display Name</th>
+					<th>Description</th>
 					<th>Command</th>
 					<th>NodeGroup</th>
 					<th class=span4>User Data</th>
@@ -24,6 +24,7 @@
 				#{list items:commands, as:'obj'}
 				<tr>
 					<td>   
+						<span rel="tooltip" data-original-title="${obj.description}">
 						<a target=_blank href="/config/viewConfigItem/cmd_oneclick/${obj.name}" >${obj.displayName}</a> 
 					</td>   
 					<td>

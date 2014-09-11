@@ -179,7 +179,6 @@ public class TaskResourcesProvider {
 		public TaskResultEnum executeOnCompleted(FlowContext ctx, Map<String, TaskResult> results)
 		{
 			jobLog.setStatus(TaskResultEnum.Success.name());
-			jobLog.setDone();
 			saveLog(true);
 			
 			// if job has raw log, fetch logs and add to elastic search index

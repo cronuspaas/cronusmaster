@@ -33,5 +33,11 @@ public interface IOneClickCommand {
 
 	/** node group */
 	public void setNodeGroupKey(String nodeGroupKey);
+	
+	/** long description */
+	public void setDescription(String description);
+	
+	/** long description */
+	public String getDescription();
 
 }

@@ -31,8 +31,6 @@ public interface ILog {
 
 	public String getStatus();
 
-	public String getDisplayProgress();
-
 	public String getStatusDetail();
 
 	public boolean isHasRawLogs();

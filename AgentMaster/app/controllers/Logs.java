@@ -91,7 +91,6 @@ public class Logs extends Controller {
 				log.put("statusdetail", logImpl.getStatusDetail());
 				String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
 				log.put("userData", userData);
-				log.put("progress", logImpl.getDisplayProgress());
 				log.put("fetched", "true");
 			}
 			else {
@@ -99,7 +98,6 @@ public class Logs extends Controller {
 				log.put("statusdetail", "-");
 				log.put("userData", "...");
 //				log.put("userDataConcise", "...");
-				log.put("progress", "-");
 				log.put("fetched", "false");
 			}
 			logFiles.add(log);
@@ -172,7 +170,6 @@ public class Logs extends Controller {
 					ILog logImpl = logger.readLog(logName);
 					log.put("status", logImpl.getStatus());
 					log.put("statusdetail", logImpl.getStatusDetail());
-					log.put("progress", logImpl.getDisplayProgress());
 					if (logImpl.isHasRawLogs()) {
 						log.put("fetch", "true");
 					}
