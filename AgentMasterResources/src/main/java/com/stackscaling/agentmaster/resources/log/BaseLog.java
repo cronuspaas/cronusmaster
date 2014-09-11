@@ -11,7 +11,6 @@ import org.lightj.task.TaskResultEnum;
 import org.lightj.util.StringUtil;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ning.http.util.DateUtil;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.NodeGroupImpl;
@@ -27,10 +26,9 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
 public abstract class BaseLog implements ILog {
 
 	public static final int ProgressTotalUnit = 1000;
-	public static final String LOG_CONCISE_TS = "MMM-dd HH:mm:ss";
 
 	/** timestamp of the log */
-	protected String timestamp = DateUtils.getNowDateTimeStrSdsm();
+	protected String timestamp = DateUtils.getNowDateTimeDotStr();
 
 	/** user data */
 	protected Map<String, String> userData;
@@ -193,8 +191,8 @@ public abstract class BaseLog implements ILog {
 	public static Map<String, String> getLogMetaFromName(String uuid) {
 		HashMap<String, String> meta = new HashMap<String, String>();
 		String[] tokens = uuid.split("~");
-		Date ts = DateUtils.fromDateTimeStrSdsm(tokens[0]);
-		meta.put("timeStampDisplay", DateUtil.formatDate(ts, LOG_CONCISE_TS));
+		Date ts = DateUtils.fromDateTimeDotStr(tokens[0]);
+		meta.put("timeStampDisplay", DateUtils.getDateTimeLocalStr(ts));
 		meta.put("timeStamp", Long.toString(ts.getTime()));
 		meta.put("nodeGroupType", tokens[1]);
 		meta.put("nodeGroup", tokens[2]);

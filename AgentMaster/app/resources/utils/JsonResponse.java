@@ -35,14 +35,14 @@ public class JsonResponse {
 	public static JsonResponse successResponse(String msg) {
 		JsonResponse res = new JsonResponse();
 		res.status = new JsonResponseStatus(
-				JsonResponseStatusCode.success.name(), DateUtils.getNowDateTimeStrSdsm(), msg);
+				JsonResponseStatusCode.success.name(), DateUtils.getNowDateTimeDotStr(), msg);
 		return res;
 	}
 	
 	public static JsonResponse failedResponse(String msg) {
 		JsonResponse res = new JsonResponse();
 		res.status = new JsonResponseStatus(
-				JsonResponseStatusCode.failed.name(), DateUtils.getNowDateTimeStrSdsm(), msg);
+				JsonResponseStatusCode.failed.name(), DateUtils.getNowDateTimeDotStr(), msg);
 		return res;
 	}
 

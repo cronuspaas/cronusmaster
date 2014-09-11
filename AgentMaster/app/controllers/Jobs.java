@@ -63,7 +63,7 @@ public class Jobs extends Controller {
 				jobDetails.add(jobDetail);
 			}
 
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 
 			render(page, topnav, jobDetails, alert, lastRefreshed);
 		} catch (Exception e) {
@@ -200,8 +200,7 @@ public class Jobs extends Controller {
 			UserDataProvider.getIntervalJobOfType(jType).save(job);
 			
 		} catch (Exception e) {
-			error(	"Error occured in saveJob: " + e.getLocalizedMessage()
-					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
+			error(	"Error occured in saveJob: " + e.getLocalizedMessage());
 		}
 
 	}

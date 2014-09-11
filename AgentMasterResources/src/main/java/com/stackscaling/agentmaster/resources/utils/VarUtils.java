@@ -74,10 +74,4 @@ public abstract class VarUtils {
 
 	public abstract void init();
 	
-	public abstract String getVarStr(String propName, String defVal);
-
-	public abstract int getVarInt(String propName, int defVal);
-
-	public abstract boolean getVarBool(String propName, boolean defVal);
-	
 }

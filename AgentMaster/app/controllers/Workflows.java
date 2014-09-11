@@ -78,7 +78,7 @@ public class Workflows extends Controller {
 				values.put("userData", userData.toString());
 				results.add(values);
 			}
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 
 			render(page, topnav, results, lastRefreshed);
 		} catch (Exception e) {
@@ -182,8 +182,7 @@ public class Workflows extends Controller {
 			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			error(	"Error occured in runWfOnNodeGroup: " + t.getLocalizedMessage()
-					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
+			error(	"Error occured in runWfOnNodeGroup: " + t.getLocalizedMessage());
 		}
 
 	}

@@ -125,7 +125,7 @@ public class DataUtil {
 		public JsonResult(String result) {
 			super();
 			this.result = result;
-			this.time = DateUtils.getNowDateTimeStrSdsm().toString();
+			this.time = DateUtils.getNowDateTimeDotStr();
 		}
 	}
 }

@@ -155,7 +155,7 @@ public class Commands extends Controller {
 		String topnav = "commands";
 
 		try {
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			List<Map<String, String>> commands = indexInternal(); 
 			render(page, topnav, commands, lastRefreshed, alert);
 		} catch (Exception e) {
@@ -198,7 +198,7 @@ public class Commands extends Controller {
 		String topnav = "commands";
 
 		try {
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			List<Map<String, String>> commands = oneclickInternal(); 
 			render(page, topnav, commands, lastRefreshed, alert);
 		} catch (Exception e) {
@@ -616,8 +616,7 @@ public class Commands extends Controller {
 			
 		} catch (Throwable t) {
 			t.printStackTrace();
-			error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage()
-					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
+			error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage());
 		}
 
 	}

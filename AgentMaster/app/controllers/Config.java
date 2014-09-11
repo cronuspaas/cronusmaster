@@ -110,7 +110,7 @@ public class Config extends Controller {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			List<String> cfgNames = UserDataProvider.getUserDataDao().listNames(dType);
 
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 
 			render(page, topnav, dataType, cfgNames, lastRefreshed, alert);
 
@@ -226,7 +226,7 @@ public class Config extends Controller {
 				throw new RuntimeException("Invalid datatype " + dataType);
 			}
 			
-			String alert = String.format("%s %s was successfully updated at %s", dType.getLabel(), configName, DateUtils.getNowDateTimeStrSdsm());
+			String alert = String.format("%s %s was successfully updated at %s", dType.getLabel(), configName, DateUtils.getNowDateTimeDotStr());
 
 			// reload after
 			UserDataProvider.reloadAllConfigs();
@@ -263,7 +263,7 @@ public class Config extends Controller {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			UserDataProvider.getUserDataDao().deleteData(dType, configName);
 			
-			String alert = String.format("%s was successfully deleted at %s ", configName, DateUtils.getNowDateTimeStrSdsm());
+			String alert = String.format("%s was successfully deleted at %s ", configName, DateUtils.getNowDateTimeDotStr());
 
 			// reload after
 			UserDataProvider.reloadAllConfigs();

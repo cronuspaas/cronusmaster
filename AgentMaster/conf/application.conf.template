@@ -268,3 +268,6 @@ agentmaster.esLogDataTtl=1d
 # agent 
 agentmaster.cronusagent.password=0d102e8ac269b10d9e5f18ead91439da
 agentmaster.cronusagent.pkicert=location_to_cert
+
+# UI
+agentmaster.ui.listlogsize=50

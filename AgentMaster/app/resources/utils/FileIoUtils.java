@@ -25,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 
 import play.vfs.VirtualFile;
 
-import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
 
 /**
@@ -63,8 +62,7 @@ public class FileIoUtils implements IVirtualFileUtils {
 			List<VirtualFile> virtualFileList = virtualDir.list();
 
 			if (virtualFileList == null) {
-				play.Logger.error("virtualFileList is NULL! in getFileNamesInFolder()"
-								+ DateUtils.getNowDateTimeStrSdsm());
+				play.Logger.error("virtualFileList is NULL! in getFileNamesInFolder()");
 			}
 
 			play.Logger.info("Under folder: " + folderName + ",  File/dir count is " + virtualFileList.size());

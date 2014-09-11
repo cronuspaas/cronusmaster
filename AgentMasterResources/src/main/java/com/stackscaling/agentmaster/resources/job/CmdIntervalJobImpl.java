@@ -23,7 +23,6 @@ import com.stackscaling.agentmaster.resources.log.JobLog;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
-import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
  * run command on a node group with an interval
@@ -72,8 +71,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 
 		} catch (Throwable t) {
-			logger.error(	"Error occured in runJobAsync: " + t.getLocalizedMessage()
-					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
+			logger.error(	"Error occured in runJobAsync: " + t.getLocalizedMessage());
 		}
 
 	}

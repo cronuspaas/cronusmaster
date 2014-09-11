@@ -36,7 +36,7 @@ public class AdhocNodeGroupDataImpl implements INodeGroupData {
 	public INodeGroup getNodeGroupByName(String name) throws IOException {
 		NodeGroupImpl nodeGroup = new NodeGroupImpl();
 		nodeGroup.setType(DataType.ADHOCNODEGROUP.name());
-		nodeGroup.setName(String.format("NG-%s", DateUtils.getNowDateTimeStrSdsm()));
+		nodeGroup.setName(String.format("NG-%s", DateUtils.getNowDateTimeStrConcise()));
 		nodeGroup.addNodesToList(Arrays.asList(name.split("\n")));
 		save(nodeGroup.getName(), JsonUtil.encode(nodeGroup));
 		return nodeGroup;

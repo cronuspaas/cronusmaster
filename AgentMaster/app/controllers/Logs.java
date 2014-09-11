@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import jobs.PlayVarUtils;
+
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
 import org.lightj.example.task.HttpTaskRequest;
@@ -83,16 +85,14 @@ public class Logs extends Controller {
 			log.putAll(logMeta);
 			log.put("name", logName);
 			log.put("type", DataType.CMDLOG.name());
-			if (idx++ <= 50) {
+			if (idx++ <= PlayVarUtils.listLogSize) {
 				ILog logImpl = logger.readLog(logName);
 				log.put("status", logImpl.getStatus());
 				log.put("statusdetail", logImpl.getStatusDetail());
 				String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
 				log.put("userData", userData);
 				log.put("progress", logImpl.getDisplayProgress());
-				if (logImpl.isRawLogsFetched()) {
-					log.put("fetched", "true");
-				}
+				log.put("fetched", "true");
 			}
 			else {
 				log.put("status", "-");
@@ -118,7 +118,7 @@ public class Logs extends Controller {
 
 		try {
 
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			List<Map<String, String>> logFiles = cmdLogsInternal();
 			render(page, topnav, logFiles, lastRefreshed, alert);
 
@@ -168,7 +168,7 @@ public class Logs extends Controller {
 				log.putAll(logMeta);
 				log.put("name", logName);
 				log.put("type", DataType.JOBLOG.name());
-				if (idx++ <= 50) {
+				if (idx++ <= PlayVarUtils.listLogSize) {
 					ILog logImpl = logger.readLog(logName);
 					log.put("status", logImpl.getStatus());
 					log.put("statusdetail", logImpl.getStatusDetail());
@@ -187,7 +187,7 @@ public class Logs extends Controller {
 			}
 			// List<>
 
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
 
 				@Override
@@ -231,7 +231,7 @@ public class Logs extends Controller {
 			}
 			// List<>
 
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			Collections.sort(logFiles, new Comparator<Map<String, String>>(){
 
 				@Override
@@ -321,7 +321,7 @@ public class Logs extends Controller {
 
 		try {
 
-			String lastRefreshed = DateUtils.getNowDateTimeStrSdsm();
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			List<String> fileNames = new ArrayList<String>();
 			List<String> dirNames = new ArrayList<String>();
 
@@ -349,7 +349,7 @@ public class Logs extends Controller {
 		} catch (Throwable t) {
 			t.printStackTrace();
 			renderText("Error occured in getFileContent of logs"
-					+ DateUtils.getNowDateTimeStrSdsm());
+					+ DateUtils.getNowDateTimeDotStr());
 		}
 
 	}

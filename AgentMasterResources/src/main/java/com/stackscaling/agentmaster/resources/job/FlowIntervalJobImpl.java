@@ -13,7 +13,6 @@ import com.stackscaling.agentmaster.resources.log.IJobLogger;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
-import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.workflow.IWorkflowMeta;
 import com.stackscaling.agentmaster.resources.workflow.WorkflowDataImpl;
 
@@ -53,8 +52,7 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 			flow.runFlow();
 
 		} catch (Throwable t) {
-			logger.error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage()
-					+ " at: " + DateUtils.getNowDateTimeStrSdsm());
+			logger.error(	"Error occured in runCmdOnNodeGroup: " + t.getLocalizedMessage());
 		}
 
 	}

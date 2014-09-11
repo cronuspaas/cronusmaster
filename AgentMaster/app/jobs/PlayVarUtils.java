@@ -36,6 +36,8 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
  */
 public class PlayVarUtils extends VarUtils {
 	
+	public static int listLogSize = getVarInt("agentmaster.ui.listlogsize", 50);
+	
 	PlayVarUtils() {
 		init();
 	}
@@ -85,15 +87,15 @@ public class PlayVarUtils extends VarUtils {
 		
 	}
 	
-	public String getVarStr(String propName, String defVal) {
+	public static final String getVarStr(String propName, String defVal) {
 		return Play.configuration.getProperty(propName, defVal);
 	}
 	
-	public int getVarInt(String propName, int defVal) {
+	public static final int getVarInt(String propName, int defVal) {
 		return Integer.parseInt(Play.configuration.getProperty(propName, Integer.toString(defVal)));
 	}
 	
-	public boolean getVarBool(String propName, boolean defVal) {
+	public static final boolean getVarBool(String propName, boolean defVal) {
 		return Boolean.valueOf(Play.configuration.getProperty(propName, Boolean.toString(defVal))).booleanValue();
 	}
 	
