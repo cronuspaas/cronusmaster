@@ -42,5 +42,7 @@ public interface ILog {
 	public boolean isRawLogsFetched();
 
 	public void setRawLogsFetched(boolean rawLogsFetched);
+	
+	public DataType getLogType();
 
 }

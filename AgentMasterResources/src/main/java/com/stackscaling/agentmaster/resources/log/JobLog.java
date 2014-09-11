@@ -7,7 +7,7 @@ public class JobLog extends BaseLog {
 	private String jobId;
 
 	public JobLog() {
-		super(DataType.CMDJOB);
+		super(DataType.CMDJOB, DataType.JOBLOG);
 	}
 
 	public String getJobId() {

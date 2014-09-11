@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.lightj.session.FlowInfo;
+import org.lightj.task.TaskResultEnum;
 import org.lightj.util.StringUtil;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -33,6 +34,9 @@ public abstract class BaseLog implements ILog {
 
 	/** user data */
 	protected Map<String, String> userData;
+	
+	/** type of log */
+	protected DataType logType;
 
 	/** node group */
 	@JsonDeserialize(as=NodeGroupImpl.class)
@@ -48,7 +52,7 @@ public abstract class BaseLog implements ILog {
 	protected String commandKey;
 
 	/** status */
-	protected String status;
+	protected String status = TaskResultEnum.Running.name();
 
 	/** progress 1 unit = 0.1%, et. 1000 = 100%*/
 	protected int progress;
@@ -62,8 +66,9 @@ public abstract class BaseLog implements ILog {
 	/** wether raw logs for this task is already fetched */
 	protected boolean rawLogsFetched;
 
-	public BaseLog(DataType commandType) {
+	public BaseLog(DataType commandType, DataType logType) {
 		this.commandType = commandType;
+		this.logType = logType;
 	}
 
 	public List<CommandResponse> getCommandResponses() {
@@ -168,7 +173,9 @@ public abstract class BaseLog implements ILog {
 	public void setRawLogsFetched(boolean rawLogsFetched) {
 		this.rawLogsFetched = rawLogsFetched;
 	}
-
+	public DataType getLogType() {
+		return logType;
+	}
 	/**
 	 * aggregation
 	 * @param matchField

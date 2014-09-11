@@ -13,7 +13,7 @@ public class FlowLog extends BaseLog {
 	private UserWorkflow userWorkflow;
 
 	public FlowLog() {
-		super(DataType.WORKFLOW);
+		super(DataType.WORKFLOW, DataType.FLOWLOG);
 	}
 
 	public UserWorkflow getUserWorkflow() {

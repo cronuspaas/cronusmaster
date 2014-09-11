@@ -384,7 +384,7 @@ public class Commands extends Controller {
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			int numOfHost = hosts!=null ? hosts.length : 1;
-			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, numOfHost);
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
 			handler.saveLog(true);
 			listener.setDelegateHandler(handler);
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
@@ -517,7 +517,7 @@ public class Commands extends Controller {
 		ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 		StandaloneTaskListener listener = new StandaloneTaskListener();
 		int numOfHost = hosts!=null ? hosts.length : 1;
-		LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, numOfHost);
+		LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
 		handler.saveLog(true);
 		listener.setDelegateHandler(handler);
 		new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
@@ -609,7 +609,7 @@ public class Commands extends Controller {
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			int numOfHost = hosts!=null ? hosts.length : 1;
-			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, numOfHost);
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
 			handler.saveLog(true);
 			listener.setDelegateHandler(handler);
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();

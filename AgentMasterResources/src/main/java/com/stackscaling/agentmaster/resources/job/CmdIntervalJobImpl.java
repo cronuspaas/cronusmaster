@@ -66,7 +66,7 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			// fire
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog, numOfHost);
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
 			handler.saveLog(true);
 			listener.setDelegateHandler(handler);
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();

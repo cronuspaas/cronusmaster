@@ -5,7 +5,7 @@ import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 public class CmdLog extends BaseLog {
 
 	public CmdLog() {
-		super(DataType.COMMAND);
+		super(DataType.COMMAND, DataType.CMDLOG);
 	}
 
 	public String uuid() {
