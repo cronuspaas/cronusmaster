@@ -192,7 +192,7 @@ public abstract class BaseLog implements ILog {
 		HashMap<String, String> meta = new HashMap<String, String>();
 		String[] tokens = uuid.split("~");
 		Date ts = DateUtils.fromDateTimeDotStr(tokens[0]);
-		meta.put("timeStampDisplay", DateUtils.getDateTimeLocalStr(ts));
+		meta.put("timeStampDisplay", DateUtils.getDateTimeStr(ts));
 		meta.put("timeStamp", Long.toString(ts.getTime()));
 		meta.put("nodeGroupType", tokens[1]);
 		meta.put("nodeGroup", tokens[2]);

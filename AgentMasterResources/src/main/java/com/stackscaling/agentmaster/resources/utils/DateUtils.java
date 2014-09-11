@@ -34,7 +34,7 @@ public class DateUtils {
 
 	static final Date EPOCH = new Date(0);
 
-	static final String DT_STR_FMT = "yyyy-MM-dd HH:mm:ss.SSSZ";
+	static final String DT_STR_FMT = "yyyy-MM-dd HH:mm:ss";
 	static SimpleDateFormat DT_STR_FMTR = new SimpleDateFormat(DT_STR_FMT);
 
 	public static String getDateTimeStr(Date d) {
@@ -55,26 +55,7 @@ public class DateUtils {
 		}
 	}
 
-	static final String DTL_STR_FMT = "yyyy-MM-dd HH:mm:ss";
-	static SimpleDateFormat DTL_STR_FMTR = new SimpleDateFormat(DTL_STR_FMT);
-
-	public static String getDateTimeLocalStr(Date d) {
-		if (d == null) return "";
-		String str = DT_STR_FMTR.format(d);
-		return str;
-	}
-
-	public static Date fromDateTimeLocalStr(String dateTimeStr) {
-
-		try {
-			return DT_STR_FMTR.parse(dateTimeStr);
-		} catch (ParseException e) {
-			LOG.error(e.getMessage());
-			return EPOCH;
-		}
-	}
-
-	static final String DTS_STR_FMT = "yyyy.MM.dd.HH.mm.ss.SSSZ";
+	static final String DTS_STR_FMT = "yyyy.MM.dd.HH.mm.ss";
 	static SimpleDateFormat DTS_STR_FMTR = new SimpleDateFormat(DTS_STR_FMT);
 
 	public static String getDateTimeDotStr(Date d) {
