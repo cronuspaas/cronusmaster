@@ -7,7 +7,6 @@ import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.ExecutableTask;
 import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
-import org.lightj.task.TaskResultEnum;
 import org.lightj.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +14,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
+import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogTaskEventHandler;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.command.CommandDataImpl;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
-import com.stackscaling.agentmaster.resources.log.IJobLogger;
 import com.stackscaling.agentmaster.resources.log.JobLog;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
@@ -62,14 +61,14 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			jobLog.setJobId(getName());
 			jobLog.setStatusDetail(0, 0, numOfHost);
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.JOBLOG);
-			logger.saveLog(jobLog);
 			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 
 			// fire
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog, numOfHost));
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.JOBLOG, jobLog, numOfHost);
+			handler.saveLog(true);
+			listener.setDelegateHandler(handler);
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 
 		} catch (Throwable t) {

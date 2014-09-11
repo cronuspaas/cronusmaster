@@ -49,6 +49,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
+import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogTaskEventHandler;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
@@ -383,7 +384,9 @@ public class Commands extends Controller {
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			int numOfHost = hosts!=null ? hosts.length : 1;
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, numOfHost);
+			handler.saveLog(true);
+			listener.setDelegateHandler(handler);
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 			
 			String alert = String.format("%s fired on %s successfully ", agentCommandType, nodeGroupType);
@@ -508,15 +511,15 @@ public class Commands extends Controller {
 		jobLog.setCommandKey(cmd.getName());
 		jobLog.setNodeGroup(ng);
 		jobLog.setHasRawLogs(cmd.isHasRawLogs());
-		IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
-		logger.saveLog(jobLog);
 		reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 		
 		// fire task
 		ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 		StandaloneTaskListener listener = new StandaloneTaskListener();
 		int numOfHost = hosts!=null ? hosts.length : 1;
-		listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
+		LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, numOfHost);
+		handler.saveLog(true);
+		listener.setDelegateHandler(handler);
 		new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 
 		return jobLog.uuid();
@@ -606,7 +609,9 @@ public class Commands extends Controller {
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			int numOfHost = hosts!=null ? hosts.length : 1;
-			listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, jobLog.ProgressTotalUnit/numOfHost));
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(DataType.CMDLOG, jobLog, numOfHost);
+			handler.saveLog(true);
+			listener.setDelegateHandler(handler);
 			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
 			
 		} catch (Throwable t) {

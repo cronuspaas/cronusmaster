@@ -209,7 +209,7 @@ public class TaskResourcesProvider {
 		 * save log
 		 * @param isResult
 		 */
-		private void saveLog(boolean isResult) {
+		public void saveLog(boolean isResult) {
 			if (isResult || VarUtils.isLogProgEnabled) {
 				try {
 					logger.saveLog(jobLog);
