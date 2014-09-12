@@ -44,6 +44,13 @@ if [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/cmd_oneclick" ]; then
 fi
 cp -n $app_home/user_data/cmd_oneclick/* $CRONUSAPP_HOME/.appdata/user_data/cmd_oneclick/
 
+# copy sys commands if not there
+if [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/cmd_sys" ]; then
+  echo "create sys commands"
+  mkdir -p $CRONUSAPP_HOME/.appdata/user_data/cmd_sys
+fi
+cp -n $app_home/user_data/cmd_sys/* $CRONUSAPP_HOME/.appdata/user_data/cmd_sys/
+
 # copy predefined nodegroups if not there
 if [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/predefined_nodegroups" ]; then
   echo "create predefined nodegroups"

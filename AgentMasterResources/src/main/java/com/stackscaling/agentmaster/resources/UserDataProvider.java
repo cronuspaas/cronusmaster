@@ -284,6 +284,7 @@ public class UserDataProvider {
 		getNodeGroupOfType(DataType.NODEGROUP).load();
 		getCommandConfigs().load();
 		getOneClickCommandConfigs().load();
+		getSysCommandConfigs().load();
 		getWorkflowConfigs().load();
 	}
 
