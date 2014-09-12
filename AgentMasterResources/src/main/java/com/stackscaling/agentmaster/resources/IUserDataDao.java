@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.stackscaling.agentmaster.resources.command.CommandImpl;
+import com.stackscaling.agentmaster.resources.command.SysCommandDataImpl;
 import com.stackscaling.agentmaster.resources.job.CmdIntervalJobImpl;
 import com.stackscaling.agentmaster.resources.job.FlowIntervalJobImpl;
 import com.stackscaling.agentmaster.resources.log.CmdLog;
@@ -32,17 +33,24 @@ public interface IUserDataDao {
 	 */
 	public enum DataType
 	{
+		// nodes
 		NODEGROUP("Predefined NodeGroup", "user_data/predefined_nodegroups", NodeGroupImpl.class),
 		ADHOCNODEGROUP("Adhoc NodeGroup", "user_data/adhoc_nodegroups", AdhocNodeGroupDataImpl.class),
-		SCRIPT("Predefined Script", "user_data/predefined_scripts", ScriptImpl.class),
+		// cmd
 		COMMAND("Command", "user_data/commands", CommandImpl.class),
+		SYSCMD("System Commands", "user_data/cmd_sys", CommandImpl.class),
+		CMD_ONECLICK("One Click Command", "user_data/cmd_oneclick", OneClickCommandImpl.class),
+		// wf
 		WORKFLOW("Workflow", "user_data/workflows", WorkflowMetaImpl.class),
+		// log
 		JOBLOG("Job Logs", "user_data/job_logs", JobLog.class),
 		FLOWLOG("Workflow Logs", "user_data/flow_logs", FlowLog.class),
 		CMDLOG("Command Logs", "user_data/cmd_logs", CmdLog.class),
-		CMD_ONECLICK("One Click Command", "user_data/cmd_oneclick", OneClickCommandImpl.class),
+		// job
 		CMDJOB("Command Job", "user_data/cmd_jobs", CmdIntervalJobImpl.class),
 		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class),
+		// script
+		SCRIPT("Predefined Script", "user_data/predefined_scripts", ScriptImpl.class),
 		;
 
 		private final String path;

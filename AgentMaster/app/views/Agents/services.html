@@ -1,0 +1,43 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+
+#{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+<h3 style="text-transform: uppercase">Services</h3>		 
+
+	<div  id="list-all-row">
+		<br/>
+			#{table-declare tableName:'list-all' /}
+			<thead>
+				<tr>
+					<th>Host</th>
+					<th>Service</th>
+					<th>Active Manifest</th>
+					<th>Active Pacakges</th>
+					<th>Service Metadata</th>
+					<th>Manifests</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:hostServices, as:'obj'}
+				<tr>
+					<td>${obj.host}</td>   
+					<td>${obj.serviceName}</td>
+					<td>${obj.activeManifest}</td>
+					<td>${obj.activePackages}</td>
+					<td>${obj.serviceMeta}</td>
+					<td>${obj.manifests}</td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+
+#{include 'tags/refresh.html'/}
+
+</div>
+	#{include 'Application/footer.html'/}
+</body>
+</html>

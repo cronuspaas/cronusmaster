@@ -66,6 +66,9 @@ GET		/jobs/runJobNow										Jobs.runJobNow
 GET		/jobs/wizard										Jobs.wizard
 POST	/jobs/saveJob										Jobs.saveJob
 
+# agent pages
+GET		/agent/services										Agents.services
+
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 

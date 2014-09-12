@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.command.CommandDataImpl;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
+import com.stackscaling.agentmaster.resources.command.SysCommandDataImpl;
 import com.stackscaling.agentmaster.resources.job.CmdIntervalJobData;
 import com.stackscaling.agentmaster.resources.job.FlowIntervalJobData;
 import com.stackscaling.agentmaster.resources.job.IntervalJobData;
@@ -54,8 +55,20 @@ public class UserDataProvider {
 	 * @return
 	 * @throws IOException
 	 */
-	public @Bean(name="commandConfigs") @Scope("singleton") ICommandData commandConfigs() throws IOException {
+	public @Bean(name="commandConfigs") @Scope("singleton") 
+	ICommandData commandConfigs() throws IOException {
 		CommandDataImpl dao = new CommandDataImpl();
+		return dao;
+	}
+
+	/**
+	 * System command DAO
+	 * @return
+	 * @throws IOException
+	 */
+	public @Bean(name="sysCommandConfigs") @Scope("singleton") 
+	ICommandData sysCommandConfigs() throws IOException {
+		SysCommandDataImpl dao = new SysCommandDataImpl();
 		return dao;
 	}
 
@@ -150,6 +163,14 @@ public class UserDataProvider {
 	 */
 	public static ICommandData getCommandConfigs() {
 		return SpringContextUtil.getBean("resources", "commandConfigs", ICommandData.class);
+	}
+
+	/**
+	 * current SysCommand DAO
+	 * @return
+	 */
+	public static ICommandData getSysCommandConfigs() {
+		return SpringContextUtil.getBean("resources", "sysCommandConfigs", ICommandData.class);
 	}
 
 	/**

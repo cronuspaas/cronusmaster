@@ -3,6 +3,8 @@ package com.stackscaling.agentmaster.resources;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskBuilder;
@@ -28,6 +30,8 @@ import org.lightj.task.asynchttp.SimpleHttpTask;
 import org.lightj.task.asynchttp.UrlRequest;
 import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
+import org.lightj.util.ConcurrentUtil;
+import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
 import com.ning.http.client.Response;
@@ -48,6 +54,12 @@ import com.stackscaling.agentmaster.resources.log.ILog;
 import com.stackscaling.agentmaster.resources.utils.ElasticSearchUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
+/**
+ * Spring resources related to running tasks 
+ * 
+ * @author binyu
+ *
+ */
 @Configuration
 public class TaskResourcesProvider {
 
@@ -93,6 +105,70 @@ public class TaskResourcesProvider {
 
 	}
 
+	/**
+	 * blocking till all http responses are collected in host-http response map
+	 * 
+	 * @author binyu
+	 *
+	 */
+	public static final class BlockingTaskResultCollector<R> 
+		extends SimpleTaskEventHandler<FlowContext> 
+	{
+
+		private final Map<String, R> results;
+		private final Map<String, String> failures;
+		private ReentrantLock lock;
+		private Condition cond;
+		private Class<R> resBeanKlass;
+		
+		public BlockingTaskResultCollector(
+				ReentrantLock lock, 
+				Condition cond, 
+				Class<R> resBeanKlass) 
+		{
+			this.results = new HashMap<String, R>();
+			this.failures = new HashMap<String, String>();
+			this.lock = lock;
+			this.cond = cond;
+			this.resBeanKlass = resBeanKlass;
+		}
+
+		@Override
+		public void executeOnResult(FlowContext ctx, Task task, TaskResult result) {
+			if (task instanceof SimpleHttpTask) {
+				String host = ((SimpleHttpTask) task).getReq().getHost();
+				if (result.getStatus() == TaskResultEnum.Success) {
+					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
+					try {
+						R resBean = JsonUtil.decode(res.getResponseBody(), resBeanKlass);
+						results.put(host, resBean);
+					} catch (IOException e) {
+						failures.put(host, e.getLocalizedMessage());
+					}
+				} else {
+					failures.put(host, result.getMsg());
+				}
+			}
+		}
+		
+		@Override
+		public TaskResultEnum executeOnCompleted(FlowContext ctx, 
+				Map<String, TaskResult> results)
+		{
+			ConcurrentUtil.signalAll(lock, cond);
+			return super.executeOnCompleted(ctx, results);
+		}
+		
+		public Map<String, R> getResults() {
+			return results;
+		}
+		
+		public Map<String, String> getFailures() {
+			return failures;
+		}
+
+	}
+	
 	/**
 	 * run task to fetch raw log for a task and add it to elastic search index
 	 *
