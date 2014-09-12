@@ -58,6 +58,8 @@ var getStatusDetail=function(statusDetailStr){
 
 					<li #{if (topnav == "jobs")} class="active" #{/if}><a href="/jobs">Jobs</a></li>	
 								
+					<li #{if (topnav == "agent")} class="active" #{/if}><a href="/agent/services">Agent</a></li>	
+								
 					<li #{if (topnav == "nodeGroups")} class="active" #{/if}><a href="/config">Configs</a></li>	
 					
 					<li #{if (topnav == "new")} class="active" #{/if}><a href="/whatsnew"  title="Release Notes -- What's New? " ><i class="fa fa-leaf"></i></a></li>
@@ -73,6 +75,7 @@ var getStatusDetail=function(statusDetailStr){
 	#{if (topnav == "commands")} #{include 'Commands/commandsnav.html'/} #{/if}	
 	#{if (topnav == "workflows")} #{include 'Workflows/workflowsnav.html'/} #{/if}	
 	#{if (topnav == "jobs")} #{include 'Jobs/jobsnav.html'/} #{/if}	
+	#{if (topnav == "agent")} #{include 'Agent/agentnav.html'/} #{/if}	
 	#{if (topnav == "nodeGroups")} #{include 'Config/confignav.html'/} #{/if}	
 	#{if (topnav == "logs")} #{include 'Logs/lognav.html'/} #{/if}	
 	#{if (topnav == "config")} #{include 'Config/confignav.html'/} #{/if}	
@@ -82,5 +85,3 @@ var getStatusDetail=function(statusDetailStr){
 		getAlertAndWrite("${alert}");
 	</script>
 
-	
-	

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,6 +34,7 @@ import org.lightj.task.ExecutableTask;
 import org.lightj.task.StandaloneTaskExecutor;
 import org.lightj.task.StandaloneTaskListener;
 import org.lightj.util.ConcurrentUtil;
+import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 
@@ -51,7 +53,7 @@ import com.stackscaling.agentmaster.resources.utils.DateUtils;
  * @author ypei
  * 
  */
-public class Agents extends Controller {
+public class Agent extends Controller {
 
 	static Comparator<Map<String, String>> cmdComparator = new Comparator<Map<String, String>>() {
 
@@ -82,12 +84,18 @@ public class Agents extends Controller {
 	public static void services(String ngName) throws Exception {
 
 		String page = "servcies";
-		String topnav = "agentnav";
+		String topnav = "agent";
 
 		try {
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
-			List<Map<String, String>> hostServices = servicesInternal(ngName); 
-			render(page, topnav, hostServices, lastRefreshed);
+			Set<String> ngs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups().keySet();
+			List<Map<String, String>> hostServices;
+			if (StringUtil.isNullOrEmpty(ngName)) {
+				hostServices = Collections.emptyList();
+			} else {
+				hostServices = servicesInternal(ngName); 
+			}
+			render(page, topnav, ngs, hostServices, ngName, lastRefreshed);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
