@@ -23,9 +23,9 @@
 			<tbody>
 				#{list items:commands, as:'obj'}
 				<tr>
-					<td>   
-						<span rel="tooltip" data-original-title="${obj.description}">
-						<a target=_blank href="/config/viewConfigItem/cmd_oneclick/${obj.name}" >${obj.displayName}</a> 
+					<td>
+						<a target="#" rel="tooltip" data-original-title="${obj.description}">
+						${obj.displayName}</a> 
 					</td>   
 					<td>
 						<a target=_blank href="/config/viewConfigItem/command/${obj.command}" >${obj.command}

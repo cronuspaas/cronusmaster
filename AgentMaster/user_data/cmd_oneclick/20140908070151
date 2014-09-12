@@ -9,5 +9,6 @@
     "mon_int" : "10"
   },
   "commandKey" : "Agent_Clean_ALL_Services",
-  "nodeGroupKey" : "LOCALHOST"
+  "nodeGroupKey" : "LOCALHOST",
+  "description" : "cleanup all local services"
 }

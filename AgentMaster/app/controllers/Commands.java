@@ -482,7 +482,7 @@ public class Commands extends Controller {
 	 * @param logType
 	 * @param logId
 	 */
-	private static String oneclickRunInternal(String dataId) throws Exception {
+	private static String oneclickRunInternal(String dataId, String ngName) throws Exception {
 		IOneClickCommand oneclickCmd = UserDataProvider.getOneClickCommandConfigs().getCommandByName(dataId);
 		
 		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
@@ -492,7 +492,11 @@ public class Commands extends Controller {
 		ICommand cmd = userConfigs.getCommandByName(oneclickCmd.getCommandKey());
 		String[] hosts = null;
 		INodeGroup ng = null;
-		if (!StringUtil.isNullOrEmpty(oneclickCmd.getNodeGroupKey())) {
+		if (!StringUtil.isNullOrEmpty(ngName)) {
+			ng = ngConfigs.getNodeGroupByName(ngName);
+			hosts = ng.getHosts();
+		}
+		else if (!StringUtil.isNullOrEmpty(oneclickCmd.getNodeGroupKey())) {
 			ng = ngConfigs.getNodeGroupByName(oneclickCmd.getNodeGroupKey());
 			hosts = ng.getHosts();
 		}
@@ -535,7 +539,7 @@ public class Commands extends Controller {
 
 		try {
 
-			String uuid = oneclickRunInternal(dataId);
+			String uuid = oneclickRunInternal(dataId, null);
 			String alert = String.format("%s launched successfully.", uuid);
 			redirect("Logs.cmdLogs", alert);
 
@@ -548,14 +552,14 @@ public class Commands extends Controller {
 
 	/**
 	 * run oneclick command
-	 * @param logType
-	 * @param logId
+	 * @param dataId
+	 * @param ngName: override nodegroup
 	 */
-	public static void oneclickRunJson(String dataId) {
+	public static void oneclickRunJson(String dataId, String ngName) {
 
 		try {
 
-			String uuid = oneclickRunInternal(dataId);
+			String uuid = oneclickRunInternal(dataId, ngName);
 			renderJSON(JsonResponse.successResponse(null).addResult("logUuid", uuid));
 			
 		} catch (Exception e) {
