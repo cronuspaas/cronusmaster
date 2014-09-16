@@ -133,7 +133,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 			fw.write(configFileContent);
 
 			fw.close();
-			logger.info("Completed saveConfigFile with size: "
+			logger.debug("Completed saveConfigFile with size: "
 					+ configFileContent.length() + " at "
 					+ DateUtils.getNowDateTimeStr());
 

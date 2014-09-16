@@ -67,6 +67,32 @@ public class AgentResourceProvider {
 		};
 
 	}
+	
+	/**
+	 * decode and remember agent pki key for future use
+	 * @param userReq
+	 * @param task
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	private TaskResult decodeAgentPkiKey(UrlRequest userReq, Task task, Response response) throws IOException 
+	{
+		int sCode = response.getStatusCode();
+		String body = response.getResponseBody();
+		AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+		IGlobalContext gContext = userReq.getGlobalConext();
+		if (agentStatus.result != null) {
+			if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
+				String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
+				String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
+				String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
+				gContext.setValueForName(userReq.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
+			}
+		}
+		return task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
+	}
+
 
 	/**
 	 * agent processor for sync requ
@@ -87,17 +113,7 @@ public class AgentResourceProvider {
 				if (sCode == 401) {
 					// update key
 					UrlRequest req = ((SimpleHttpTask) task).getReq();
-					String body = response.getResponseBody();
-					AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-					IGlobalContext gContext = req.getGlobalConext();
-					if (agentStatus.result != null) {
-						if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
-							String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
-							String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
-							String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
-							gContext.setValueForName(req.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
-						}
-					}
+					res = decodeAgentPkiKey(req, task, response);
 				}
 				else {
 					String body = response.getResponseBody();
@@ -108,13 +124,16 @@ public class AgentResourceProvider {
 						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
 						res = task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
 					}
+					else {
+						res = task.failed(String.format("invalid agent response %s", body), null);
+					}
 				}
 				return res;
 			}
 		};
 	}
-
-
+	
+	
 	/**
 	 * this handles agent polling and agent pki authentication
 	 * @return
@@ -133,23 +152,16 @@ public class AgentResourceProvider {
 
 				int sCode = response.getStatusCode();
 				TaskResult res = null;
-				if (sCode >= 400) {
-					res = task.failed(Integer.toString(sCode), null);
+				String body = response.getResponseBody();
+				if (body.matches(successRegex)) {
+					res = task.succeeded();
 				}
-				else {
-					String body = response.getResponseBody();
-					if (body.matches(successRegex)) {
-						res = task.succeeded();
-					}
-					else if (body.matches(failureRegex)) {
-						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-						res = task.failed(String.format("%s - %s", sCode, agentStatus.errorMsg), null);
-					}
+				else if (body.matches(failureRegex)) {
+					AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+					res = task.failed(String.format("%s - %s", sCode, agentStatus.errorMsg), null);
 				}
-				if (res != null) {
-					if (res.getStatus() == TaskResultEnum.Success) {
-						res.addResultDetail("uuid", task.<String>getContextValue("uuid"));
-					}
+				if (res != null && res.getStatus() == TaskResultEnum.Success) {
+					res.addResultDetail("uuid", task.<String>getContextValue("uuid"));
 				}
 				return res;
 			}
@@ -161,23 +173,11 @@ public class AgentResourceProvider {
 					UrlRequest pollReq) throws IOException
 			{
 				int sCode = response.getStatusCode();
-				if (sCode >= 400) {
-					if (sCode == 401) {
-						// update key
-						String body = response.getResponseBody();
-						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-						IGlobalContext gContext = pollReq.getGlobalConext();
-						if (agentStatus.result != null) {
-							if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
-								String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
-								String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
-								String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
-								gContext.setValueForName(pollReq.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
-							}
-						}
-					}
-					return task.failed(Integer.toString(sCode), null);
+				if (sCode == 401) {
+					// handle pki auth failure
+					return decodeAgentPkiKey(pollReq, task, response);
 				}
+				// try to decode uuid from response for future polling
 				String body = response.getResponseBody();
 				Matcher m = r.matcher(body);
 				if (m.find()) {
@@ -186,7 +186,8 @@ public class AgentResourceProvider {
 					pollReq.addTemplateValue("uuid", uuid);
 					task.addContext("uuid", pollReq.getTemplateValue("uuid"));
 					return task.succeeded();
-				} else {
+				} 
+				else {
 					return task.failed("cannot find uuid", null);
 				}
 			}
