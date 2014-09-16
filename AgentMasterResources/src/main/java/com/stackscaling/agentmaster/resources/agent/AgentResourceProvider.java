@@ -94,7 +94,7 @@ public class AgentResourceProvider {
 	}
 	
 	static final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
-	static final String failureRegex = ".*\\\"error\\\"\\s*:\\s*(.*),.*";
+	static final String failureRegex = ".*\\\"error\\\":\\s*(\\d*).*";
 	private TaskResult processAgentResponse(Task task, Response response) throws IOException 
 	{
 		int sCode = response.getStatusCode();
