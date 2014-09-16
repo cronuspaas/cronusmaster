@@ -84,23 +84,20 @@ public class AgentResourceProvider {
 					throws IOException {
 				int sCode = response.getStatusCode();
 				TaskResult res = null;
-				if (sCode >= 400) {
-					if (sCode == 401) {
-						// update key
-						UrlRequest req = ((SimpleHttpTask) task).getReq();
-						String body = response.getResponseBody();
-						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-						IGlobalContext gContext = req.getGlobalConext();
-						if (agentStatus.result != null) {
-							if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
-								String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
-								String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
-								String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
-								gContext.setValueForName(req.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
-							}
+				if (sCode == 401) {
+					// update key
+					UrlRequest req = ((SimpleHttpTask) task).getReq();
+					String body = response.getResponseBody();
+					AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+					IGlobalContext gContext = req.getGlobalConext();
+					if (agentStatus.result != null) {
+						if (StringUtil.equalIgnoreCase("pki", ((Map<String, String>)agentStatus.result).get("scheme"))) {
+							String pkiTokenEncrypted = ((Map<String, String>)agentStatus.result).get("key");
+							String pkiTokenClear = SecurityUtil.decryptPki(pkiTokenEncrypted, VarUtils.agentPkiCert);
+							String pkiTokenBase64 = Base64.encodeBase64String(pkiTokenClear.getBytes());
+							gContext.setValueForName(req.getTemplateValue(gContext.getPivotKey()), "pkiTokenBase64", pkiTokenBase64);
 						}
 					}
-					res = task.failed(Integer.toString(sCode), null);
 				}
 				else {
 					String body = response.getResponseBody();
@@ -108,7 +105,8 @@ public class AgentResourceProvider {
 						res = task.succeeded();
 					}
 					else if (body.matches(failureRegex)) {
-						res = task.failed(body, null);
+						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+						res = task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
 					}
 				}
 				return res;
@@ -144,7 +142,8 @@ public class AgentResourceProvider {
 						res = task.succeeded();
 					}
 					else if (body.matches(failureRegex)) {
-						res = task.failed(body, null);
+						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+						res = task.failed(String.format("%s - %s", sCode, agentStatus.errorMsg), null);
 					}
 				}
 				if (res != null) {

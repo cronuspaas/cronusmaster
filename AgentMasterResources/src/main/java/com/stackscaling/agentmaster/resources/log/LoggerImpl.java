@@ -77,12 +77,20 @@ public abstract class LoggerImpl<T extends ILog> implements IJobLogger<T> {
 		try {
 			// asynchronously delete elastic search data
 			T log = this.readLog(logId);
+
+			// Index name
+			String _index = "log";
+			// Type name
+			String _type = log.getClass().getSimpleName();
+
 			if (log instanceof BaseLog) {
 				for (CommandResponse res : ((BaseLog) log).getCommandResponses()) {
-					if (res.indexMeta != null) {
-						ElasticSearchUtils.deleteDocumentFromCmdResponse(res.indexMeta);
-						LOG.debug("Completed delete elastic search document %s", res.indexMeta);
-					}
+
+					// Document ID (generated or not)
+					String _id = String.format("%s/%s/%s~%s", _index, _type, log.uuid(), res.host);
+					LOG.debug("Completed delete elastic search document %s", _id);
+					ElasticSearchUtils.deleteDocumentFromCmdResponse(_id);
+
 				}
 			}
 		} finally {

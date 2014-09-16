@@ -9,6 +9,8 @@ import java.util.Map;
 import org.lightj.session.FlowInfo;
 import org.lightj.task.TaskResultEnum;
 import org.lightj.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
@@ -24,6 +26,8 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
  *
  */
 public abstract class BaseLog implements ILog {
+	
+	static Logger logger = LoggerFactory.getLogger(BaseLog.class);
 
 	/** timestamp of the log */
 	protected String timestamp = DateUtils.getNowDateTimeDotStr();
@@ -89,10 +93,8 @@ public abstract class BaseLog implements ILog {
 
 			ElasticSearchUtils.insertDocument(_index, _type, _id, jsonStr);
 
-			commandResponse.indexMeta = String.format("%s/%s/%s", _index, _type, _id);
-
 		} catch (Exception e) {
-			commandResponse.indexMeta = e.getMessage();
+			logger.warn(e.getMessage());
 		}
 
 		// trim response length so we don't persist too much
@@ -204,7 +206,6 @@ public abstract class BaseLog implements ILog {
 		public int httpStatusCode;
 		public String responseBody;
 		public Date timeReceived;
-		public String indexMeta;
 		public String status;
 		public String logId;
 		public CommandResponse() {}
@@ -217,9 +218,6 @@ public abstract class BaseLog implements ILog {
 		}
 		public void trimBodyToLength(int length) {
 			this.responseBody = StringUtil.trimToLength(this.responseBody, length);
-		}
-		public void setIndexMeta(String indexMeta) {
-			this.indexMeta = indexMeta;
 		}
 	}
 

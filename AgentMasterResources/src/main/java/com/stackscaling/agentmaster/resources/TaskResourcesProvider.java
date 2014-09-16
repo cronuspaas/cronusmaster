@@ -232,7 +232,11 @@ public class TaskResourcesProvider {
 				String host = ((SimpleHttpTask) task).getReq().getHost();
 				if (result.getStatus() == TaskResultEnum.Success) {
 					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
-					jobLog.addCommandResponse(new CommandResponse(host, result.getStatus().name(), res.getStatusCode(), res.getResponseBody()));
+					jobLog.addCommandResponse(
+							new CommandResponse(host, 
+									result.getStatus().name(), 
+									res.getStatusCode(), 
+									res.getResponseBody()));
 				}
 				else {
 					jobLog.addCommandResponse(new CommandResponse(host, result.getStatus().name(), -1, String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
