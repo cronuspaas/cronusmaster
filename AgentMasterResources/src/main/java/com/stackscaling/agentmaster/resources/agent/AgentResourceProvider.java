@@ -92,6 +92,25 @@ public class AgentResourceProvider {
 		}
 		return task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
 	}
+	
+	static final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
+	static final String failureRegex = ".*\\\"error\\\"\\s*:\\s*(.*),.*";
+	private TaskResult processAgentResponse(Task task, Response response) throws IOException 
+	{
+		int sCode = response.getStatusCode();
+		String body = response.getResponseBody();
+		if (body.matches(successRegex)) {
+			return task.succeeded();
+		}
+		else if (body.matches(failureRegex)) {
+			AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+			return task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
+		}
+		else {
+			return task.failed(String.format("invalid agent response %s", body), null);
+		}
+
+	}
 
 
 	/**
@@ -99,9 +118,6 @@ public class AgentResourceProvider {
 	 * @return
 	 */
 	public @Bean @Scope("singleton") IHttpProcessor agentProcessor() {
-
-		final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
-		final String failureRegex = ".*\\\"error\\\"\\s*:\\s*(.*),.*";
 
 		return new IHttpProcessor() {
 
@@ -116,17 +132,7 @@ public class AgentResourceProvider {
 					res = decodeAgentPkiKey(req, task, response);
 				}
 				else {
-					String body = response.getResponseBody();
-					if (body.matches(successRegex)) {
-						res = task.succeeded();
-					}
-					else if (body.matches(failureRegex)) {
-						AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-						res = task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
-					}
-					else {
-						res = task.failed(String.format("invalid agent response %s", body), null);
-					}
+					res = processAgentResponse(task, response);
 				}
 				return res;
 			}
@@ -140,8 +146,6 @@ public class AgentResourceProvider {
 	 */
 	public @Bean @Scope("singleton") IHttpPollProcessor agentPollProcessor() {
 
-		final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
-		final String failureRegex = ".*\\\"error\\\"\\s*:\\s*(.*),.*";
 		// matching pattern "status": "/status/uuid"
 		final String uuidRegex = ".*\\\"/status/(.*?)\\\".*,";
 		final Pattern r = Pattern.compile(uuidRegex);
@@ -150,16 +154,7 @@ public class AgentResourceProvider {
 			@Override
 			public TaskResult checkPollProgress(Task task, Response response) throws IOException {
 
-				int sCode = response.getStatusCode();
-				TaskResult res = null;
-				String body = response.getResponseBody();
-				if (body.matches(successRegex)) {
-					res = task.succeeded();
-				}
-				else if (body.matches(failureRegex)) {
-					AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-					res = task.failed(String.format("%s - %s", sCode, agentStatus.errorMsg), null);
-				}
+				TaskResult res = processAgentResponse(task, response);
 				if (res != null && res.getStatus() == TaskResultEnum.Success) {
 					res.addResultDetail("uuid", task.<String>getContextValue("uuid"));
 				}
@@ -188,7 +183,7 @@ public class AgentResourceProvider {
 					return task.succeeded();
 				} 
 				else {
-					return task.failed("cannot find uuid", null);
+					return processAgentResponse(task, response);
 				}
 			}
 

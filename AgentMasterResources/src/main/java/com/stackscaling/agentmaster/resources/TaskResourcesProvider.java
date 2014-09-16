@@ -24,12 +24,12 @@ import org.lightj.task.StandaloneTaskListener;
 import org.lightj.task.Task;
 import org.lightj.task.TaskResult;
 import org.lightj.task.TaskResultEnum;
+import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.task.asynchttp.IHttpPollProcessor;
 import org.lightj.task.asynchttp.SimpleHttpResponse;
 import org.lightj.task.asynchttp.SimpleHttpTask;
 import org.lightj.task.asynchttp.UrlRequest;
 import org.lightj.task.asynchttp.UrlTemplate;
-import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.util.ConcurrentUtil;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
@@ -39,8 +39,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
 import com.ning.http.client.Response;
@@ -258,7 +256,7 @@ public class TaskResourcesProvider {
 		@Override
 		public TaskResultEnum executeOnCompleted(FlowContext ctx, Map<String, TaskResult> results)
 		{
-			jobLog.setStatus(TaskResultEnum.Success.name());
+			jobLog.setStatus(fail==0 ? TaskResultEnum.Success.name() : TaskResultEnum.Failed.name());
 			saveLog(true);
 			
 			// if job has raw log, fetch logs and add to elastic search index
