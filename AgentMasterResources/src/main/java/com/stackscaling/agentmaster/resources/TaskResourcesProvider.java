@@ -173,7 +173,6 @@ public class TaskResourcesProvider {
 	 * @author binyu
 	 *
 	 */
-	@SuppressWarnings("rawtypes")
 	public static final class LogTaskEventUpdater extends SimpleTaskEventHandler<FlowContext> {
 
 		private final ILog log;
@@ -254,7 +253,6 @@ public class TaskResourcesProvider {
 		public TaskResultEnum executeOnCompleted(FlowContext ctx, Map<String, TaskResult> results)
 		{
 			jobLog.setStatus(fail==0 ? TaskResultEnum.Success.name() : TaskResultEnum.Failed.name());
-			saveLog(true);
 			
 			// if job has raw log, fetch logs and add to elastic search index
 			if (jobLog.isHasRawLogs()) {
@@ -271,6 +269,8 @@ public class TaskResourcesProvider {
 				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
 			}
 			jobLog.setRawLogsFetched(true);
+
+			saveLog(true);
 
 			return super.executeOnCompleted(ctx, results);
 		}

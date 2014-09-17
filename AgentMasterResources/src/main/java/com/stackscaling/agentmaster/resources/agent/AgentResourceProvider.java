@@ -95,21 +95,32 @@ public class AgentResourceProvider {
 	
 	static final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
 	static final String failureRegex = ".*\\\"error\\\":\\s*(\\d*).*";
+	/**
+	 * process general agent response
+	 * @param task
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
 	private TaskResult processAgentResponse(Task task, Response response) throws IOException 
 	{
 		int sCode = response.getStatusCode();
 		String body = response.getResponseBody();
+		TaskResult res = null;
 		if (body.matches(successRegex)) {
-			return task.succeeded();
+			res = task.succeeded();
 		}
 		else if (body.matches(failureRegex)) {
 			AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
-			return task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
+			res = task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
+		}
+		else if (sCode >= 400) {
+			res = task.failed(Integer.toString(sCode), null);
 		}
 		else {
-			return task.failed(String.format("invalid agent response %s", body), null);
+			res = task.succeeded();
 		}
-
+		return res;
 	}
 
 
