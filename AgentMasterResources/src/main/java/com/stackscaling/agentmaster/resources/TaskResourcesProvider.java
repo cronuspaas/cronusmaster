@@ -177,9 +177,7 @@ public class TaskResourcesProvider {
 	public static final class LogTaskEventUpdater extends SimpleTaskEventHandler<FlowContext> {
 
 		private final ILog log;
-		private final IJobLogger logger;
-		public LogTaskEventUpdater(IJobLogger logger, ILog log) {
-			this.logger = logger;
+		public LogTaskEventUpdater(ILog log) {
 			this.log = log;
 		}
 
@@ -192,15 +190,10 @@ public class TaskResourcesProvider {
 					HashMap<String, String> values = new HashMap<String, String>();
 					values.put("rawScriptLogs", res.getResponseBody());
 					String id = String.format("%s~%s", log.uuid(), host);
+					LOG.info("%s - %s - %s", log.getClass().getSimpleName(), id, values);
 					ElasticSearchUtils.updateDocument("log", log.getClass().getSimpleName(), id, values);
 				}
 			}
-			try {
-				logger.saveLog(log);
-			} catch (IOException e) {
-				LOG.error(e.getMessage());
-			}
-			
 		}
 	}
 
@@ -237,7 +230,11 @@ public class TaskResourcesProvider {
 									res.getResponseBody()));
 				}
 				else {
-					jobLog.addCommandResponse(new CommandResponse(host, result.getStatus().name(), -1, String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
+					jobLog.addCommandResponse(
+							new CommandResponse(host, 
+									result.getStatus().name(), 
+									-1, 
+									String.format("%s - %s", result.getMsg(), StringUtil.getStackTrace(result.getStackTrace()))));
 				}
 				switch (result.getStatus()) {
 				case Success:
@@ -269,7 +266,7 @@ public class TaskResourcesProvider {
 
 				ExecutableTask task = HttpTaskBuilder.buildTask(taskReq);
 				StandaloneTaskListener listener = new StandaloneTaskListener();
-				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(logger, jobLog));
+				listener.setDelegateHandler(new TaskResourcesProvider.LogTaskEventUpdater(jobLog));
 				
 				new StandaloneTaskExecutor(new BatchOption(), listener, task).execute();
 			}
