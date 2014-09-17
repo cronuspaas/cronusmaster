@@ -93,7 +93,7 @@ public class AgentResourceProvider {
 		return task.failed(String.format("%s - %s", sCode, agentStatus!=null ? agentStatus.errorMsg : ""), null);
 	}
 	
-	static final String successRegex = ".*\\\"progress\\\"\\s*:\\s*100.*";
+	static final String successRegex = ".*\\\"progress\\\":\\s*(\\d*).*";
 	static final String failureRegex = ".*\\\"error\\\":\\s*(\\d*).*";
 	/**
 	 * process general agent response
