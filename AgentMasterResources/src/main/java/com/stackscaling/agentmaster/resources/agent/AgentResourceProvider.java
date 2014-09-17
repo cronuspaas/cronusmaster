@@ -108,7 +108,10 @@ public class AgentResourceProvider {
 		String body = response.getResponseBody();
 		TaskResult res = null;
 		if (body.matches(successRegex)) {
-			res = task.succeeded();
+			AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
+			if (agentStatus.progress == 100) {
+				res = task.succeeded();
+			}
 		}
 		else if (body.matches(failureRegex)) {
 			AgentStatus agentStatus = JsonUtil.decode(body, AgentStatus.class);
