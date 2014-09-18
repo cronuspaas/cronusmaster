@@ -17,8 +17,6 @@ test-result
 server.pid
 modules
 bin
-ebay.log
-ebay.log.*
 *.jsonlog.txt
 *.jsonlog
 *.jsonlog.nonconcise.txt

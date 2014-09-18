@@ -6,7 +6,7 @@
     "exe_retry" : "3",
     "mon_retry" : "3",
     "thrStrategy" : "UNLIMITED",
-    "var_values" : "{\"moduleName\":\"sysmetrics\",\"package\":\"http://www.stackscaling.com/agentrepo/sysmetrics-0.0.1.all.cronus\"}"
+    "var_values" : "{\"moduleName\":\"sysmetrics\",\"package\":\"http://www.stackscaling.com/agentrepo/sysmetricsmodule-0.0.1.all.cronus\"}"
   },
   "commandKey" : "Agent_Deploy_Module",
   "nodeGroupKey" : "LOCALHOST"
