@@ -6,8 +6,14 @@
 
 <h3 style="text-transform: uppercase">Log Analysis with Response Aggregation</h3>		 
 
-<a target=_self href="/search/searchCmdLog" class="btn btn-small btn-primary">FullText Search Logs</a> 
-
+<div>
+<a target=_self href="/search/searchCmdLog" class="btn btn-small btn-primary">Search Logs</a>
+#{if (hasRunning)}
+	<span align="right">
+		<span class="label label-info">Refresh</span><input type="checkbox" id="reloadCB">
+	</span>
+#{/if}
+</div>
 	<div  id="agent-list-all-row">
 		<br/>
 			#{table-declare tableName:'log-list-all' /}
@@ -58,9 +64,6 @@
 						#{if (logObj.fetched == "true")} <a target=_self href="/search/searchCmdLog?logId=${logObj.name}" >
 						<i class="fa fa-file-text-o fa-lg"></i></a> #{/if}
 					</td>  
-					<!--<td>
-						#{if (logObj.fetch == "true")} <a href="/logs/fetchRawLogs/${logObj.name}" title="Fetch raw logs"><i class="fa fa-download fa-lg"></i></a> #{/if}   
-					</td>-->  
 					<td>   
 						<a target=_self href="/commands/wizard?dataId=${logObj.name}&dataType=${logObj.type}">
 						<i class="fa fa-magic fa-lg"></i></a> 
@@ -86,7 +89,29 @@
 	</div>
 
 <script type="text/javascript">
+
 $('[rel=tooltip]').tooltip({placement : 'right'});
+
+var reloadState = !(window.location.hash=="#norefresh")
+$.fn.bootstrapSwitch.defaults.size = 'small';
+$("[id='reloadCB']").on('switchChange.bootstrapSwitch',  function(event, state) {
+	autoRefresh(state);
+});
+$("[id='reloadCB']").on('init.bootstrapSwitch', function(event, state) {
+	autoRefresh(reloadState);
+});
+$("[id='reloadCB']").bootstrapSwitch('state', reloadState, false);
+
+function autoRefresh(state) {
+    if (state) {
+        window.location.replace("#");
+        reloading=setTimeout("window.location.reload();", 5000);
+    } else {
+        window.location.replace("#norefresh");
+        clearTimeout(reloading);
+    }
+}
+
 </script> 
 
 #{include 'tags/refresh.html'/}

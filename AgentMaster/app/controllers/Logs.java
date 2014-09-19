@@ -78,30 +78,30 @@ public class Logs extends Controller {
 		List<String> logs = logger.listLogs();
 		ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 		
-		int idx = 0;
-		for (String logName : logs) {
+		boolean hasRunning = false;
+		for (int idx = 0, size = Math.min(PlayVarUtils.listLogSize, logs.size()); 
+				idx < size; idx++) 
+		{
+			String logName = logs.get(idx);
 			Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
 			HashMap<String, String> log = new HashMap<String, String>();
 			log.putAll(logMeta);
 			log.put("name", logName);
 			log.put("type", DataType.CMDLOG.name());
-			if (idx++ <= PlayVarUtils.listLogSize) {
-				ILog logImpl = logger.readLog(logName);
-				log.put("status", logImpl.getStatus());
-				log.put("statusdetail", logImpl.getStatusDetail());
-				String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
-				log.put("userData", userData);
-				log.put("fetched", "true");
-			}
-			else {
-				log.put("status", "-");
-				log.put("statusdetail", "-");
-				log.put("userData", "...");
-//				log.put("userDataConcise", "...");
-				log.put("fetched", "false");
-			}
+			ILog logImpl = logger.readLog(logName);
+			log.put("status", logImpl.getStatus());
+			hasRunning = (hasRunning || StringUtil.equalIgnoreCase("Running", logImpl.getStatus()));
+			log.put("statusdetail", logImpl.getStatusDetail());
+			String userData = DataUtil.getOptionValue(logImpl.getUserData(), "var_values", "{}").trim();
+			log.put("userData", userData);
+			log.put("fetched", "true");
 			logFiles.add(log);
 		}
+		
+		// insert at 0 idx dummy record for running state, removed later
+		HashMap<String, String> runningState = new HashMap<String, String>();
+		runningState.put("hasRunning", Boolean.toString(hasRunning));
+		logFiles.add(0, runningState);
 		return logFiles;
 	}
 
@@ -118,7 +118,9 @@ public class Logs extends Controller {
 
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 			List<Map<String, String>> logFiles = cmdLogsInternal();
-			render(page, topnav, logFiles, lastRefreshed, alert);
+			boolean hasRunning = Boolean.parseBoolean(logFiles.get(0).get("hasRunning"));
+			logFiles.remove(0);
+			render(page, topnav, logFiles, lastRefreshed, hasRunning, alert);
 
 		} catch (Throwable t) {
 			t.printStackTrace();
