@@ -4,13 +4,13 @@
 
 #{data-table-init tableName:'log-list-all', defaultSize:'50', , sortSpec:'[]' /}
 
-<h3 style="text-transform: uppercase">Log Analysis with Response Aggregation</h3>		 
+<h3 style="text-transform: uppercase">Command Logs</h3>		 
 
 <div>
-<a target=_self href="/search/searchCmdLog" class="btn btn-small btn-primary">Search Logs</a>
+<span><a target=_self href="/search/searchCmdLog" class="btn btn-small btn-primary">Search Logs</a></span>
 #{if (hasRunning)}
-	<span align="right">
-		<span class="label label-info">Refresh</span><input type="checkbox" id="reloadCB">
+	<span style="float:right">
+		<span class="label label-info">Auto Refresh <input type="checkbox" id="reloadCB"></span>
 	</span>
 #{/if}
 </div>
@@ -93,7 +93,7 @@
 $('[rel=tooltip]').tooltip({placement : 'right'});
 
 var reloadState = !(window.location.hash=="#norefresh")
-$.fn.bootstrapSwitch.defaults.size = 'small';
+$.fn.bootstrapSwitch.defaults.size = 'mini';
 $("[id='reloadCB']").on('switchChange.bootstrapSwitch',  function(event, state) {
 	autoRefresh(state);
 });
