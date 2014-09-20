@@ -1,0 +1,13 @@
+{
+  "name" : "20140919214659",
+  "displayName" : "restart_local_pyserver",
+  "userData" : {
+    "exe_retry" : "3",
+    "mon_retry" : "3",
+    "thrStrategy" : "UNLIMITED",
+    "var_values" : "{\"serviceName\":\"pyserver\",\"action\":\"restart\"}",
+    "mon_int" : "10"
+  },
+  "commandKey" : "Agent_Service_LCMAction",
+  "nodeGroupKey" : "LOCALHOST"
+}
