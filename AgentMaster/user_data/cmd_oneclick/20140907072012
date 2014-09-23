@@ -6,7 +6,7 @@
     "exe_retry" : "3",
     "mon_retry" : "3",
     "thrStrategy" : "UNLIMITED",
-    "var_values" : "{  \"serviceName\" : \"perlserver\",  \"manifestName\" : \"1.0.0\",  \"package\" : [\"http://www.stackscaling.com/agentrepo/perlserver-1.0.0.unix.cronus\"] }"
+    "var_values" : "{  \"serviceName\" : \"perlserver\",  \"manifestName\" : \"1.0.0\",  \"package\" : [\"http://www.stackscaling.com/agentrepo/perlserver-1.0.0.all.cronus\"] }"
   },
   "commandKey" : "Agent_Deploy_Service",
   "nodeGroupKey" : "LOCALHOST"

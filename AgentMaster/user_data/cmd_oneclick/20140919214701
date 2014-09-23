@@ -1,12 +1,12 @@
 {
-  "name" : "20140907071619",
-  "displayName" : "clean_local_perlserver",
+  "name" : "20140919214701",
+  "displayName" : "clean_local_pyserver",
   "userData" : {
-    "mon_int" : "10",
     "exe_retry" : "3",
     "mon_retry" : "3",
     "thrStrategy" : "UNLIMITED",
-    "var_values" : "{  \"serviceName\" : \"perlserver\" }"
+    "var_values" : "{\"serviceName\":\"pyserver\"}",
+    "mon_int" : "10"
   },
   "commandKey" : "Agent_Cleanup_Service",
   "nodeGroupKey" : "LOCALHOST"
