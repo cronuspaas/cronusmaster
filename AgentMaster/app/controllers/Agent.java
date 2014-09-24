@@ -17,6 +17,9 @@ limitations under the License.
  */
 package controllers;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,14 +39,17 @@ import org.lightj.task.StandaloneTaskListener;
 import org.lightj.util.ConcurrentUtil;
 import org.lightj.util.StringUtil;
 
+import play.data.Upload;
+import play.libs.MimeTypes;
 import play.mvc.Controller;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.BlockingTaskResultCollector;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider.AgentStatus;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
+import com.stackscaling.agentmaster.resources.cronuspkg.CronusPkgImpl;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
@@ -55,29 +61,12 @@ import com.stackscaling.agentmaster.resources.utils.DateUtils;
  */
 public class Agent extends Controller {
 
-	static Comparator<Map<String, String>> cmdComparator = new Comparator<Map<String, String>>() {
-
-		@Override
-		public int compare(Map<String, String> o1, Map<String, String> o2) {
-			return o1.get("name").compareTo(o2.get("name"));
-
-		}
-	};
-
-	static Comparator<Map<String, String>> oneclickComparator = new Comparator<Map<String, String>>() {
-
-		@Override
-		public int compare(Map<String, String> o1, Map<String, String> o2) {
-			return o1.get("displayName").compareTo(o2.get("displayName"));
-
-		}
-	};
-
 	// this command definition must exist in user_data/cmd_sys
 	private static final String KEY_CMD_SERVICES_INFO = "_Agent_Services_Info";
 
 	/**
 	 * services summary page
+	 * 
 	 * @param ngName
 	 * @throws Exception
 	 */
@@ -88,15 +77,17 @@ public class Agent extends Controller {
 
 		try {
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
-			Set<String> ngs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups().keySet();
+			Set<String> ngs = UserDataProvider
+					.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups()
+					.keySet();
 			List<Map<String, String>> hostServices;
 			if (StringUtil.isNullOrEmpty(ngName)) {
 				hostServices = Collections.emptyList();
 			} else {
-				hostServices = servicesInternal(ngName); 
+				hostServices = servicesInternal(ngName);
 			}
 			render(page, topnav, ngs, hostServices, ngName, lastRefreshed);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
@@ -104,12 +95,46 @@ public class Agent extends Controller {
 
 	}
 
+    public static void uploadPage() {
+    }
+
+    /**
+     * Upload a cronus package
+     * @param data
+     */
+    public static void uploadPkg(Upload data) 
+    {
+    	try {
+		
+    		UserDataProvider.getCronusPkgData().save(data.getFileName(), data.asStream());
+
+    	} catch (IOException e) {
+			error(e);
+		}
+    }
+    
+
+    /**
+     * download a cronus package
+     * @param pkgName
+     */
+    public static void downloadPkg(String pkgName) {
+    	try {
+
+        	response.setContentTypeIfNotSet("application/octet-stream");
+    		renderBinary(UserDataProvider.getCronusPkgData().getDownloadStream(pkgName));
+
+    	} catch (Exception e) {
+    		error(e);
+    	}
+    }
 	/**
 	 * services summary
 	 * 
 	 * @throws Exception
 	 */
-	private static List<Map<String, String>> servicesInternal(String ngName) throws Exception {
+	private static List<Map<String, String>> servicesInternal(String ngName)
+			throws Exception {
 		List<Map<String, String>> hostServices = new ArrayList<Map<String, String>>();
 		ICommandData cmdDao = UserDataProvider.getSysCommandConfigs();
 		ICommand cmd = cmdDao.getCommandByName(KEY_CMD_SERVICES_INFO);

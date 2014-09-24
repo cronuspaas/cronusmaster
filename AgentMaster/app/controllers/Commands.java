@@ -47,7 +47,7 @@ import resources.utils.JsonResponse;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogTaskEventHandler;
 import com.stackscaling.agentmaster.resources.UserDataProvider;

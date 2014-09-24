@@ -45,7 +45,7 @@ import play.mvc.Controller;
 import resources.utils.FileIoUtils;
 import resources.utils.JsonResponse;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider;

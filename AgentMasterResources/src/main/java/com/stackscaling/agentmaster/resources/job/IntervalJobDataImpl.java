@@ -7,8 +7,8 @@ import java.util.List;
 import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 
 /**
  * base class of interval job
@@ -18,7 +18,7 @@ import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 public abstract class IntervalJobDataImpl implements IntervalJobData {
 
 	@Autowired(required=true)
-	private IUserDataDao userDataDao;
+	protected IUserDataDao userDataDao;
 
 	/** type of job */
 	protected DataType jobType;
@@ -65,9 +65,6 @@ public abstract class IntervalJobDataImpl implements IntervalJobData {
 	}
 
 	@Override
-	public IntervalJob getJobById(String jobId) throws IOException {
-		String jobContent = userDataDao.readData(jobType, jobId);
-		return (IntervalJob) JsonUtil.decode(jobContent, jobType.getDoKlass());
-	}
+	public abstract IntervalJob getJobById(String jobId) throws IOException;
 
 }

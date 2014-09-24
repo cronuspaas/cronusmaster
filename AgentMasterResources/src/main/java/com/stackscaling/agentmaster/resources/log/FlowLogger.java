@@ -1,6 +1,6 @@
 package com.stackscaling.agentmaster.resources.log;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 
 public class FlowLogger extends LoggerImpl<FlowLog> {
 

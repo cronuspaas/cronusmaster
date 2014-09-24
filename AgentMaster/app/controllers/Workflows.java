@@ -34,7 +34,7 @@ import org.lightj.util.MapListPrimitiveJsonParser;
 
 import play.mvc.Controller;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogFlowEventListener;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog.UserWorkflow;

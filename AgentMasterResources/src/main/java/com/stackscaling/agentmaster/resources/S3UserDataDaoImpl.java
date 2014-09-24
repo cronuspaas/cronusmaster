@@ -161,4 +161,18 @@ public class S3UserDataDaoImpl implements IUserDataDao {
 		return buf.toString();
 	}
 
+	@Override
+	public InputStream readStream(DataType type, String name)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveStream(DataType type, String name, InputStream dataStream)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

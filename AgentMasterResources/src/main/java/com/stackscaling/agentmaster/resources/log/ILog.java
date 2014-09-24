@@ -2,7 +2,7 @@ package com.stackscaling.agentmaster.resources.log;
 
 import java.util.Map;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 
 /**

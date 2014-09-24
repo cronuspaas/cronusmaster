@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.command.CommandDataImpl;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
 import com.stackscaling.agentmaster.resources.command.SysCommandDataImpl;
+import com.stackscaling.agentmaster.resources.cronuspkg.CronusPkgDataImpl;
+import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkgData;
 import com.stackscaling.agentmaster.resources.job.CmdIntervalJobData;
 import com.stackscaling.agentmaster.resources.job.FlowIntervalJobData;
 import com.stackscaling.agentmaster.resources.job.IntervalJobData;
@@ -100,12 +101,21 @@ public class UserDataProvider {
 	public @Bean @Scope("singleton") INodeGroupData adhocNodeGroup() {
 		return new AdhocNodeGroupDataImpl();
 	}
+	
+	
+	/**
+	 * cronus package dao
+	 * @return
+	 */
+	public @Bean @Scope("singleton") ICronusPkgData cronusPkgData() {
+		return new CronusPkgDataImpl();
+	}
 
 	/**
 	 * job logger
 	 * @return
 	 */
-	public @Bean @Scope("singleton") IJobLogger jobLogger() {
+	public @Bean @Scope("singleton") JobLogger jobLogger() {
 		return new JobLogger();
 	}
 
@@ -113,7 +123,7 @@ public class UserDataProvider {
 	 * flow logger
 	 * @return
 	 */
-	public @Bean @Scope("singleton") IJobLogger flowLogger() {
+	public @Bean @Scope("singleton") FlowLogger flowLogger() {
 		return new FlowLogger();
 	}
 
@@ -121,7 +131,7 @@ public class UserDataProvider {
 	 * cmd logger
 	 * @return
 	 */
-	public @Bean @Scope("singleton") IJobLogger cmdLogger() {
+	public @Bean @Scope("singleton") CmdLogger cmdLogger() {
 		return new CmdLogger();
 	}
 
@@ -222,6 +232,7 @@ public class UserDataProvider {
 	 * get job logger
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static IJobLogger getJobLoggerOfType(DataType type) {
 		IJobLogger logger = null;
 		switch(type) {
@@ -275,6 +286,14 @@ public class UserDataProvider {
 	public static IWorkflowData getWorkflowConfigs() {
 		return SpringContextUtil.getBean("resources", IWorkflowData.class);
 	}
+	
+	/**
+	 * cronus package dao
+	 * @return
+	 */
+	public static ICronusPkgData getCronusPkgData() {
+		return SpringContextUtil.getBean("resources", "cronusPkgData", ICronusPkgData.class);
+	}
 
 	/**
 	 * reload all configs
@@ -286,6 +305,7 @@ public class UserDataProvider {
 		getOneClickCommandConfigs().load();
 		getSysCommandConfigs().load();
 		getWorkflowConfigs().load();
+		getCronusPkgData().load();
 	}
 
 }

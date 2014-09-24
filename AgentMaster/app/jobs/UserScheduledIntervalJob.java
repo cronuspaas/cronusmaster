@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import play.jobs.Every;
 import play.jobs.Job;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.job.IntervalJob;
 import com.stackscaling.agentmaster.resources.job.IntervalJobData;

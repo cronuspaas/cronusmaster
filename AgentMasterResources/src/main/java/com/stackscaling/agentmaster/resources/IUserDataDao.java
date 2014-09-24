@@ -1,20 +1,8 @@
 package com.stackscaling.agentmaster.resources;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
-
-import com.stackscaling.agentmaster.resources.command.CommandImpl;
-import com.stackscaling.agentmaster.resources.command.SysCommandDataImpl;
-import com.stackscaling.agentmaster.resources.job.CmdIntervalJobImpl;
-import com.stackscaling.agentmaster.resources.job.FlowIntervalJobImpl;
-import com.stackscaling.agentmaster.resources.log.CmdLog;
-import com.stackscaling.agentmaster.resources.log.FlowLog;
-import com.stackscaling.agentmaster.resources.log.JobLog;
-import com.stackscaling.agentmaster.resources.nodegroup.AdhocNodeGroupDataImpl;
-import com.stackscaling.agentmaster.resources.nodegroup.NodeGroupImpl;
-import com.stackscaling.agentmaster.resources.oneclickcommand.OneClickCommandImpl;
-import com.stackscaling.agentmaster.resources.script.ScriptImpl;
-import com.stackscaling.agentmaster.resources.workflow.WorkflowMetaImpl;
 
 /**
  * manage persistence and CRUD of user configs
@@ -26,58 +14,6 @@ import com.stackscaling.agentmaster.resources.workflow.WorkflowMetaImpl;
 public interface IUserDataDao {
 
 	/**
-	 * different type of data
-	 *
-	 * @author binyu
-	 *
-	 */
-	public enum DataType
-	{
-		// nodes
-		NODEGROUP("Predefined NodeGroup", "user_data/predefined_nodegroups", NodeGroupImpl.class),
-		ADHOCNODEGROUP("Adhoc NodeGroup", "user_data/adhoc_nodegroups", AdhocNodeGroupDataImpl.class),
-		// cmd
-		COMMAND("Command", "user_data/commands", CommandImpl.class),
-		SYSCMD("System Commands", "user_data/cmd_sys", CommandImpl.class),
-		CMD_ONECLICK("One Click Command", "user_data/cmd_oneclick", OneClickCommandImpl.class),
-		// wf
-		WORKFLOW("Workflow", "user_data/workflows", WorkflowMetaImpl.class),
-		// log
-		JOBLOG("Job Logs", "user_data/job_logs", JobLog.class),
-		FLOWLOG("Workflow Logs", "user_data/flow_logs", FlowLog.class),
-		CMDLOG("Command Logs", "user_data/cmd_logs", CmdLog.class),
-		// job
-		CMDJOB("Command Job", "user_data/cmd_jobs", CmdIntervalJobImpl.class),
-		FLOWJOB("Workflow Job", "user_data/wf_jobs", FlowIntervalJobImpl.class),
-		// script
-		SCRIPT("Predefined Script", "user_data/predefined_scripts", ScriptImpl.class),
-		;
-
-		private final String path;
-		private final Class doKlass;
-		private String uuid;
-		private final String label;
-		DataType(String label, String path, Class doKlass) {
-			this.label = label;
-			this.path = path;
-			this.doKlass = doKlass;
-		}
-		public String getPath() {
-			return path;
-		}
-		public Class getDoKlass() {
-			return doKlass;
-		}
-		public String getUuid() {
-			return uuid==null ? name() : uuid;
-		}
-		public String getLabel() {
-			return label;
-		}
-	};
-
-
-	/**
 	 * read config file of type
 	 * @param type
 	 * @return
@@ -86,12 +22,30 @@ public interface IUserDataDao {
 	public String readData(DataType type, String name) throws IOException;
 
 	/**
+	 * render input stream for user data
+	 * @param type
+	 * @param name
+	 * @return
+	 * @throws IOException
+	 */
+	public InputStream readStream(DataType type, String name) throws IOException;
+	
+	/**
 	 * save config file of type
 	 * @param type
 	 * @param content
 	 * @throws IOException
 	 */
 	public void saveData(DataType type, String name, String content) throws IOException;
+
+	/**
+	 * save config file from input stream
+	 * @param type
+	 * @param name
+	 * @param dataStream
+	 * @throws IOException
+	 */
+	public void saveStream(DataType type, String name, InputStream dataStream) throws IOException;
 
 	/**
 	 * delete config file
@@ -107,6 +61,6 @@ public interface IUserDataDao {
 	 * @param type
 	 * @return
 	 */
-	public List<String> listNames(DataType type);
+	public List<String> listNames(DataType type) throws IOException;
 
 }

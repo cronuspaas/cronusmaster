@@ -1,6 +1,6 @@
 package com.stackscaling.agentmaster.resources.command;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 
 public class SysCommandDataImpl extends BaseCommandData {
 

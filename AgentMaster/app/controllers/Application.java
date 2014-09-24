@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 import play.mvc.Controller;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 
 /**

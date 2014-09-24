@@ -8,8 +8,8 @@ import java.util.Map;
 import org.lightj.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 public class AdhocNodeGroupDataImpl implements INodeGroupData {

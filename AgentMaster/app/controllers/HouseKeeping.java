@@ -10,7 +10,7 @@ import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;

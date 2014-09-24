@@ -3,8 +3,8 @@ package com.stackscaling.agentmaster.resources.nodegroup;
 import java.io.IOException;
 import java.util.Map;
 
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserData;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 
 /**
  * command configs

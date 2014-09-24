@@ -2,15 +2,21 @@ package com.stackscaling.agentmaster.resources;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +39,9 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	 * list files
 	 * @param dataType
 	 * @return
+	 * @throws IOException 
 	 */
-	public List<String> listNames(DataType dataType)
+	public List<String> listNames(DataType dataType) throws IOException
 	{
 
 		File dir = VarUtils.vf.getRealFileFromRelativePath(dataType.getPath());
@@ -51,9 +58,13 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 					}
 
 		}, null);
+		
 		List<String> fileNames = new ArrayList<String>();
 		for (File file : files) {
 			fileNames.add(file.getName());
+			BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+			System.out.println("creationTime: " + attr.creationTime());
+			System.out.println("size: " + attr.size());			
 		}
 		Collections.sort(fileNames);
 		Collections.reverse(fileNames);
@@ -119,22 +130,16 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	public void saveData(DataType dataType, String fileName, String configFileContent) throws IOException
 	{
 
-		if (dataType == null) {
-			logger.error("ERROR reading config: configFile is empty.");
-		}
-
-		// in test
 		String configFileLocation = getFilePath(dataType, fileName);
 		FileWriter fw = null;
 		try {
 
-			boolean append = false;
-			fw = new FileWriter(VarUtils.vf.getRealFileFromRelativePath(configFileLocation), append);
+			fw = new FileWriter(VarUtils.vf.getRealFileFromRelativePath(configFileLocation), false);
 			fw.write(configFileContent);
 
 			fw.close();
-			logger.debug("Completed saveConfigFile with size: "
-					+ configFileContent.length() + " at "
+			logger.debug("Completed saveConfigFile " 
+					+ configFileLocation + " at "
 					+ DateUtils.getNowDateTimeStr());
 
 		}
@@ -158,13 +163,56 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	public void deleteData(DataType type, String fileName)
 			throws IOException {
 
-		// in test
 		String configFileLocation = getFilePath(type, fileName);
 
 		VarUtils.vf.getRealFileFromRelativePath(configFileLocation).delete();
-		logger.info("Deleted file : "
-					+ type + "/" + fileName + " at "
+		logger.info("Deleted file : " 
+					+ configFileLocation + " at "
 					+ DateUtils.getNowDateTimeStr());
+
+	}
+
+
+	@Override
+	public InputStream readStream(DataType type, String name)
+			throws IOException 
+	{
+		String configFileLocation = getFilePath(type, name);
+		File configFile = VarUtils.vf.getRealFileFromRelativePath(configFileLocation);
+		if (configFile.exists()) {
+			return new FileInputStream(configFile);
+		} else {
+			throw new IllegalArgumentException(name + " not found");
+		}
+	}
+
+	@Override
+	public void saveStream(DataType type, String name, InputStream dataStream)
+			throws IOException
+	{
+
+		String configFileLocation = getFilePath(type, name);
+		FileOutputStream output = null;
+		try {
+
+			output = new FileOutputStream(VarUtils.vf.getRealFileFromRelativePath(configFileLocation));
+			IOUtils.copy(dataStream, output);
+
+			output.close();
+			logger.debug("Completed saveConfigFile " 
+					+ configFileLocation + " at "
+					+ DateUtils.getNowDateTimeStr());
+
+		}
+		finally {
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+				}
+			}
+		}
 
 	}
 

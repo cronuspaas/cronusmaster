@@ -34,8 +34,8 @@ import org.lightj.util.StringUtil;
 import play.mvc.Controller;
 import resources.utils.JsonResponse;
 
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.command.CommandImpl;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
@@ -200,11 +200,14 @@ public class Config extends Controller {
 
 		try {
 			if (dataType == null) {
-				renderJSON("configFile is NULL. Error occured in editConfig");
+				throw new IllegalArgumentException("configFile is NULL. Error occured in editConfig");
 			}
 			
 			if (StringUtil.equalIgnoreCase(NEW_CONFIG_NAME, configName)) {
 				// new config
+				if (StringUtil.isNullOrEmptyAfterTrim(configNameNew)) {
+					throw new IllegalArgumentException("Invalid configuration name, cannot be empty");
+				}
 				configName = configNameNew;
 			}
 

@@ -4,7 +4,7 @@ import org.lightj.session.FlowSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
+import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogFlowEventListener;
 import com.stackscaling.agentmaster.resources.UserDataProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog.UserWorkflow;

@@ -42,7 +42,6 @@ import org.springframework.context.annotation.Scope;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfigBean;
 import com.ning.http.client.Response;
-import com.stackscaling.agentmaster.resources.IUserDataDao.DataType;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
 import com.stackscaling.agentmaster.resources.log.BaseLog.CommandResponse;
@@ -84,6 +83,7 @@ public class TaskResourcesProvider {
 				IFlowStep flowStep, StepTransition stepTransition) {
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handleFlowEvent(FlowEvent event, FlowSession session,
 				String msg) {
@@ -279,6 +279,7 @@ public class TaskResourcesProvider {
 		 * save log
 		 * @param isResult
 		 */
+		@SuppressWarnings("unchecked")
 		public void saveLog(boolean isResult) {
 			jobLog.setStatusDetail(suc, fail, other);
 			if (isResult || VarUtils.isLogProgEnabled) {

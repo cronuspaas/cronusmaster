@@ -16,6 +16,7 @@
 					<th>NodeGroup</th>
 					<th class=span4>User Data</th>
 					<th>Run</th>
+					<th>Copy</th>
 					<th>Edit</th>
 					<th>Delete</th>
 				</tr>
@@ -37,6 +38,11 @@
 					<td>
 					<a href="/commands/oneclickRun?dataId=${obj.name}" target=_self>
 					<i class="fa fa-magic fa-lg"></i></a>
+					</td>
+					<td>   
+						<a target=_self href="/config/editConfig/cmd_oneclick/create/${obj.name}?topage=Commands.oneclick&nav=${topnav}">
+						<i class="fa fa-copy fa-lg"></i></a>	
+						</a>
 					</td>
 					<td>   
 						<a target=_self href="/config/editConfig/cmd_oneclick/update/${obj.name}?topage=Commands.oneclick&nav=${topnav}">

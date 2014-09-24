@@ -67,10 +67,12 @@ GET		/jobs/wizard										Jobs.wizard
 POST	/jobs/saveJob										Jobs.saveJob
 
 # agent pages
-GET		/agent/services									Agent.services
+GET		/agent/services								Agent.services
+POST	/agent/uploadPkg									Agent.uploadPkg
+GET     /agent/downloadPkg/{pkgName}			         	Agent.downloadPkg
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+GET     /public/                                	staticDir:public
 
 # elastic search
 GET		/search/searchCmdLog								Search.searchCmdLog
