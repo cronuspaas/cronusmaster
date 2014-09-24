@@ -1,6 +1,6 @@
 {
   "name" : "20140919214654",
-  "displayName" : "deploy_local_pyserver",
+  "displayName" : "deploy_pyserver",
   "userData" : {
     "exe_retry" : "3",
     "mon_retry" : "3",

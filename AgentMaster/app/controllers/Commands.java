@@ -608,7 +608,9 @@ public class Commands extends Controller {
 			jobLog.setStatus(TaskResultEnum.Running.name());
 			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
-			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
+			if (reqTemplate.getUrlTemplate().hasVariableKey("correlationId")) {
+				reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
+			}
 			
 			// fire task
 			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);

@@ -1,6 +1,6 @@
 {
   "name" : "20140919214701",
-  "displayName" : "clean_local_pyserver",
+  "displayName" : "delete_pyserver",
   "userData" : {
     "exe_retry" : "3",
     "mon_retry" : "3",

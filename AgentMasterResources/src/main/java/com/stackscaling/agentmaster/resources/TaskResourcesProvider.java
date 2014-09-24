@@ -189,7 +189,7 @@ public class TaskResourcesProvider {
 					HashMap<String, String> values = new HashMap<String, String>();
 					values.put("rawScriptLogs", res.getResponseBody());
 					String id = String.format("%s~%s", log.uuid(), host);
-					LOG.info("%s - %s - %s", log.getClass().getSimpleName(), id, values);
+					LOG.info(String.format("%s - %s - %s", log.getClass().getSimpleName(), id, values));
 					ElasticSearchUtils.updateDocument("log", log.getClass().getSimpleName(), id, values);
 				}
 			}
