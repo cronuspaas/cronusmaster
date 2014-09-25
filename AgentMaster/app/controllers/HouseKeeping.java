@@ -11,6 +11,7 @@ import org.lightj.util.StringUtil;
 import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;
@@ -33,30 +34,31 @@ public class HouseKeeping extends Controller {
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			IJobLogger jobLogger = UserDataProviderFactory.getJobLoggerOfType(dType);
-			List<String> logFiles = jobLogger.listLogs();
+			List<UserDataMeta> logFiles = jobLogger.listLogs();
 			ArrayList<String> deletedFiles = new ArrayList<String>();
 			if (StringUtil.equalIgnoreCase("time", retainFactor)) {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, 0-numToKeep);
 				long ts = cal.getTimeInMillis();
-				for (String logFile : logFiles) {
-					long fileTs = Long.parseLong(BaseLog.getLogMetaFromName(logFile).get("timeStamp"));
+				for (UserDataMeta logFile : logFiles) {
+					long fileTs = Long.parseLong(
+							BaseLog.getLogMetaFromName(logFile.getName()).get("timeStamp"));
 					if (fileTs < ts) {
-						jobLogger.deleteLog(logFile);
-						deletedFiles.add(logFile);
+						jobLogger.deleteLog(logFile.getName());
+						deletedFiles.add(logFile.getName());
 					}
 				}
 			}
 			else if (StringUtil.equalIgnoreCase("name", retainFactor)) {
 				HashMap<String, AtomicInteger> nameCount = new HashMap<String, AtomicInteger>();
-				for (String logFile : logFiles) {
-					String lastToken = BaseLog.getLogMetaFromName(logFile).get("lastToken");
+				for (UserDataMeta logFile : logFiles) {
+					String lastToken = BaseLog.getLogMetaFromName(logFile.getName()).get("lastToken");
 					if (!nameCount.containsKey(lastToken)) {
 						nameCount.put(lastToken, new AtomicInteger(0));
 					}
 					if (nameCount.get(lastToken).incrementAndGet() > numToKeep) {
-						jobLogger.deleteLog(logFile);
-						deletedFiles.add(logFile);
+						jobLogger.deleteLog(logFile.getName());
+						deletedFiles.add(logFile.getName());
 					}
 				}
 			}

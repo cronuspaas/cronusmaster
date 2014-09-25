@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
@@ -73,18 +74,19 @@ public abstract class ScriptDataImpl implements IScriptData {
 
 		HashMap<String, IScript> scripts = new HashMap<String, IScript>();
 
-		List<String> ngNames = userConfigs.listNames(dataType);
-		for (String ngName : ngNames) {
-			String content = userConfigs.readData(DataType.SCRIPT, ngName);
-			ScriptImpl scriptImpl = new ScriptImpl(ngName, DataType.SCRIPT.name(), content);
-			scripts.put(ngName, scriptImpl);
+		List<UserDataMeta> scriptMetas = userConfigs.listNames(dataType);
+		for (UserDataMeta scriptMeta : scriptMetas) {
+			String content = userConfigs.readData(DataType.SCRIPT, scriptMeta.getName());
+			ScriptImpl scriptImpl = new ScriptImpl(scriptMeta.getName(), DataType.SCRIPT.name(), content);
+			scriptImpl.setUserDataMeta(scriptMeta);
+			scripts.put(scriptMeta.getName(), scriptImpl);
 		}
 
 		LOG.info("Completed scripts loading script count: "
 				+ scripts.size() + " at " + DateUtils.getNowDateTimeStr());
 
 		this.scripts = scripts;
-		this.scriptCount = ngNames.size();
+		this.scriptCount = scriptMetas.size();
 	}
 
 	@Override

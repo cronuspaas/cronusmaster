@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.log.BaseLog.CommandResponse;
 import com.stackscaling.agentmaster.resources.utils.ElasticSearchUtils;
 
@@ -67,7 +68,7 @@ public abstract class LoggerImpl<T extends ILog> implements IJobLogger<T> {
 	}
 
 	@Override
-	public List<String> listLogs() throws IOException {
+	public List<UserDataMeta> listLogs() throws IOException {
 		return userDataDao.listNames(dataType);
 	}
 

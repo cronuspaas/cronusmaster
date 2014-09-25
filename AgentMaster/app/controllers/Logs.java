@@ -24,21 +24,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import jobs.PlayVarUtils;
 
-import org.lightj.example.task.HostTemplateValues;
-import org.lightj.example.task.HttpTaskBuilder;
-import org.lightj.example.task.HttpTaskRequest;
-import org.lightj.task.BatchOption;
-import org.lightj.task.ExecutableTask;
-import org.lightj.task.ExecuteOption;
-import org.lightj.task.StandaloneTaskExecutor;
-import org.lightj.task.StandaloneTaskListener;
-import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
-import org.lightj.task.asynchttp.UrlTemplate;
-import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
@@ -46,17 +34,12 @@ import resources.utils.FileIoUtils;
 import resources.utils.JsonResponse;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
-import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
-import com.stackscaling.agentmaster.resources.log.CmdLog;
 import com.stackscaling.agentmaster.resources.log.FlowLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;
 import com.stackscaling.agentmaster.resources.log.ILog;
-import com.stackscaling.agentmaster.resources.log.JobLog;
-import com.stackscaling.agentmaster.resources.log.LogAggregation;
-import com.stackscaling.agentmaster.resources.log.LogAggregation.LogAggregationItem;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
@@ -75,14 +58,14 @@ public class Logs extends Controller {
 	 */
 	private static List<Map<String, String>> cmdLogsInternal() throws IOException {
 		IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
-		List<String> logs = logger.listLogs();
+		List<UserDataMeta> logs = logger.listLogs();
 		ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 		
 		boolean hasRunning = false;
 		for (int idx = 0, size = Math.min(PlayVarUtils.listLogSize, logs.size()); 
 				idx < size; idx++) 
 		{
-			String logName = logs.get(idx);
+			String logName = logs.get(idx).getName();
 			Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
 			HashMap<String, String> log = new HashMap<String, String>();
 			log.putAll(logMeta);
@@ -158,18 +141,18 @@ public class Logs extends Controller {
 		try {
 			
 			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.JOBLOG);
-			List<String> logs = logger.listLogs();
+			List<UserDataMeta> logs = logger.listLogs();
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
 			int idx = 0;
-			for (String logName : logs) {
-				Map<String, String> logMeta = BaseLog.getLogMetaFromName(logName);
+			for (UserDataMeta l : logs) {
+				Map<String, String> logMeta = BaseLog.getLogMetaFromName(l.getName());
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
-				log.put("name", logName);
+				log.put("name", l.getName());
 				log.put("type", DataType.JOBLOG.name());
 				if (idx++ <= PlayVarUtils.listLogSize) {
-					ILog logImpl = logger.readLog(logName);
+					ILog logImpl = logger.readLog(l.getName());
 					log.put("status", logImpl.getStatus());
 					log.put("statusdetail", logImpl.getStatusDetail());
 					if (logImpl.isHasRawLogs()) {
@@ -217,14 +200,14 @@ public class Logs extends Controller {
 		try {
 			
 			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.FLOWLOG);
-			List<String> logs = logger.listLogs();
+			List<UserDataMeta> logs = logger.listLogs();
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
-			for (String logName : logs) {
-				Map<String, String> logMeta = FlowLog.getLogMetaFromName(logName);
+			for (UserDataMeta l : logs) {
+				Map<String, String> logMeta = FlowLog.getLogMetaFromName(l.getName());
 				HashMap<String, String> log = new HashMap<String, String>();
 				log.putAll(logMeta);
-				log.put("name", logName);
+				log.put("name", l.getName());
 				log.put("type", DataType.FLOWLOG.name());
 				logFiles.add(log);
 			}

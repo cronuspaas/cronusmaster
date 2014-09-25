@@ -68,6 +68,7 @@ POST	/jobs/saveJob										Jobs.saveJob
 
 # agent pages
 GET		/agent/services								Agent.services
+GET		/agent/packages										Agent.packages
 POST	/agent/uploadPkg									Agent.uploadPkg
 GET     /agent/downloadPkg/{pkgName}			         	Agent.downloadPkg
 

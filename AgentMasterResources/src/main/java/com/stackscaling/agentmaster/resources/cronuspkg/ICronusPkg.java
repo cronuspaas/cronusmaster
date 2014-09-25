@@ -24,11 +24,9 @@ public interface ICronusPkg extends IUserData {
 	public String getPlatform();
 	public void setPlatform(String platform);
 	
-	public int getSizeKByte();
-	public void setSizeKByte(int sizeKByte);
+	public long getSize();
 	
-	public Date getCreateDate();
-	public void setCreateDate(Date createDate);
+	public Date getLastModified();
 	
 	public String getExternalLink();
 	public String getInternalLink();

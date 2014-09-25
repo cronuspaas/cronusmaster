@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 
 public class OneClickCommandDataImpl implements IOneClickCommandData {
 
@@ -55,12 +56,13 @@ public class OneClickCommandDataImpl implements IOneClickCommandData {
 	@Override
 	public void load() throws IOException {
 		HashMap<String, IOneClickCommand> templates = new HashMap<String, IOneClickCommand>();
-		List<String> cmdNames = userDataDao.listNames(DataType.CMD_ONECLICK);
-		for (String cmdName : cmdNames) {
-			String content = userDataDao.readData(DataType.CMD_ONECLICK, cmdName);
+		List<UserDataMeta> cmdMetas = userDataDao.listNames(DataType.CMD_ONECLICK);
+		for (UserDataMeta cmdMeta : cmdMetas) {
+			String content = userDataDao.readData(DataType.CMD_ONECLICK, cmdMeta.getName());
 			if (!StringUtil.isNullOrEmpty(content)) {
 				OneClickCommandImpl cmd = JsonUtil.decode(content, OneClickCommandImpl.class);
-				templates.put(cmdName, cmd);
+				cmd.setUserDataMeta(cmdMeta);
+				templates.put(cmdMeta.getName(), cmd);
 			}
 		}
 		this.templates = templates;

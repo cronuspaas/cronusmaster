@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
 
@@ -50,12 +51,12 @@ public class WorkflowDataImpl implements IWorkflowData {
 		HashMap<String, IWorkflowMeta> flows = new HashMap<String, IWorkflowMeta>();
 
 		// load from dir
-		List<String> flowNames = userConfigs.listNames(DataType.WORKFLOW);
-		for (String flowName : flowNames) {
-			String content = userConfigs.readData(DataType.WORKFLOW, flowName);
+		List<UserDataMeta> flowMetas = userConfigs.listNames(DataType.WORKFLOW);
+		for (UserDataMeta flowMeta : flowMetas) {
+			String content = userConfigs.readData(DataType.WORKFLOW, flowMeta.getName());
 			if (!StringUtil.isNullOrEmpty(content)) {
 				WorkflowMetaImpl flow = JsonUtil.decode(content, WorkflowMetaImpl.class);
-				flows.put(flowName, flow);
+				flows.put(flowMeta.getName(), flow);
 			}
 		}
 
@@ -106,6 +107,7 @@ public class WorkflowDataImpl implements IWorkflowData {
 	 * @return
 	 * @throws IOException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static FlowSession createFlowByRequest(INodeGroup ng, IWorkflowMeta workflow, Map<String, String> options) throws IOException 
 	{
 		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
@@ -76,9 +77,9 @@ public class NodeGroupDataImpl implements INodeGroupData {
 		HashMap<String, INodeGroup> nodeGroups = new HashMap<String, INodeGroup>();
 		int nodeCount = 0;
 
-		List<String> ngNames = userConfigs.listNames(dataType);
-		for (String ngName : ngNames) {
-			String content = userConfigs.readData(DataType.NODEGROUP, ngName);
+		List<UserDataMeta> ngMetas = userConfigs.listNames(dataType);
+		for (UserDataMeta ngMeta : ngMetas) {
+			String content = userConfigs.readData(DataType.NODEGROUP, ngMeta.getName());
 
 			String[] lines = content.split("\n");
 			List<String> tmpNodeList = new ArrayList<String>();
@@ -89,11 +90,12 @@ public class NodeGroupDataImpl implements INodeGroupData {
 				}
 				tmpNodeList.add(line);
 			}
-			NodeGroupImpl nodeGroupImpl = new NodeGroupImpl(ngName);
+			NodeGroupImpl nodeGroupImpl = new NodeGroupImpl(ngMeta.getName());
+			nodeGroupImpl.setUserDataMeta(ngMeta);
 			nodeGroupImpl.setType(DataType.NODEGROUP.name());
 			nodeGroupImpl.addNodesToList(tmpNodeList);
 			nodeCount += tmpNodeList.size();
-			nodeGroups.put(ngName, nodeGroupImpl);
+			nodeGroups.put(ngMeta.getName(), nodeGroupImpl);
 		}
 
 		LOG.info("Completed NodeGroup loading with node group count: "

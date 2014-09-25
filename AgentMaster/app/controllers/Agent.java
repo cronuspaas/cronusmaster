@@ -17,12 +17,10 @@ limitations under the License.
  */
 package controllers;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +38,6 @@ import org.lightj.util.ConcurrentUtil;
 import org.lightj.util.StringUtil;
 
 import play.data.Upload;
-import play.libs.MimeTypes;
 import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
@@ -49,7 +46,7 @@ import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider.AgentStatus;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
-import com.stackscaling.agentmaster.resources.cronuspkg.CronusPkgImpl;
+import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkg;
 import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkgData;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
@@ -73,7 +70,7 @@ public class Agent extends Controller {
 	 */
 	public static void services(String ngName) throws Exception {
 
-		String page = "servcies";
+		String page = "services";
 		String topnav = "agent";
 
 		try {
@@ -96,7 +93,35 @@ public class Agent extends Controller {
 
 	}
 
-    public static void uploadPage() {
+	/**
+	 * show existing pkgs
+	 */
+    public static void packages(String alert) {
+    	
+		String page = "packages";
+		String topnav = "agent";
+
+		try {
+    		
+    		ICronusPkgData cronusPkgDao = UserDataProviderFactory.getCronusPkgData();
+    		List<Map<String, String>> pkgMetas = new ArrayList<Map<String, String>>();
+    		DecimalFormat myFormatter = new DecimalFormat("###,###,###");
+    		for (ICronusPkg pkg : cronusPkgDao.getAllPkgs().values()) {
+    			Map<String, String> pkgMeta = new HashMap<String, String>();
+    			pkgMeta.put("name", pkg.getName());
+    			// KB
+    			pkgMeta.put("size", myFormatter.format(pkg.getSize()/1024));
+    			pkgMeta.put("lastmodified", DateUtils.getDateTimeStr(pkg.getLastModified()));
+    			pkgMetas.add(pkgMeta);
+    		}
+    		
+			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
+    		render(page, topnav, pkgMetas, lastRefreshed, alert);
+
+    	} catch (IOException e) {
+			error(e);
+		}
+    	
     }
 
     /**
@@ -109,6 +134,7 @@ public class Agent extends Controller {
 		
     		ICronusPkgData cronusPkgDao = UserDataProviderFactory.getCronusPkgData();
     		cronusPkgDao.save(data.getFileName(), data.asStream());
+    		cronusPkgDao.load();
 
     	} catch (IOException e) {
 			error(e);

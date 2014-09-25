@@ -103,6 +103,18 @@ public class CronusPkgDataImpl implements ICronusPkgData {
 			pkg.setPlatform(matcher.group(3));
 		}
 	}
+	
+	/**
+	 * validate the name is a valid cronus pkg name
+	 * @param pkgName
+	 * @return
+	 */
+	private void validateName(String pkgName) {
+		Matcher matcher = CRONUSPKG_NAME_PATTERN.matcher(pkgName);
+		if (!matcher.matches()) {
+			throw new IllegalArgumentException("invalid cronus package name " + pkgName);
+		}
+	}
 
 	@Override
 	public Map<String, ICronusPkg> getAllPkgs() throws IOException {
@@ -140,7 +152,9 @@ public class CronusPkgDataImpl implements ICronusPkgData {
 	}
 
 	@Override
-	public void save(String pkgName, InputStream dataInputStream) throws IOException {
+	public void save(String pkgName, InputStream dataInputStream) throws IOException 
+	{
+		validateName(pkgName);
 		userConfigs.saveStream(DataType.CRONUSPKG, pkgName, dataInputStream);
 	}
 

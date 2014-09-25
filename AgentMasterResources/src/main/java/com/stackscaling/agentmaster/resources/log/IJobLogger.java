@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.stackscaling.agentmaster.resources.IUserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 
 /**
  * save command log
@@ -32,7 +33,7 @@ public interface IJobLogger<T extends ILog> extends IUserDataProvider {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<String> listLogs() throws IOException;
+	public List<UserDataMeta> listLogs() throws IOException;
 
 	/**
 	 * delete a log
