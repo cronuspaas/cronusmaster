@@ -14,6 +14,7 @@ import org.lightj.task.BatchOption.Strategy;
 import org.lightj.task.ExecuteOption;
 import org.lightj.task.MonitorOption;
 import org.lightj.util.JsonUtil;
+import org.lightj.util.SpringContextUtil;
 import org.lightj.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -110,6 +111,14 @@ public abstract class BaseCommandData implements ICommandData {
 			Map<String, ?> userData) throws IOException 
 	{
 		HttpTaskRequest reqTemplate = cmd.createCopy();
+		
+		// enhance the request by its category
+		if (!StringUtil.isNullOrEmpty(cmd.getCategory())) {
+			ICommandEnhancer cmdEnhancer = SpringContextUtil.getBean("resources", cmd.getCategory(), ICommandEnhancer.class);
+			if (cmdEnhancer != null) {
+				cmdEnhancer.enhanceRequest(reqTemplate);
+			}
+		}
 
 		long exeInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_initde", "0"));
 		long exeTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "exe_to", "0"));

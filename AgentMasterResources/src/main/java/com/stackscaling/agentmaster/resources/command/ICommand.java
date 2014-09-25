@@ -21,10 +21,13 @@ public interface ICommand extends IUserData
 	/** user data */
 	public Map<String, String> getUserData();
 
-	/** this command has raw logs */
-	public boolean isHasRawLogs();
-
-	/** the raw log of this command has been fetched and indexed */
-	public void setHasRawLogs(boolean hasRawLogs);
+	/** sub category of the command, 
+	 * can be used to lookup and apply use case specific request enhancer 
+	 * e.g. add common headers and parameters for all agent requests
+	 */ 
+	public String getCategory();
+	
+	/** set sub category of the command */
+	public void setCategory(String category);
 
 }

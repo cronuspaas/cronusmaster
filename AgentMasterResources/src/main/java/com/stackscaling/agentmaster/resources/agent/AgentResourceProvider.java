@@ -7,7 +7,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
+import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.example.task.HttpTaskRequest.TaskType;
+import org.lightj.task.BatchOption;
+import org.lightj.task.BatchOption.Strategy;
+import org.lightj.task.ExecuteOption;
 import org.lightj.task.IGlobalContext;
+import org.lightj.task.MonitorOption;
 import org.lightj.task.Task;
 import org.lightj.task.TaskResult;
 import org.lightj.task.TaskResultEnum;
@@ -21,9 +27,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.ning.http.client.Response;
+import com.stackscaling.agentmaster.resources.command.ICommandEnhancer;
 import com.stackscaling.agentmaster.resources.security.SecurityUtil;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
-import com.ning.http.client.Response;
 
 @Configuration
 public class AgentResourceProvider {
@@ -31,6 +38,56 @@ public class AgentResourceProvider {
 	public static final String AGENT_PROCESSOR = "agentProcessor";
 	public static final String AGENT_POLL_PROCESSOR = "agentPollProcessor";
 	public static final String AGENT_AUTHKEY_BEAN = "agentAuthKeyContext";
+	
+	@Bean(name={"agentCommandEnhancer", "agentcommand"}) 
+	@Scope("singleton")
+	public ICommandEnhancer agentCommandEnhancer() {
+
+		// unlimited batching
+		final BatchOption defBatchOption = new BatchOption(0, Strategy.UNLIMITED);
+		// exec wait for up to 60 min
+		final ExecuteOption defExecOption = new ExecuteOption(0, 60 * 60, 3, 1);
+		// polling every 5 sec for up to 60 min
+		final MonitorOption defMonOption = new MonitorOption(0, 5, 60 * 60, 3, 1);
+		
+		return new ICommandEnhancer() {
+			
+			@Override
+			public void enhanceRequest(HttpTaskRequest request) {
+				boolean isPolling = (StringUtil.equalIgnoreCase(request.getTaskType(), TaskType.asyncpoll.name()));
+				if (request.getExecutionOption()==null) {
+					request.setExecutionOption(defExecOption);
+				}
+				if (request.getBatchOption()==null) {
+					request.setBatchOption(defBatchOption);
+				}
+				if (isPolling && request.getMonitorOption()==null) {
+					request.setMonitorOption(defMonOption);
+				}
+				Map<String, String> headers = request.getUrlTemplate().getHeaders();
+				if (!headers.containsKey("content-type")) {
+					headers.put("content-type", "application/json");
+				}
+				if (!headers.containsKey("Authorization")) {
+					headers.put("Authorization", "Basic <agentAuthKey>");
+				}
+				if (!headers.containsKey("X-CORRELATIONID")) {
+					headers.put("X-CORRELATIONID", "<correlationId>");
+				}
+				if (request.getGlobalContext()==null) {
+					request.setGlobalContext("agentAuthKeyContext");
+				}
+				if (StringUtil.isNullOrEmpty(request.getResProcessorName())) {
+					if (isPolling) {
+						request.setResProcessorName("agentPollProcessor");
+					}
+					else {
+						request.setResProcessorName("agentProcessor");
+					}
+				}
+			}
+		};
+	}
 	
 	/**
 	 * global context to keep all agent auth key (pki based)

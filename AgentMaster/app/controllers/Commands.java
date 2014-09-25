@@ -40,6 +40,7 @@ import org.lightj.task.TaskResultEnum;
 import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.MapListPrimitiveJsonParser;
+import org.lightj.util.SpringContextUtil;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
@@ -51,8 +52,10 @@ import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogTaskEventHandler;
 import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
+import com.stackscaling.agentmaster.resources.command.BaseCommandData;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
+import com.stackscaling.agentmaster.resources.command.ICommandEnhancer;
 import com.stackscaling.agentmaster.resources.log.CmdLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;
 import com.stackscaling.agentmaster.resources.log.ILog;
@@ -297,6 +300,14 @@ public class Commands extends Controller {
 			}
 
 			HttpTaskRequest req = cmd.createCopy();
+
+			// enhance the request by its category
+			if (!StringUtil.isNullOrEmpty(cmd.getCategory())) {
+				ICommandEnhancer cmdEnhancer = SpringContextUtil.getBean("resources", cmd.getCategory(), ICommandEnhancer.class);
+				if (cmdEnhancer != null) {
+					cmdEnhancer.enhanceRequest(req);
+				}
+			}
 			ExecuteOption eo = req.getExecutionOption()==null ? new ExecuteOption() : req.getExecutionOption();
 			result.add(createResultItem("exe_initde", Long.toString(eo.getInitDelaySec())));
 			result.add(createResultItem("exe_to", Long.toString(eo.getTimeOutSec())));
@@ -368,7 +379,7 @@ public class Commands extends Controller {
 
 			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
+			HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
 
 			// prepare log
 			CmdLog jobLog = new CmdLog();
@@ -376,7 +387,8 @@ public class Commands extends Controller {
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
-			jobLog.setHasRawLogs(cmd.isHasRawLogs());
+			boolean hasRawLogs = StringUtil.equalIgnoreCase(cmd.getCategory(), "agent");
+			jobLog.setHasRawLogs(hasRawLogs);
 			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
 			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
@@ -507,7 +519,7 @@ public class Commands extends Controller {
 		Map<String, String> options = oneclickCmd.getUserData();
 		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 		Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-		HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
+		HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
 
 		// prepare log
 		CmdLog jobLog = new CmdLog();
@@ -515,7 +527,8 @@ public class Commands extends Controller {
 		jobLog.setUserData(optionCleanup);
 		jobLog.setCommandKey(cmd.getName());
 		jobLog.setNodeGroup(ng);
-		jobLog.setHasRawLogs(cmd.isHasRawLogs());
+		boolean hasRawLogs = StringUtil.equalIgnoreCase(cmd.getCategory(), "agent");
+		jobLog.setHasRawLogs(hasRawLogs);
 		reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 		
 		// fire task
@@ -596,7 +609,7 @@ public class Commands extends Controller {
 
 			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-			HttpTaskRequest reqTemplate = createTaskByRequest(hosts, cmd, options, userData);
+			HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
 
 			// prepare log
 			CmdLog jobLog = new CmdLog();
@@ -604,7 +617,8 @@ public class Commands extends Controller {
 			jobLog.setUserData(optionCleanup);
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
-			jobLog.setHasRawLogs(cmd.isHasRawLogs());
+			boolean hasRawLogs = StringUtil.equalIgnoreCase(cmd.getCategory(), "agent");
+			jobLog.setHasRawLogs(hasRawLogs);
 			jobLog.setStatus(TaskResultEnum.Running.name());
 			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
@@ -628,66 +642,4 @@ public class Commands extends Controller {
 
 	}
 	
-	/**
-	 * build http request from user request
-	 * @param ng
-	 * @param cmd
-	 * @param options
-	 * @return
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	public static HttpTaskRequest createTaskByRequest(
-			String[] hosts, 
-			ICommand cmd, 
-			Map<String, String> options, 
-			Map<String, ?> userData) throws IOException 
-	{
-		HttpTaskRequest reqTemplate = cmd.createCopy();
-
-		long exeInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_initde", "0"));
-		long exeTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "exe_to", "0"));
-		int exeRetry = Integer.parseInt(DataUtil.getOptionValue(options, "exe_retry", "0"));
-		long retryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_rede", "0"));
-		ExecuteOption exeOption = new ExecuteOption(exeInitDelaySec, exeTimoutSec, exeRetry, retryDelaySec);
-		reqTemplate.setExecutionOption(exeOption);
-		
-		if (StringUtil.equalIgnoreCase(HttpTaskRequest.TaskType.asyncpoll.name(), reqTemplate.getTaskType())) {
-			long monIntervalSec = Integer.parseInt(DataUtil.getOptionValue(options, "mon_int", "1"));
-			long monInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_initde", "0"));
-			long monTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "mon_to", "0"));
-			int monRetry = Integer.parseInt(DataUtil.getOptionValue(options, "mon_retry", "0"));
-			long monRetryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_rede", "0"));
-			MonitorOption monOption = new MonitorOption(monInitDelaySec, monIntervalSec, monTimoutSec, monRetry, monRetryDelaySec);
-			reqTemplate.setMonitorOption(monOption);
-		}
-		else {
-			for (String option : new String[] {"mon_int", "mon_initde", "mon_to", "mon_retry", "mon_rede"}) {
-				options.remove(option);
-			}
-		}
-				
-		Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
-		int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
-		BatchOption batchOption = new BatchOption(maxRate, strategy);
-		reqTemplate.setBatchOption(batchOption);
-		
-		HashMap<String, String> values = new HashMap<String, String>();
-		for (Entry<String, ?> entry : userData.entrySet()) {
-			Object v = entry.getValue();
-			if (v instanceof String) {
-				values.put(entry.getKey(), (String) v);
-			} else {
-				values.put(entry.getKey(), JsonUtil.encode(v));
-			}
-		}
-		
-		if (hosts != null) {
-			reqTemplate.setHosts(hosts);
-		}
-		reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
-		return reqTemplate;
-	}
-
 }

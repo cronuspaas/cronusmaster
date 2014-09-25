@@ -3,27 +3,13 @@
   "httpTaskRequest" : {
     "taskType" : "async",
     "httpClientType" : "httpClient",
-    "executionOption" : {
-      "timeOutSec" : 0,
-      "initDelaySec" : 0,
-      "maxRetry" : 3,
-      "retryDelaySec" : 0
-    },
     "urlTemplate" : {
       "url" : "https://<host>:12020/status/<uuid>",
       "method" : "DELETE",
-      "body" : {
-      },
-      "headers" : {
-        "content-type" : "application/json",
-        "X-CORRELATIONID": "<correlationId>",
-        "Authorization" : "Basic <agentAuthKey>"
-      },
-      "parameters" : {
-      }
-    },
-    "resProcessorName" : "agentProcessor",
-    "globalContext" : "agentAuthKeyContext"
+      "body" : { },
+      "headers" : { },
+      "parameters" : { }
+    }
   },
   "userData" : {
     "uuid" : "job uuid"

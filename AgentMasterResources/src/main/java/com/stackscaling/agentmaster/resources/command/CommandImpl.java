@@ -20,16 +20,8 @@ public class CommandImpl extends BaseUserData implements ICommand {
 	/** user inputs */
 	private Map<String, String> userData = new HashMap<String, String>();
 
-	/** this command has more logs that can be fetched */
-	private boolean hasRawLogs;
-
-	public boolean isHasRawLogs() {
-		return hasRawLogs;
-	}
-
-	public void setHasRawLogs(boolean hasRawLogs) {
-		this.hasRawLogs = hasRawLogs;
-	}
+	/** category of the command */
+	private String category;
 
 	/**
 	 * do not use externally, use createCopy because ICommand is cached and shared (copy on write)
@@ -61,6 +53,16 @@ public class CommandImpl extends BaseUserData implements ICommand {
 	public CommandImpl addUserData(String key, String value) {
 		userData.put(key, value);
 		return this;
+	}
+
+	@Override
+	public String getCategory() {
+		return category;
+	}
+
+	@Override
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 }

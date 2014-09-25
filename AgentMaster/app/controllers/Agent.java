@@ -44,6 +44,7 @@ import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.BlockingTaskResultCollector;
 import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider.AgentStatus;
+import com.stackscaling.agentmaster.resources.command.BaseCommandData;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
 import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkg;
@@ -175,8 +176,8 @@ public class Agent extends Controller {
 
 		Map<String, Object> userData = Collections.emptyMap();
 		Map<String, String> options = Collections.emptyMap();
-		HttpTaskRequest reqTemplate = Commands.createTaskByRequest(hosts, cmd,
-				options, userData);
+		HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(
+				hosts, cmd, options, userData);
 
 		// fire task
 		ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);

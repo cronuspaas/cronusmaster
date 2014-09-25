@@ -165,13 +165,13 @@ public class Config extends Controller {
 						sampleReq.setGlobalContext("globalContextLookup");
 						sampleReq.setResProcessorName("responseProcessor");
 						command.setHttpTaskRequest(sampleReq);
-						
+					
 						command.addUserData("variableInHttpTemplate", "sample value");
-						HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
-						cmdMap.put("httpTaskRequest", command.createCopy());
-						cmdMap.put("userData", command.getUserData());
+//						HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
+//						cmdMap.put("httpTaskRequest", command.createCopy());
+//						cmdMap.put("userData", command.getUserData());
 						
-						content = JsonUtil.encodePretty(cmdMap);
+						content = JsonUtil.encodePretty(command);
 					}
 					else if (dType == DataType.NODEGROUP) {
 						content = "line separated hosts";
