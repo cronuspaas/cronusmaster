@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
 
 /**
@@ -72,12 +73,13 @@ public abstract class BaseCommandData implements ICommandData {
 	@Override
 	public void load() throws IOException {
 		HashMap<String, ICommand> templates = new HashMap<String, ICommand>();
-		List<String> cmdNames = userDataDao.listNames(dataType);
-		for (String cmdName : cmdNames) {
-			String content = userDataDao.readData(dataType, cmdName);
+		List<UserDataMeta> cmdMetas = userDataDao.listNames(dataType);
+		for (UserDataMeta cmdMeta : cmdMetas) {
+			String content = userDataDao.readData(dataType, cmdMeta.getName());
 			if (!StringUtil.isNullOrEmpty(content)) {
 				CommandImpl cmd = JsonUtil.decode(content, CommandImpl.class);
-				templates.put(cmdName, cmd);
+				cmd.setUserDataMeta(cmdMeta);
+				templates.put(cmdMeta.getName(), cmd);
 			}
 		}
 		this.cmdCache = templates;

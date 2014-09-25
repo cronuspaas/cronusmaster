@@ -24,7 +24,7 @@
 				#{list items:cfgNames, as:'obj'}
 				<tr>
 					<td>   
-						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj}" >${obj}</a> 
+						<a target=_blank href="/config/viewConfigItem/${dataType}/${obj.name}" >${obj.name}</a> 
 					</td>   
 					<td>   
 						<a target=_self href="/config/editConfig/${dataType}/update/${obj}?nav=${topnav}">

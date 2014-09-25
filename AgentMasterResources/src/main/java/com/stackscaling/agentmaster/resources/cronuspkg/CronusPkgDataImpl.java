@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
@@ -56,12 +57,13 @@ public class CronusPkgDataImpl implements ICronusPkgData {
 
 		HashMap<String, ICronusPkg> pkgs = new HashMap<String, ICronusPkg>();
 
-		List<String> pkgNames = userConfigs.listNames(DataType.CRONUSPKG);
-		for (String pkgName : pkgNames) {
+		List<UserDataMeta> pkgMetas = userConfigs.listNames(DataType.CRONUSPKG);
+		for (UserDataMeta pkgMeta : pkgMetas) {
 			CronusPkgImpl pkg = new CronusPkgImpl();
-			pkg.setName(pkgName);
+			pkg.setName(pkgMeta.getName());
+			pkg.setUserDataMeta(pkgMeta);
 			this.parseFromUserDataName(pkg);
-			pkgs.put(pkgName, pkg);
+			pkgs.put(pkgMeta.getName(), pkg);
 		}
 
 		LOG.info("Completed cronuspkgs loading pkgs count: "

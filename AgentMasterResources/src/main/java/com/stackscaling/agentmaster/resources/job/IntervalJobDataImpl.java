@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 
 /**
  * base class of interval job
@@ -47,9 +48,11 @@ public abstract class IntervalJobDataImpl implements IntervalJobData {
 	@Override
 	public List<IntervalJob> getAllJobs() throws IOException {
 		ArrayList<IntervalJob> jobs = new ArrayList<IntervalJob>();
-		for (String fileName : userDataDao.listNames(jobType)) {
-			String jobDataContent = userDataDao.readData(jobType, fileName);
-			jobs.add(JsonUtil.decode(jobDataContent, CmdIntervalJobImpl.class));
+		for (UserDataMeta logMeta : userDataDao.listNames(jobType)) {
+			String jobDataContent = userDataDao.readData(jobType, logMeta.getName());
+			CmdIntervalJobImpl jobImpl = JsonUtil.decode(jobDataContent, CmdIntervalJobImpl.class);
+			jobImpl.setUserDataMeta(logMeta);
+			jobs.add(jobImpl);
 		}
 		return jobs;
 	}

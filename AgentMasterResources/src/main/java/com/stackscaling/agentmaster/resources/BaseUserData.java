@@ -1,5 +1,7 @@
 package com.stackscaling.agentmaster.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * base user data class
  * 
@@ -9,6 +11,8 @@ package com.stackscaling.agentmaster.resources;
 public abstract class BaseUserData implements IUserData {
 	
 	protected String name;
+	
+	@JsonIgnore
 	protected UserDataMeta userDataMeta;
 	
 	public String getName() {
@@ -17,9 +21,11 @@ public abstract class BaseUserData implements IUserData {
 	public void setName(String name) {
 		this.name = name;
 	}
+	@JsonIgnore
 	public UserDataMeta getUserDataMeta() {
 		return userDataMeta;
 	}
+	@JsonIgnore
 	public void setUserDataMeta(UserDataMeta userDataMeta) {
 		this.userDataMeta = userDataMeta;
 	}

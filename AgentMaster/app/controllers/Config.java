@@ -18,6 +18,7 @@ limitations under the License.
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -36,6 +37,7 @@ import resources.utils.JsonResponse;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
+import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.command.CommandImpl;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
@@ -108,8 +110,11 @@ public class Config extends Controller {
 
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			List<String> cfgNames = UserDataProviderFactory.getUserDataDao().listNames(dType);
-
+			List<UserDataMeta> cfgs = UserDataProviderFactory.getUserDataDao().listNames(dType);
+			List<String> cfgNames = new ArrayList<String>();
+			for (UserDataMeta cfg : cfgs) {
+				cfgNames.add(cfg.getName());
+			}
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 
 			render(page, topnav, dataType, cfgNames, lastRefreshed, alert);
