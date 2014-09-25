@@ -3,14 +3,14 @@ package com.stackscaling.agentmaster.resources.log;
 import java.io.IOException;
 import java.util.List;
 
-import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataProvider;
 
 /**
  * save command log
  * @author binyu
  *
  */
-public interface IJobLogger<T extends ILog> extends IUserData {
+public interface IJobLogger<T extends ILog> extends IUserDataProvider {
 
 	/**
 	 * save log

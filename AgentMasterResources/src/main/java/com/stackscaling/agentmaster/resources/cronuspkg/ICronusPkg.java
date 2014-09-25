@@ -2,6 +2,8 @@ package com.stackscaling.agentmaster.resources.cronuspkg;
 
 import java.util.Date;
 
+import com.stackscaling.agentmaster.resources.IUserData;
+
 
 /**
  * represent a saved cronus package
@@ -10,11 +12,7 @@ import java.util.Date;
  * @author binyu
  *
  */
-public interface ICronusPkg {
-
-	/** package name */
-	public String getName();
-	public void setName(String name);
+public interface ICronusPkg extends IUserData {
 
 	/** what app this package is for */
 	public String getAppName();
@@ -32,6 +30,7 @@ public interface ICronusPkg {
 	public Date getCreateDate();
 	public void setCreateDate(Date createDate);
 	
-	public String getDownloadLink();
+	public String getExternalLink();
+	public String getInternalLink();
 	
 }

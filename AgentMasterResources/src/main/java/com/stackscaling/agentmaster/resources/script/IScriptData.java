@@ -3,14 +3,14 @@ package com.stackscaling.agentmaster.resources.script;
 import java.io.IOException;
 import java.util.Map;
 
-import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataProvider;
 
 /**
  * command configs
  * @author binyu
  *
  */
-public interface IScriptData extends IUserData {
+public interface IScriptData extends IUserDataProvider {
 
 	/**
 	 * get all commands back

@@ -32,7 +32,7 @@ import com.stackscaling.agentmaster.resources.workflow.IWorkflowData;
 import com.stackscaling.agentmaster.resources.workflow.WorkflowDataImpl;
 
 @Configuration
-public class UserDataProvider {
+public class UserDataProviderFactory {
 
 	/**
 	 * IUserConfigs impl

@@ -122,16 +122,19 @@ public class S3UserDataDaoImpl implements IUserDataDao {
 	}
 
 	@Override
-	public List<String> listNames(DataType type)
+	public List<UserDataMeta> listNames(DataType type)
 	{
 		ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName(type.getUuid());
 		ObjectListing objectListing;
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<UserDataMeta> result = new ArrayList<UserDataMeta>();
 
 		do {
 			objectListing = AwsResourceProvider.getS3Client().listObjects(listObjectsRequest);
 			for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-				result.add(objectSummary.getKey());
+				result.add(new UserDataMeta(
+						objectSummary.getKey(), 
+						objectSummary.getSize(), 
+						objectSummary.getLastModified()));
 			}
 			listObjectsRequest.setMarker(objectListing.getNextMarker());
 

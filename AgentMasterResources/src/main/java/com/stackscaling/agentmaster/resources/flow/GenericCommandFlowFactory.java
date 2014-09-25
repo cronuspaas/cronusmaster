@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.command.CommandDataImpl;
 import com.stackscaling.agentmaster.resources.command.CommandImpl;
 import com.stackscaling.agentmaster.resources.command.ICommand;
@@ -51,7 +51,7 @@ public class GenericCommandFlowFactory {
 
 					if (context.hasMoreCommand()) {
 						String commandName = context.getCurrentCommand();
-						ICommand command = UserDataProvider.getCommandConfigs().getCommandByName(commandName);
+						ICommand command = UserDataProviderFactory.getCommandConfigs().getCommandByName(commandName);
 						Map<String, String> userData = context.getCommandUserData(commandName);
 						HttpTaskRequest req = CommandDataImpl.createTaskByRequest(
 															context.getHosts(),

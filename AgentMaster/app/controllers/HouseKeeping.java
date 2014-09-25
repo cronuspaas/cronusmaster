@@ -11,7 +11,7 @@ import org.lightj.util.StringUtil;
 import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;
 
@@ -32,7 +32,7 @@ public class HouseKeeping extends Controller {
 	public static void deleteLogs(String dataType, String retainFactor, int numToKeep) {
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			IJobLogger jobLogger = UserDataProvider.getJobLoggerOfType(dType);
+			IJobLogger jobLogger = UserDataProviderFactory.getJobLoggerOfType(dType);
 			List<String> logFiles = jobLogger.listLogs();
 			ArrayList<String> deletedFiles = new ArrayList<String>();
 			if (StringUtil.equalIgnoreCase("time", retainFactor)) {

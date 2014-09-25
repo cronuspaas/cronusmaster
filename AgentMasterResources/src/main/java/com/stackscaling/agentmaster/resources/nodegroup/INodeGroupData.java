@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataProvider;
 
 /**
  * command configs
  * @author binyu
  *
  */
-public interface INodeGroupData extends IUserData {
+public interface INodeGroupData extends IUserDataProvider {
 
 	public static final INodeGroup NG_EMPTY = new NodeGroupImpl("NG-EMPTY", DataType.NODEGROUP.name(), null);
 

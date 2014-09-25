@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -41,7 +41,7 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 	 * @return
 	 * @throws IOException 
 	 */
-	public List<String> listNames(DataType dataType) throws IOException
+	public List<UserDataMeta> listNames(DataType dataType) throws IOException
 	{
 
 		File dir = VarUtils.vf.getRealFileFromRelativePath(dataType.getPath());
@@ -59,15 +59,16 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 
 		}, null);
 		
-		List<String> fileNames = new ArrayList<String>();
+		List<UserDataMeta> fileNames = new ArrayList<UserDataMeta>();
 		for (File file : files) {
-			fileNames.add(file.getName());
 			BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-			System.out.println("creationTime: " + attr.creationTime());
-			System.out.println("size: " + attr.size());			
+			fileNames.add(new UserDataMeta(
+					file.getName(), 
+					attr.size(), 
+					new Date(attr.lastModifiedTime().toMillis())));
 		}
-		Collections.sort(fileNames);
-		Collections.reverse(fileNames);
+//		Collections.sort(fileNames);
+//		Collections.reverse(fileNames);
 		return fileNames;
 
 	}

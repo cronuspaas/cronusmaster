@@ -1,17 +1,19 @@
 package com.stackscaling.agentmaster.resources;
 
+/**
+ * base interface of all user data
+ * 
+ * @author binyu
+ *
+ */
 public interface IUserData {
+	
+	public String getName();
+	
+	public void setName(String name);
 
-	/**
-	 * user configs handle persistence
-	 * @return
-	 */
-	public IUserDataDao getUserDataDao();
-
-	/**
-	 * user configs handle persistence
-	 * @param userConfigs
-	 */
-	public void setUserDataDao(IUserDataDao userConfigs);
-
+	public UserDataMeta getUserDataMeta();
+	
+	public void setUserDataMeta(UserDataMeta meta);
+	
 }

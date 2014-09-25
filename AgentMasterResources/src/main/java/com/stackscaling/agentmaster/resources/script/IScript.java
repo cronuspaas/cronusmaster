@@ -1,21 +1,15 @@
 package com.stackscaling.agentmaster.resources.script;
 
+import com.stackscaling.agentmaster.resources.IUserData;
+
 
 /**
  * group of nodes
  * @author binyu
  *
  */
-public interface IScript {
-
-	/** script name */
-	public String getName();
-
-	/**
-	 * set script name
-	 * @param name
-	 */
-	public void setName(String name);
+public interface IScript extends IUserData 
+{
 
 	/**
 	 * type of script

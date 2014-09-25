@@ -90,7 +90,7 @@ public class TaskResourcesProvider {
 			if (event == FlowEvent.stop) {
 				flowLog.getUserWorkflow().jobInfo = session.getFlowInfo();
 				try {
-					UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG).saveLog(flowLog);
+					UserDataProviderFactory.getJobLoggerOfType(DataType.FLOWLOG).saveLog(flowLog);
 				} catch (IOException e) {
 					LOG.error(e.getMessage());
 				}
@@ -211,7 +211,7 @@ public class TaskResourcesProvider {
 
 		public LogTaskEventHandler(BaseLog jobLog, int numOfHosts) {
 			this.jobLog = jobLog;
-			this.logger = UserDataProvider.getJobLoggerOfType(jobLog.getLogType());
+			this.logger = UserDataProviderFactory.getJobLoggerOfType(jobLog.getLogType());
 			this.other = numOfHosts;
 		}
 

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogTaskEventHandler;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.command.CommandDataImpl;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
@@ -37,8 +37,8 @@ public class CmdIntervalJobImpl extends BaseIntervalJob {
 	@Override
 	public void runJobAsync()
 	{
-		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP);
-		ICommandData cmdData = UserDataProvider.getCommandConfigs();
+		INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(DataType.NODEGROUP);
+		ICommandData cmdData = UserDataProviderFactory.getCommandConfigs();
 		try {
 			// create task
 			ICommand cmd = cmdData.getCommandByName(cmdName);

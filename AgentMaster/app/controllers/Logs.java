@@ -47,7 +47,7 @@ import resources.utils.JsonResponse;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider;
 import com.stackscaling.agentmaster.resources.log.BaseLog;
 import com.stackscaling.agentmaster.resources.log.CmdLog;
@@ -74,7 +74,7 @@ public class Logs extends Controller {
 	 * @throws IOException
 	 */
 	private static List<Map<String, String>> cmdLogsInternal() throws IOException {
-		IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+		IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
 		List<String> logs = logger.listLogs();
 		ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 		
@@ -157,7 +157,7 @@ public class Logs extends Controller {
 
 		try {
 			
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.JOBLOG);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.JOBLOG);
 			List<String> logs = logger.listLogs();
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
@@ -216,7 +216,7 @@ public class Logs extends Controller {
 
 		try {
 			
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.FLOWLOG);
 			List<String> logs = logger.listLogs();
 			ArrayList<Map<String, String>> logFiles = new ArrayList<Map<String,String>>();
 			
@@ -259,7 +259,7 @@ public class Logs extends Controller {
 		try {
 
 			DataType dtype = DataType.valueOf(type);
-			String fileContent = UserDataProvider.getUserDataDao().readData(dtype, name);
+			String fileContent = UserDataProviderFactory.getUserDataDao().readData(dtype, name);
 			
 			renderJSON(fileContent);
 		} catch (Throwable t) {
@@ -279,7 +279,7 @@ public class Logs extends Controller {
 		try {
 			
 			DataType dtype = DataType.valueOf(type.toUpperCase());
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(dtype);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(dtype);
 			logger.deleteLog(name);
 			
 			// redirect with message

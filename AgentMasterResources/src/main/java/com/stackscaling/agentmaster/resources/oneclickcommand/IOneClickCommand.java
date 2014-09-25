@@ -2,13 +2,10 @@ package com.stackscaling.agentmaster.resources.oneclickcommand;
 
 import java.util.Map;
 
-public interface IOneClickCommand {
+import com.stackscaling.agentmaster.resources.IUserData;
 
-	/** name of the command */
-	public String getName();
-	
-	/** name of the command */
-	public void setName(String name);
+public interface IOneClickCommand extends IUserData 
+{
 
 	/** user defined display name */
 	public String getDisplayName();

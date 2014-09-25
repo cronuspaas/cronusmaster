@@ -2,27 +2,22 @@ package com.stackscaling.agentmaster.resources.cronuspkg;
 
 import java.util.Date;
 
+import com.stackscaling.agentmaster.resources.BaseUserData;
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
+
 /**
  * Cronus package
  * @author binyu
  *
  */
-public class CronusPkgImpl implements ICronusPkg {
+public class CronusPkgImpl extends BaseUserData implements ICronusPkg {
 	
-	private String name;
 	private String appName;
 	private String version;
 	private String platform;
 	private int sizeKByte;
 	private Date createDate;
-	private String downloadLink;
 	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public String getAppName() {
 		return appName;
 	}
@@ -54,8 +49,12 @@ public class CronusPkgImpl implements ICronusPkg {
 		this.createDate = createDate;
 	}
 	@Override
-	public String getDownloadLink() {
-		return downloadLink;
+	public String getExternalLink() {
+		return String.format("http://%s/agent/downloadPkg/%s", VarUtils.externalIp, name);
+	}
+	@Override
+	public String getInternalLink() {
+		return String.format("http://%s/agent/downloadPkg/%s", VarUtils.internalIp, name);
 	}
 
 }

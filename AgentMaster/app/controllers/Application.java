@@ -22,7 +22,7 @@ import java.util.HashMap;
 import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 
 /**
  * 
@@ -37,18 +37,18 @@ public class Application extends Controller {
 		
 		try {
 			metricMap.put("totalNodeCount",
-					Integer.toString(UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getNodeCount()));
+					Integer.toString(UserDataProviderFactory.getNodeGroupOfType(DataType.NODEGROUP).getNodeCount()));
 			metricMap.put("totalCmdCount",
-					Integer.toString(UserDataProvider.getCommandConfigs().getAllCommands().size()));
+					Integer.toString(UserDataProviderFactory.getCommandConfigs().getAllCommands().size()));
 			metricMap.put("totalOneclickCount", 
-					Integer.toString(UserDataProvider.getOneClickCommandConfigs().getAllCommands().size()));
+					Integer.toString(UserDataProviderFactory.getOneClickCommandConfigs().getAllCommands().size()));
 			metricMap.put("totalWfCount",
-					Integer.toString(UserDataProvider.getWorkflowConfigs().getAllFlows().size()));
+					Integer.toString(UserDataProviderFactory.getWorkflowConfigs().getAllFlows().size()));
 			metricMap.put("totalJobCount",
-					Integer.toString(UserDataProvider.getIntervalJobOfType(DataType.CMDJOB).getAllJobs().size()
-					+ UserDataProvider.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs().size()));
+					Integer.toString(UserDataProviderFactory.getIntervalJobOfType(DataType.CMDJOB).getAllJobs().size()
+					+ UserDataProviderFactory.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs().size()));
 			metricMap.put("totalScriptCount", 
-					Integer.toString(UserDataProvider.getScriptOfType(DataType.SCRIPT).getScriptCount()));
+					Integer.toString(UserDataProviderFactory.getScriptOfType(DataType.SCRIPT).getScriptCount()));
 
 			render(metricMap);
 			

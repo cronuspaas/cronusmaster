@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogFlowEventListener;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.log.BaseLog.UserWorkflow;
 import com.stackscaling.agentmaster.resources.log.FlowLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;
@@ -29,9 +29,9 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 	@Override
 	public void runJobAsync()
 	{
-		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP);
+		INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(DataType.NODEGROUP);
 		try {
-			IWorkflowMeta workflow = UserDataProvider.getWorkflowConfigs().getFlowByName(cmdName);
+			IWorkflowMeta workflow = UserDataProviderFactory.getWorkflowConfigs().getFlowByName(cmdName);
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupName);
 
 			FlowSession flow = WorkflowDataImpl.createFlowByRequest(ng, workflow, userData);
@@ -43,7 +43,7 @@ public class FlowIntervalJobImpl extends BaseIntervalJob {
 			flowLog.setCommandKey(workflow.getFlowName());
 			flowLog.setNodeGroup(ng);
 			flowLog.setUserWorkflow(userWorkflow);
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.FLOWLOG);
 			logger.saveLog(flowLog);
 
 			// save and run flow

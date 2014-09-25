@@ -3,15 +3,14 @@ package com.stackscaling.agentmaster.resources.oneclickcommand;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.stackscaling.agentmaster.resources.BaseUserData;
+
 /**
  * one click command impl
  * @author biyu
  *
  */
-public class OneClickCommandImpl implements IOneClickCommand {
-	
-	/** name of the command */
-	private String name;
+public class OneClickCommandImpl extends BaseUserData implements IOneClickCommand {
 	
 	/** user defined display name */
 	private String displayName;
@@ -36,16 +35,6 @@ public class OneClickCommandImpl implements IOneClickCommand {
 	@Override
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override

@@ -2,12 +2,15 @@ package com.stackscaling.agentmaster.resources.workflow;
 
 import java.util.Map;
 
+import com.stackscaling.agentmaster.resources.IUserData;
+
 /**
  * flow data, read only
  * @author biyu
  *
  */
-public interface IWorkflowMeta {
+public interface IWorkflowMeta extends IUserData 
+{
 
 	public static enum FlowType {
 		Predefined, Adhoc

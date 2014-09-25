@@ -4,13 +4,10 @@ import java.util.Map;
 
 import org.lightj.example.task.HttpTaskRequest;
 
-public interface ICommand {
+import com.stackscaling.agentmaster.resources.IUserData;
 
-	/** name of the command */
-	public String getName();
-
-	/** name of the command */
-	public void setName(String name);
+public interface ICommand extends IUserData 
+{
 
 	/** http request */
 	public HttpTaskRequest createCopy();

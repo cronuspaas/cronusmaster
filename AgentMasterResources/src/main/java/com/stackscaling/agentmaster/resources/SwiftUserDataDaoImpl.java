@@ -78,16 +78,19 @@ public class SwiftUserDataDaoImpl implements IUserDataDao {
 	}
 
 	@Override
-	public List<String> listNames(DataType type)
+	public List<UserDataMeta> listNames(DataType type)
 	{
 
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<UserDataMeta> result = new ArrayList<UserDataMeta>();
 
 		Account account = SwiftResourceProvider.getSwiftClient();
 		Container container = account.getContainer(type.getUuid());
 	    Collection<StoredObject> objects = container.list();
 	    for (StoredObject currentObject : objects) {
-	        result.add(currentObject.getName());
+	        result.add(new UserDataMeta(
+	        		currentObject.getName(), 
+	        		currentObject.getContentLength(), 
+	        		currentObject.getLastModifiedAsDate()));
 	    }
 		return result;
 

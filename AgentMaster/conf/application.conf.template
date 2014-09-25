@@ -243,6 +243,8 @@ agentmaster.baseLog.cmdResLength=200
 # (for s3 and swift, bucket/container names are DataType enum name)
 agentmaster.userDataDao=file
 agentmaster.logProgressEnabled=true
+agentmaster.externalIp=localhost
+agentmaster.internalIp=localhost
 
 # file
 #agentmaster.userDataDao.file.dir=user_data

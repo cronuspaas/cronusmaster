@@ -3,6 +3,7 @@ package com.stackscaling.agentmaster.resources.log;
 import java.util.Map;
 
 import com.stackscaling.agentmaster.resources.DataType;
+import com.stackscaling.agentmaster.resources.IUserData;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 
 /**
@@ -10,7 +11,8 @@ import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
  * @author biyu
  *
  */
-public interface ILog {
+public interface ILog extends IUserData 
+{
 
 	/** log uuid, combination of some metadata */
 	public String uuid();

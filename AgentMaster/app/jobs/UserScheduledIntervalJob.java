@@ -10,7 +10,7 @@ import play.jobs.Every;
 import play.jobs.Job;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.job.IntervalJob;
 import com.stackscaling.agentmaster.resources.job.IntervalJobData;
 
@@ -32,7 +32,7 @@ public class UserScheduledIntervalJob extends Job {
 	public void doJob() throws Exception {
 //		if (ClusteringModule.isMaster()) {
 			// master node (including local) needs to pick up the jobs
-			IntervalJobData cmdJobData = UserDataProvider.getIntervalJobOfType(DataType.CMDJOB);
+			IntervalJobData cmdJobData = UserDataProviderFactory.getIntervalJobOfType(DataType.CMDJOB);
 			List<IntervalJob> jobs = cmdJobData.getAllJobs();
 			for (IntervalJob job : jobs) {
 				if (!job.isEnabled()) continue;

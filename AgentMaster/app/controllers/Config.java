@@ -36,7 +36,7 @@ import resources.utils.JsonResponse;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.command.CommandImpl;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
@@ -55,7 +55,7 @@ public class Config extends Controller {
 	public static void viewConfigItem(String configType, String configKey) {
 		try {
 			DataType type = DataType.valueOf(configType.toUpperCase());
-			String jsonResult = UserDataProvider.getUserDataDao().readData(type, configKey);;
+			String jsonResult = UserDataProviderFactory.getUserDataDao().readData(type, configKey);;
 			renderJSON(jsonResult);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public class Config extends Controller {
 	public static void reloadConfig(String dataType, String nav) {
 
 		try {
-			UserDataProvider.reloadAllConfigs();
+			UserDataProviderFactory.reloadAllConfigs();
 			String alert = "Successful reload config with type " + dataType;
 			redirect("Config.showConfigs", dataType, alert, nav);
 			
@@ -88,7 +88,7 @@ public class Config extends Controller {
 	public static void reloadConfigsJson() {
 
 		try {
-			UserDataProvider.reloadAllConfigs();
+			UserDataProviderFactory.reloadAllConfigs();
 			renderJSON(JsonResponse.successResponse(null));
 			
 		} catch (Exception e) {
@@ -108,7 +108,7 @@ public class Config extends Controller {
 
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			List<String> cfgNames = UserDataProvider.getUserDataDao().listNames(dType);
+			List<String> cfgNames = UserDataProviderFactory.getUserDataDao().listNames(dType);
 
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 
@@ -140,7 +140,7 @@ public class Config extends Controller {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			if (StringUtil.equalIgnoreCase("create", action)) {
 				if (!StringUtil.equalIgnoreCase("new", configName)) {
-					IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+					IUserDataDao userDataDao = UserDataProviderFactory.getUserDataDao();
 					content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
 					configName = "new";
 				}
@@ -174,7 +174,7 @@ public class Config extends Controller {
 				}
 			}
 			else {
-				IUserDataDao userDataDao = UserDataProvider.getUserDataDao();
+				IUserDataDao userDataDao = UserDataProviderFactory.getUserDataDao();
 				content = userDataDao.readData(DataType.valueOf(dataType.toUpperCase()), configName);
 			}
 			
@@ -214,16 +214,16 @@ public class Config extends Controller {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			switch(dType) {
 			case COMMAND:
-				UserDataProvider.getCommandConfigs().save(configName, content);
+				UserDataProviderFactory.getCommandConfigs().save(configName, content);
 				break;
 			case CMD_ONECLICK:
-				UserDataProvider.getOneClickCommandConfigs().save(configName, content);
+				UserDataProviderFactory.getOneClickCommandConfigs().save(configName, content);
 				break;
 			case NODEGROUP:
-				UserDataProvider.getNodeGroupOfType(dType).save(configName, content);
+				UserDataProviderFactory.getNodeGroupOfType(dType).save(configName, content);
 				break;
 			case SCRIPT:
-				UserDataProvider.getScriptOfType(dType).save(configName, content);
+				UserDataProviderFactory.getScriptOfType(dType).save(configName, content);
 				break;
 			default:
 				throw new RuntimeException("Invalid datatype " + dataType);
@@ -232,7 +232,7 @@ public class Config extends Controller {
 			String alert = String.format("%s %s was successfully updated at %s", dType.getLabel(), configName, DateUtils.getNowDateTimeDotStr());
 
 			// reload after
-			UserDataProvider.reloadAllConfigs();
+			UserDataProviderFactory.reloadAllConfigs();
 			
 			if ("Config.showConfigs".equalsIgnoreCase(topage)) {
 				redirect("Config.showConfigs", dataType, alert, topnav);
@@ -264,12 +264,12 @@ public class Config extends Controller {
 			}
 			
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			UserDataProvider.getUserDataDao().deleteData(dType, configName);
+			UserDataProviderFactory.getUserDataDao().deleteData(dType, configName);
 			
 			String alert = String.format("%s was successfully deleted at %s ", configName, DateUtils.getNowDateTimeDotStr());
 
 			// reload after
-			UserDataProvider.reloadAllConfigs();
+			UserDataProviderFactory.reloadAllConfigs();
 			
 			if ("Config.showConfigs".equals(topage)) {
 				redirect(topage, dataType, alert, topnav);

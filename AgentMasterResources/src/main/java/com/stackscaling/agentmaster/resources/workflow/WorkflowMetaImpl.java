@@ -4,12 +4,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.stackscaling.agentmaster.resources.BaseUserData;
+
 /**
  * workflow metadata impl
  * @author biyu
  *
  */
-public class WorkflowMetaImpl implements IWorkflowMeta {
+public class WorkflowMetaImpl extends BaseUserData implements IWorkflowMeta {
 
 	private String flowName;
 	private String flowType;

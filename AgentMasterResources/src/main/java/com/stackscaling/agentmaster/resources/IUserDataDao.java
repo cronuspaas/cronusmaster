@@ -61,6 +61,6 @@ public interface IUserDataDao {
 	 * @param type
 	 * @return
 	 */
-	public List<String> listNames(DataType type) throws IOException;
+	public List<UserDataMeta> listNames(DataType type) throws IOException;
 
 }

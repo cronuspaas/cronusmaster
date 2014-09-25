@@ -2,21 +2,15 @@ package com.stackscaling.agentmaster.resources.nodegroup;
 
 import java.util.List;
 
+import com.stackscaling.agentmaster.resources.IUserData;
+
 /**
  * group of nodes
  * @author binyu
  *
  */
-public interface INodeGroup {
-
-	/** node group name */
-	public String getName();
-
-	/**
-	 * set node group name
-	 * @param name
-	 */
-	public void setName(String name);
+public interface INodeGroup extends IUserData 
+{
 
 	/**
 	 * get groups of nodes

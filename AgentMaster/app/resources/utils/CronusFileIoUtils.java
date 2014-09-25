@@ -32,7 +32,7 @@ import play.Play;
 import play.vfs.VirtualFile;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataProvider;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.IVirtualFileUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;

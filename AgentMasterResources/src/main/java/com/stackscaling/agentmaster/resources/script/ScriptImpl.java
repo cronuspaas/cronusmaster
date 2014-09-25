@@ -1,9 +1,10 @@
 package com.stackscaling.agentmaster.resources.script;
 
+import com.stackscaling.agentmaster.resources.BaseUserData;
 
-public class ScriptImpl implements IScript {
 
-	private String name;
+public class ScriptImpl extends BaseUserData implements IScript {
+
 	private String type;
 	private String content;
 
@@ -23,16 +24,6 @@ public class ScriptImpl implements IScript {
 
 	public String getContent() {
 		return content;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override

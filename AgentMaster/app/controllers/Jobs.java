@@ -11,7 +11,7 @@ import org.lightj.util.StringUtil;
 import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.job.BaseIntervalJob;
 import com.stackscaling.agentmaster.resources.job.CmdIntervalJobImpl;
 import com.stackscaling.agentmaster.resources.job.FlowIntervalJobImpl;
@@ -34,7 +34,7 @@ public class Jobs extends Controller {
 
 		try {
 			
-			IntervalJobData jobData = UserDataProvider.getIntervalJobOfType(DataType.CMDJOB);
+			IntervalJobData jobData = UserDataProviderFactory.getIntervalJobOfType(DataType.CMDJOB);
 			List<IntervalJob> jobs = jobData.getAllJobs();
 			
 			ArrayList<Map<String, String>> jobDetails = new ArrayList<Map<String,String>>();
@@ -51,7 +51,7 @@ public class Jobs extends Controller {
 				jobDetails.add(jobDetail);
 			}
 			
-			for (IntervalJob job : UserDataProvider.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs()) {
+			for (IntervalJob job : UserDataProviderFactory.getIntervalJobOfType(DataType.FLOWJOB).getAllJobs()) {
 				HashMap<String, String> jobDetail = new HashMap<String, String>();
 				jobDetail.put("name", job.getName());
 				jobDetail.put("interval", String.format("Every %s min", job.getIntervalInMinute()));
@@ -79,7 +79,7 @@ public class Jobs extends Controller {
 	public static void toggleJobStatus(String dataType, String jobId, String status) {
 		try {
 			DataType type = DataType.valueOf(dataType.toUpperCase());
-			IntervalJobData jobData = UserDataProvider.getIntervalJobOfType(type);
+			IntervalJobData jobData = UserDataProviderFactory.getIntervalJobOfType(type);
 			IntervalJob job = jobData.getJobById(jobId);
 			job.setEnabled(StringUtil.equalIgnoreCase(status, "enable") ? true : false);
 			jobData.save(job);
@@ -101,7 +101,7 @@ public class Jobs extends Controller {
 	public static void deleteJob(String dataType, String jobId) {
 		try {
 			DataType type = DataType.valueOf(dataType.toUpperCase());
-			UserDataProvider.getIntervalJobOfType(type).delete(jobId);
+			UserDataProviderFactory.getIntervalJobOfType(type).delete(jobId);
 
 			redirect("Jobs.index", "Successfully deleted job " + jobId);
 			
@@ -118,7 +118,7 @@ public class Jobs extends Controller {
 	public static void runJobNow(String dataType, String jobId) {
 		try {
 			DataType type = DataType.valueOf(dataType.toUpperCase());
-			IntervalJob job = UserDataProvider.getIntervalJobOfType(type).getJobById(jobId);
+			IntervalJob job = UserDataProviderFactory.getIntervalJobOfType(type).getJobById(jobId);
 			job.runJobAsync();
 
 			redirect("Jobs.index", "Successfully launched job " + jobId);
@@ -140,7 +140,7 @@ public class Jobs extends Controller {
 		try {
 			
 			DataType dType = DataType.valueOf(logType.toUpperCase());
-			ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(logId);
+			ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(logId);
 			HashMap<String, String> meta = new HashMap<String, String>();
 			meta.put("logType", logType);
 			meta.put("logId", logId);
@@ -169,7 +169,7 @@ public class Jobs extends Controller {
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			DataType jType = null;
-			ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(logId);
+			ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(logId);
 			if (!StringUtil.equalIgnoreCase(log.getNodeGroup().getType(), DataType.NODEGROUP.name())) {
 				throw new RuntimeException("Only predefined nodegroup type is allowed for scheduled job");
 			}
@@ -197,7 +197,7 @@ public class Jobs extends Controller {
 			job.setIntervalInMinute(intervalInMinute);
 			job.setEnabled("enable".equalsIgnoreCase(DataUtil.getOptionValue(jobOptions, "job_status", "disable")));
 			
-			UserDataProvider.getIntervalJobOfType(jType).save(job);
+			UserDataProviderFactory.getIntervalJobOfType(jType).save(job);
 			
 		} catch (Exception e) {
 			error(	"Error occured in saveJob: " + e.getLocalizedMessage());

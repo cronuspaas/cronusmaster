@@ -36,7 +36,7 @@ import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogFlowEventListener;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.log.BaseLog.UserWorkflow;
 import com.stackscaling.agentmaster.resources.log.FlowLog;
 import com.stackscaling.agentmaster.resources.log.IJobLogger;
@@ -60,7 +60,7 @@ public class Workflows extends Controller {
 		String topnav = "workflows";
 
 		try {
-			Map<String, IWorkflowMeta> workflows = UserDataProvider.getWorkflowConfigs().getAllFlows();
+			Map<String, IWorkflowMeta> workflows = UserDataProviderFactory.getWorkflowConfigs().getAllFlows();
 			List<Map<String, String>> results = new ArrayList<Map<String,String>>();
 			for (Entry<String, IWorkflowMeta> entry : workflows.entrySet()) {
 				Map<String, String> values = new HashMap<String, String>();
@@ -98,9 +98,9 @@ public class Workflows extends Controller {
 
 		try {
 			
-			IWorkflowMeta workflow = UserDataProvider.getWorkflowConfigs().getFlowByName(workflowId);
+			IWorkflowMeta workflow = UserDataProviderFactory.getWorkflowConfigs().getFlowByName(workflowId);
 			
-			Map<String, INodeGroup> ngsMap = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
+			Map<String, INodeGroup> ngsMap = UserDataProviderFactory.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
 			ArrayList<Map<String, String>> ngs = new ArrayList<Map<String, String>>();
 			for (String v : ngsMap.keySet()) {
 				Map<String, String> kvp = new HashMap<String, String>(1);
@@ -128,7 +128,7 @@ public class Workflows extends Controller {
 	public static void getOptions(String wfName) {
 		
 		try {
-			IWorkflowMeta wf = UserDataProvider.getWorkflowConfigs().getFlowByName(wfName);
+			IWorkflowMeta wf = UserDataProviderFactory.getWorkflowConfigs().getFlowByName(wfName);
 			ArrayList<Map<String, String>> result = new ArrayList<Map<String,String>>();
 			
 			if (wf.getUserData() != null) {
@@ -157,10 +157,10 @@ public class Workflows extends Controller {
 	public static void runWfOnNodeGroup(String dataType, String nodeGroupType, String workflowType, Map<String, String> options) 
 	{
 		DataType dType = DataType.valueOf(dataType.toUpperCase());
-		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
+		INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(dType);
 		try {
 			// create flow from user request
-			IWorkflowMeta workflow = UserDataProvider.getWorkflowConfigs().getFlowByName(workflowType);
+			IWorkflowMeta workflow = UserDataProviderFactory.getWorkflowConfigs().getFlowByName(workflowType);
 			INodeGroup ng = ngConfigs.getNodeGroupByName(nodeGroupType);
 			FlowSession flow = createFlowByRequest(ng, workflow, options); 
 			
@@ -172,7 +172,7 @@ public class Workflows extends Controller {
 			UserWorkflow userWorkflow = new UserWorkflow();
 			flowLog.setNodeGroup(ng);
 			flowLog.setUserWorkflow(userWorkflow);
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.FLOWLOG);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.FLOWLOG);
 			logger.saveLog(flowLog);
 
 			// save and run flow

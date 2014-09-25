@@ -45,11 +45,12 @@ import play.mvc.Controller;
 
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.BlockingTaskResultCollector;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider.AgentStatus;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
 import com.stackscaling.agentmaster.resources.cronuspkg.CronusPkgImpl;
+import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkgData;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroupData;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
@@ -77,7 +78,7 @@ public class Agent extends Controller {
 
 		try {
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
-			Set<String> ngs = UserDataProvider
+			Set<String> ngs = UserDataProviderFactory
 					.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups()
 					.keySet();
 			List<Map<String, String>> hostServices;
@@ -106,7 +107,8 @@ public class Agent extends Controller {
     {
     	try {
 		
-    		UserDataProvider.getCronusPkgData().save(data.getFileName(), data.asStream());
+    		ICronusPkgData cronusPkgDao = UserDataProviderFactory.getCronusPkgData();
+    		cronusPkgDao.save(data.getFileName(), data.asStream());
 
     	} catch (IOException e) {
 			error(e);
@@ -122,7 +124,7 @@ public class Agent extends Controller {
     	try {
 
         	response.setContentTypeIfNotSet("application/octet-stream");
-    		renderBinary(UserDataProvider.getCronusPkgData().getDownloadStream(pkgName));
+    		renderBinary(UserDataProviderFactory.getCronusPkgData().getDownloadStream(pkgName));
 
     	} catch (Exception e) {
     		error(e);
@@ -136,9 +138,9 @@ public class Agent extends Controller {
 	private static List<Map<String, String>> servicesInternal(String ngName)
 			throws Exception {
 		List<Map<String, String>> hostServices = new ArrayList<Map<String, String>>();
-		ICommandData cmdDao = UserDataProvider.getSysCommandConfigs();
+		ICommandData cmdDao = UserDataProviderFactory.getSysCommandConfigs();
 		ICommand cmd = cmdDao.getCommandByName(KEY_CMD_SERVICES_INFO);
-		INodeGroupData ngDao = UserDataProvider
+		INodeGroupData ngDao = UserDataProviderFactory
 				.getNodeGroupOfType(DataType.NODEGROUP);
 
 		String[] hosts = null;

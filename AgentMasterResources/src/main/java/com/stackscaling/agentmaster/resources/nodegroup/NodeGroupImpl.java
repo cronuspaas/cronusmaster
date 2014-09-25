@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.stackscaling.agentmaster.resources.BaseUserData;
 
-public class NodeGroupImpl implements INodeGroup {
+public class NodeGroupImpl extends BaseUserData implements INodeGroup {
 
-	private String name;
 	private String type;
 	private List<String> nodeList = new ArrayList<String>();
 
@@ -24,16 +24,6 @@ public class NodeGroupImpl implements INodeGroup {
 	public NodeGroupImpl addNodesToList(List<String> nodes) {
 		nodeList.addAll(nodes);
 		return this;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override

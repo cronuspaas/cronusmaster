@@ -1,23 +1,14 @@
 package com.stackscaling.agentmaster.resources.job;
 
+import com.stackscaling.agentmaster.resources.IUserData;
+
 /**
  * interval based job
  * @author binyu
  *
  */
-public interface IntervalJob {
-
-	/**
-	 * job name
-	 * @return
-	 */
-	public String getName();
-
-	/**
-	 * job name
-	 * @param name
-	 */
-	public void setName(String name);
+public interface IntervalJob extends IUserData 
+{
 
 	/**
 	 * interval in minute

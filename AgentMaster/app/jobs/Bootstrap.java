@@ -32,7 +32,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.elasticsearch.EsResourceProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -80,7 +80,7 @@ public class Bootstrap extends Job {
 
 		// initialize user data
 		try {
-			UserDataProvider.reloadAllConfigs();
+			UserDataProviderFactory.reloadAllConfigs();
 		} catch (IOException e) {
 			play.Logger.error(e, "error load configs");
 		}

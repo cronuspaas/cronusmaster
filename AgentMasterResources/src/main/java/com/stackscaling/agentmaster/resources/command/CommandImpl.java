@@ -5,15 +5,14 @@ import java.util.Map;
 
 import org.lightj.example.task.HttpTaskRequest;
 
+import com.stackscaling.agentmaster.resources.BaseUserData;
+
 /**
  * command impl
  * @author biyu
  *
  */
-public class CommandImpl implements ICommand {
-
-	/** name of the command */
-	private String name;
+public class CommandImpl extends BaseUserData implements ICommand {
 
 	/** http request template */
 	private HttpTaskRequest httpTaskRequest;
@@ -38,16 +37,6 @@ public class CommandImpl implements ICommand {
 	 */
 	public HttpTaskRequest getHttpTaskRequest() {
 		return httpTaskRequest;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override

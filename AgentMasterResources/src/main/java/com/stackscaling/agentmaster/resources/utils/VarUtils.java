@@ -65,6 +65,10 @@ public abstract class VarUtils {
 	// agent private key
 	public static String agentPkiCert;
 	
+	// ip that allow access externally (public) and internally (private)
+	public static String externalIp;
+	public static String internalIp;
+	
 	
 	public VarUtils() {}
 

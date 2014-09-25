@@ -50,7 +50,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider;
 import com.stackscaling.agentmaster.resources.TaskResourcesProvider.LogTaskEventHandler;
-import com.stackscaling.agentmaster.resources.UserDataProvider;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.command.ICommand;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
 import com.stackscaling.agentmaster.resources.log.CmdLog;
@@ -98,7 +98,7 @@ public class Commands extends Controller {
 	 */
 	private static List<Map<String, String>> indexInternal() throws Exception 
 	{
-		Map<String, ICommand> cmds = UserDataProvider.getCommandConfigs().getAllCommands();
+		Map<String, ICommand> cmds = UserDataProviderFactory.getCommandConfigs().getAllCommands();
 		List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
 		for (Entry<String, ICommand> entry : cmds.entrySet()) {
 			Map<String, String> values = new HashMap<String, String>();
@@ -170,7 +170,7 @@ public class Commands extends Controller {
 	 * @return
 	 */
 	private static List<Map<String, String>> oneclickInternal() throws Exception {
-		Map<String, IOneClickCommand> cmds = UserDataProvider.getOneClickCommandConfigs().getAllCommands();
+		Map<String, IOneClickCommand> cmds = UserDataProviderFactory.getOneClickCommandConfigs().getAllCommands();
 		List<Map<String, String>> commands = new ArrayList<Map<String,String>>();
 		for (Entry<String, IOneClickCommand> entry : cmds.entrySet()) {
 			Map<String, String> values = new HashMap<String, String>();
@@ -231,7 +231,7 @@ public class Commands extends Controller {
 		String topnav = "commands";
 
 		try {
-			Map<String, INodeGroup> ngsMap = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
+			Map<String, INodeGroup> ngsMap = UserDataProviderFactory.getNodeGroupOfType(DataType.NODEGROUP).getAllNodeGroups();
 			ArrayList<Map<String, String>> ngs = new ArrayList<Map<String, String>>();
 			for (String v : ngsMap.keySet()) {
 				Map<String, String> kvp = new HashMap<String, String>(1);
@@ -245,13 +245,13 @@ public class Commands extends Controller {
 			ICommand cmd = null;
 			switch (dType) {
 			case COMMAND:
-				cmd = UserDataProvider.getCommandConfigs().getCommandByName(dataId);
+				cmd = UserDataProviderFactory.getCommandConfigs().getCommandByName(dataId);
 				break;
 
 			case CMDLOG:
-				ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(dataId);
+				ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(dataId);
 				String agentCommandType = log.getCommandKey();
-				cmd = UserDataProvider.getCommandConfigs().getCommandByName(agentCommandType);
+				cmd = UserDataProviderFactory.getCommandConfigs().getCommandByName(agentCommandType);
 			}
 
 			String cmdName = cmd.getName();
@@ -278,17 +278,17 @@ public class Commands extends Controller {
 			ICommand cmd = null;
 			switch (dType) {
 			case COMMAND:
-				cmd = UserDataProvider.getCommandConfigs().getCommandByName(dataId);
+				cmd = UserDataProviderFactory.getCommandConfigs().getCommandByName(dataId);
 				if (cmd.getUserData() != null) {
 					result.add(createResultItem("var_values", JsonUtil.encodePretty(cmd.getUserData())));
 				}
 				break;
 
 			case CMDLOG:
-				ILog log = UserDataProvider.getJobLoggerOfType(dType).readLog(dataId);
+				ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(dataId);
 				String agentCommandType = log.getCommandKey();
 				Map<String, String> options = log.getUserData();
-				ICommandData userConfigs = UserDataProvider.getCommandConfigs();
+				ICommandData userConfigs = UserDataProviderFactory.getCommandConfigs();
 
 				// build task
 				cmd = userConfigs.getCommandByName(agentCommandType);
@@ -343,7 +343,7 @@ public class Commands extends Controller {
 		try {
 			
 			DataType lType = DataType.valueOf(logType.toUpperCase());
-			ILog log = UserDataProvider.getJobLoggerOfType(lType).readLog(logId);
+			ILog log = UserDataProviderFactory.getJobLoggerOfType(lType).readLog(logId);
 			
 			String dataType = log.getNodeGroup().getType();
 			String nodeGroupType = log.getNodeGroup().getName();
@@ -351,8 +351,8 @@ public class Commands extends Controller {
 			Map<String, String> options = log.getUserData();
 			
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			ICommandData userConfigs = UserDataProvider.getCommandConfigs();
-			INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
+			ICommandData userConfigs = UserDataProviderFactory.getCommandConfigs();
+			INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(dType);
 
 			// build task
 			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
@@ -377,7 +377,7 @@ public class Commands extends Controller {
 			jobLog.setCommandKey(cmd.getName());
 			jobLog.setNodeGroup(ng);
 			jobLog.setHasRawLogs(cmd.isHasRawLogs());
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
 			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
 			
@@ -409,9 +409,9 @@ public class Commands extends Controller {
 	private static Map<String, String> oneclickSaveInternal(String logType, String logId) throws Exception {
 		
 		DataType lType = DataType.valueOf(logType.toUpperCase());
-		ILog log = UserDataProvider.getJobLoggerOfType(lType).readLog(logId);
+		ILog log = UserDataProviderFactory.getJobLoggerOfType(lType).readLog(logId);
 		
-		IOneClickCommandData oneClickDao = UserDataProvider.getOneClickCommandConfigs();
+		IOneClickCommandData oneClickDao = UserDataProviderFactory.getOneClickCommandConfigs();
 		IOneClickCommand oneClickCmd = new OneClickCommandImpl();
 		oneClickCmd.setCommandKey(log.getCommandKey());
 		oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
@@ -483,10 +483,10 @@ public class Commands extends Controller {
 	 * @param logId
 	 */
 	private static String oneclickRunInternal(String dataId, String ngName) throws Exception {
-		IOneClickCommand oneclickCmd = UserDataProvider.getOneClickCommandConfigs().getCommandByName(dataId);
+		IOneClickCommand oneclickCmd = UserDataProviderFactory.getOneClickCommandConfigs().getCommandByName(dataId);
 		
-		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
-		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(DataType.NODEGROUP);
+		ICommandData userConfigs = UserDataProviderFactory.getCommandConfigs();
+		INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(DataType.NODEGROUP);
 
 		// build task
 		ICommand cmd = userConfigs.getCommandByName(oneclickCmd.getCommandKey());
@@ -578,8 +578,8 @@ public class Commands extends Controller {
 	public static void runCmdOnNodeGroup(String dataType, String nodeGroupType, String agentCommandType, Map<String, String> options) 
 	{
 		DataType dType = DataType.valueOf(dataType.toUpperCase());
-		ICommandData userConfigs = UserDataProvider.getCommandConfigs();
-		INodeGroupData ngConfigs = UserDataProvider.getNodeGroupOfType(dType);
+		ICommandData userConfigs = UserDataProviderFactory.getCommandConfigs();
+		INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(dType);
 		try {
 			
 			// build task
@@ -606,7 +606,7 @@ public class Commands extends Controller {
 			jobLog.setNodeGroup(ng);
 			jobLog.setHasRawLogs(cmd.isHasRawLogs());
 			jobLog.setStatus(TaskResultEnum.Running.name());
-			IJobLogger logger = UserDataProvider.getJobLoggerOfType(DataType.CMDLOG);
+			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
 			logger.saveLog(jobLog);
 			if (reqTemplate.getUrlTemplate().hasVariableKey("correlationId")) {
 				reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());

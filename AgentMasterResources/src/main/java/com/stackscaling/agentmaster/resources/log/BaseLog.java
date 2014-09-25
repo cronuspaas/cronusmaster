@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.stackscaling.agentmaster.resources.BaseUserData;
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.nodegroup.INodeGroup;
 import com.stackscaling.agentmaster.resources.nodegroup.NodeGroupImpl;
@@ -25,7 +26,7 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
  * @author binyu
  *
  */
-public abstract class BaseLog implements ILog {
+public abstract class BaseLog extends BaseUserData implements ILog {
 	
 	static Logger logger = LoggerFactory.getLogger(BaseLog.class);
 

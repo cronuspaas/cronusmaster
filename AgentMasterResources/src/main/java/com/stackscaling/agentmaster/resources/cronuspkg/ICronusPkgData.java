@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataProvider;
 
 /**
  * cronus package DAO
@@ -13,7 +13,7 @@ import com.stackscaling.agentmaster.resources.IUserData;
  * @author binyu
  *
  */
-public interface ICronusPkgData extends IUserData {
+public interface ICronusPkgData extends IUserDataProvider {
 
 	/**
 	 * get all commands back

@@ -3,9 +3,9 @@ package com.stackscaling.agentmaster.resources.job;
 import java.io.IOException;
 import java.util.List;
 
-import com.stackscaling.agentmaster.resources.IUserData;
+import com.stackscaling.agentmaster.resources.IUserDataProvider;
 
-public interface IntervalJobData extends IUserData {
+public interface IntervalJobData extends IUserDataProvider {
 
 	/**
 	 * get job by id

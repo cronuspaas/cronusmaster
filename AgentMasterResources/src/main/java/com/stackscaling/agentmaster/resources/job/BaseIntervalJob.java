@@ -2,15 +2,14 @@ package com.stackscaling.agentmaster.resources.job;
 
 import java.util.Map;
 
+import com.stackscaling.agentmaster.resources.BaseUserData;
+
 /**
  * base interval job
  * @author binyu
  *
  */
-public abstract class BaseIntervalJob implements IntervalJob {
-
-	/** name of the job, has to be unique */
-	protected String name;
+public abstract class BaseIntervalJob extends BaseUserData implements IntervalJob {
 
 	/** interval in minutes */
 	protected int intervalInMinute;
@@ -23,14 +22,6 @@ public abstract class BaseIntervalJob implements IntervalJob {
 	}
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-	@Override
-	public String getName() {
-		return name;
-	}
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 	@Override
 	public int getIntervalInMinute() {

@@ -81,6 +81,10 @@ public class PlayVarUtils extends VarUtils {
 			agentPasswordBase64 = Base64.encode(agentPassword.getBytes());
 		}
 		agentPkiCert = getVarStr("agentmaster.cronusagent.pkicert", null);
+		
+		// ips
+		externalIp = getVarStr("agentmaster.externalIp", "127.0.0.1");
+		internalIp = getVarStr("agentmaster.internalIp", "127.0.0.1");
 
 		// in the end, init file util
 		vf = new CronusFileIoUtils();
