@@ -1,0 +1,50 @@
+#{include 'Application/top_head.html'/}
+#{include 'Application/top_nav.html'/}
+
+
+
+<h3 style="text-transform: uppercase">Cronus Packages</h3>		 
+
+	<form action="/agent/uploadPkg" method="post" accept-charset="utf-8"
+      enctype="multipart/form-data">
+	    <input id="data" name="data" type="file" value="Cronus Package" /><br/>
+	    <input type="submit" class="btn btn-small btn-primary" value="Upload New" />
+	</form>
+
+#{data-table-init tableName:'list-all', defaultSize:'50', , sortSpec:'[]' /}
+
+	<div  id="list-all-row">
+		<br/>
+			#{table-declare tableName:'list-all' /}
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Size(KB)</th>
+					<th>Last Modified</th>
+					<th>Remove</th>
+				</tr>
+			</thead>
+			<tbody>
+				#{list items:pkgMetas, as:'obj'}
+				<tr>
+					<td>${obj.name}</td>   
+					<td>${obj.size}</td>
+					<td>${obj.lastmodified}</td>
+					<td>
+						<a target=_self href="/config/deleteConfig/cronuspkg/${obj.name}?page=Agent.packages">
+						<i class="fa fa-trash-o fa-lg"></i></a>
+						</a> 
+					</td>
+				</tr>
+				#{/list}
+			</tbody>
+		</table>
+
+	</div>
+
+#{include 'tags/refresh.html'/}
+
+</div>
+	#{include 'Application/footer.html'/}
+</body>
+</html>
