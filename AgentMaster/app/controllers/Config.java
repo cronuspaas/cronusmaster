@@ -18,11 +18,11 @@ limitations under the License.
 package controllers;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.task.ExecuteOption;
@@ -111,9 +111,14 @@ public class Config extends Controller {
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			List<UserDataMeta> cfgs = UserDataProviderFactory.getUserDataDao().listNames(dType);
-			List<String> cfgNames = new ArrayList<String>();
+			List<Map<String, String>> cfgNames = new ArrayList<Map<String, String>>();
+    		DecimalFormat myFormatter = new DecimalFormat("###,###,###");
 			for (UserDataMeta cfg : cfgs) {
-				cfgNames.add(cfg.getName());
+				HashMap<String, String> prop = new HashMap<String, String>();
+				prop.put("name", cfg.getName());
+				prop.put("size", myFormatter.format(cfg.getSize()));
+				prop.put("lastmodified", DateUtils.getDateTimeStr(cfg.getLastModified()));
+				cfgNames.add(prop);
 			}
 			String lastRefreshed = DateUtils.getNowDateTimeDotStr();
 
