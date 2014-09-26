@@ -21,6 +21,7 @@ import org.lightj.task.asynchttp.IHttpPollProcessor;
 import org.lightj.task.asynchttp.IHttpProcessor;
 import org.lightj.task.asynchttp.SimpleHttpTask;
 import org.lightj.task.asynchttp.UrlRequest;
+import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
 import org.lightj.util.StringUtil;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +40,38 @@ public class AgentResourceProvider {
 	public static final String AGENT_POLL_PROCESSOR = "agentPollProcessor";
 	public static final String AGENT_AUTHKEY_BEAN = "agentAuthKeyContext";
 	
-	@Bean(name={"agentCommandEnhancer", "agentcommand"}) 
+	
+	@Bean(name={"genericcommand", "genericcmd", "command"}) 
+	@Scope("singleton")
+	public ICommandEnhancer genericCommandEnhancer() {
+
+		// unlimited batching
+		final BatchOption defBatchOption = new BatchOption(0, Strategy.UNLIMITED);
+		// exec wait for up to 60 min
+		final ExecuteOption defExecOption = new ExecuteOption(0, 60 * 60, 3, 1);
+		// polling every 5 sec for up to 60 min
+		final MonitorOption defMonOption = new MonitorOption(0, 10, 60 * 60, 3, 1);
+		
+		return new ICommandEnhancer() {
+			
+			@Override
+			public void enhanceRequest(HttpTaskRequest request) {
+				boolean isPolling = (StringUtil.equalIgnoreCase(request.getTaskType(), TaskType.asyncpoll.name()));
+				if (request.getExecutionOption()==null) {
+					request.setExecutionOption(defExecOption);
+				}
+				if (request.getBatchOption()==null) {
+					request.setBatchOption(defBatchOption);
+				}
+				if (isPolling && request.getMonitorOption()==null) {
+					request.setMonitorOption(defMonOption);
+				}
+			}
+		};
+		
+	}
+	
+	@Bean(name={"agentCommandEnhancer", "agentcommand", "agentcmd", "agent"}) 
 	@Scope("singleton")
 	public ICommandEnhancer agentCommandEnhancer() {
 
@@ -64,25 +96,24 @@ public class AgentResourceProvider {
 				if (isPolling && request.getMonitorOption()==null) {
 					request.setMonitorOption(defMonOption);
 				}
-				Map<String, String> headers = request.getUrlTemplate().getHeaders();
-				if (!headers.containsKey("content-type")) {
-					headers.put("content-type", "application/json");
+				if (isPolling && request.getPollTemplate()==null) {
+					UrlTemplate pollTemplate = new UrlTemplate("https://<host>:12020/status/<uuid>");
+					pollTemplate.addHeader("content-type", "application/json");
+					request.setPollTemplate(pollTemplate);
 				}
-				if (!headers.containsKey("Authorization")) {
-					headers.put("Authorization", "Basic <agentAuthKey>");
-				}
-				if (!headers.containsKey("X-CORRELATIONID")) {
-					headers.put("X-CORRELATIONID", "<correlationId>");
-				}
+				
+				request.getUrlTemplate().addHeader("content-type", "application/json");
+				request.getUrlTemplate().addHeader("Authorization", "Basic <agentAuthKey>");
+				request.getUrlTemplate().addHeader("X-CORRELATIONID", "<correlationId>");
 				if (request.getGlobalContext()==null) {
-					request.setGlobalContext("agentAuthKeyContext");
+					request.setGlobalContext(AGENT_AUTHKEY_BEAN);
 				}
 				if (StringUtil.isNullOrEmpty(request.getResProcessorName())) {
 					if (isPolling) {
-						request.setResProcessorName("agentPollProcessor");
+						request.setResProcessorName(AGENT_POLL_PROCESSOR);
 					}
 					else {
-						request.setResProcessorName("agentProcessor");
+						request.setResProcessorName(AGENT_PROCESSOR);
 					}
 				}
 			}
@@ -99,6 +130,7 @@ public class AgentResourceProvider {
 
 			private final HashMap<String, String> PkiAuthKeys = new HashMap<String, String>();
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public String getValueByName(String pivotValue, String name) {
 				return PkiAuthKeys.containsKey(pivotValue) ? PkiAuthKeys.get(pivotValue) : VarUtils.agentPasswordBase64;
@@ -133,6 +165,7 @@ public class AgentResourceProvider {
 	 * @return
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	private TaskResult decodeAgentPkiKey(UrlRequest userReq, Task task, Response response) throws IOException 
 	{
 		int sCode = response.getStatusCode();

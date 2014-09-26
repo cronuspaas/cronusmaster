@@ -1,0 +1,13 @@
+{
+  "name" : "deploy_play_ec2",
+  "displayName" : "deploy_pyserver_ec2",
+  "userData" : {
+    "exe_retry" : "3",
+    "mon_retry" : "3",
+    "thrStrategy" : "UNLIMITED",
+    "var_values" : "{\"serviceName\":\"pyserver\",\"manifestName\":\"1.0.0\",\"package\":[\"http://www.stackscaling.com/agentrepo/simple_pyserver-1.0.0.all.cronus\"]}",
+    "mon_int" : "10"
+  },
+  "commandKey" : "Agent_Deploy_Service",
+  "nodeGroupKey" : "EC2_NODES"
+}

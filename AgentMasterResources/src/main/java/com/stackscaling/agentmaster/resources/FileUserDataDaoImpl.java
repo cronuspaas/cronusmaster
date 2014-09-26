@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stackscaling.agentmaster.resources.UserDataMeta.UserDataMetaComparator;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
@@ -32,6 +34,8 @@ import com.stackscaling.agentmaster.resources.utils.VarUtils;
 public class FileUserDataDaoImpl implements IUserDataDao {
 	
 	static Logger logger = LoggerFactory.getLogger(FileUserDataDaoImpl.class);
+	
+	private UserDataMetaComparator udmComparator = new UserDataMetaComparator();
 	
 	public FileUserDataDaoImpl() {}
 
@@ -67,8 +71,8 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 					attr.size(), 
 					new Date(attr.lastModifiedTime().toMillis())));
 		}
-//		Collections.sort(fileNames);
-//		Collections.reverse(fileNames);
+		Collections.sort(fileNames, udmComparator);
+		Collections.reverse(fileNames);
 		return fileNames;
 
 	}

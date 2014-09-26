@@ -3,12 +3,6 @@
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
-    "executionOption" : {
-      "timeOutSec" : 0,
-      "initDelaySec" : 0,
-      "maxRetry" : 3,
-      "retryDelaySec" : 0
-    },
     "urlTemplate" : {
       "url" : "https://<host>:12020/agent/modules/<moduleName>",
       "method" : "POST",
@@ -16,37 +10,14 @@
         "package" : "<package>"
       },
       "headers" : {
-        "content-type" : "application/json",
-        "Authorization" : "Basic <agentAuthKey>",
-        "X-CORRELATIONID" : "<correlationId>"
       },
       "parameters" : {
       }
-    },
-    "monitorOption" : {
-      "timeOutSec" : 0,
-      "initDelaySec" : 0,
-      "maxRetry" : 3,
-      "retryDelaySec" : 0,
-      "intervalSec" : 10
-    },
-    "pollTemplate" : {
-      "url" : "https://<host>:12020/status/<uuid>",
-      "method" : "GET",
-      "body" : {
-      },
-      "headers" : {
-        "content-type" : "application/json"
-      },
-      "parameters" : {
-      }
-    },
-    "resProcessorName" : "agentPollProcessor",
-    "globalContext" : "agentAuthKeyContext"
+    }
   },
   "userData" : {
     "moduleName" : "moduleName",
     "package" : "http pkg location"
   },
-  "hasRawLogs" : true
+  "category" : "agentcommand"
 }

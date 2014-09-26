@@ -120,6 +120,7 @@ public abstract class BaseCommandData implements ICommandData {
 			}
 		}
 
+		// process user input for execution
 		long exeInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_initde", "0"));
 		long exeTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "exe_to", "0"));
 		int exeRetry = Integer.parseInt(DataUtil.getOptionValue(options, "exe_retry", "0"));
@@ -147,6 +148,7 @@ public abstract class BaseCommandData implements ICommandData {
 		BatchOption batchOption = new BatchOption(maxRate, strategy);
 		reqTemplate.setBatchOption(batchOption);
 		
+		// process user input for user data
 		HashMap<String, String> values = new HashMap<String, String>();
 		for (Entry<String, ?> entry : userData.entrySet()) {
 			Object v = entry.getValue();

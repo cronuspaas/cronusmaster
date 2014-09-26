@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.StringInputStream;
+import com.stackscaling.agentmaster.resources.UserDataMeta.UserDataMetaComparator;
 import com.stackscaling.agentmaster.resources.aws.AwsResourceProvider;
 
 /**
@@ -32,6 +34,8 @@ public class S3UserDataDaoImpl implements IUserDataDao {
 
 	static Logger logger = LoggerFactory.getLogger(S3UserDataDaoImpl.class);
 
+	private UserDataMetaComparator udmComparator = new UserDataMetaComparator();
+	
 	@Override
 	public String readData(DataType type, String name) throws IOException
 	{
@@ -139,6 +143,8 @@ public class S3UserDataDaoImpl implements IUserDataDao {
 			listObjectsRequest.setMarker(objectListing.getNextMarker());
 
 		} while (objectListing.isTruncated());
+		Collections.sort(result, udmComparator);
+		Collections.reverse(result);
 
 		return result;
 	}

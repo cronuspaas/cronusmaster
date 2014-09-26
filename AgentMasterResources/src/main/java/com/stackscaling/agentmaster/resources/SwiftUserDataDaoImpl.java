@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.javaswift.joss.model.Account;
@@ -14,6 +15,7 @@ import org.javaswift.joss.model.StoredObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stackscaling.agentmaster.resources.UserDataMeta.UserDataMetaComparator;
 import com.stackscaling.agentmaster.resources.swift.SwiftResourceProvider;
 
 /**
@@ -26,6 +28,8 @@ public class SwiftUserDataDaoImpl implements IUserDataDao {
 
 	static Logger logger = LoggerFactory.getLogger(SwiftUserDataDaoImpl.class);
 
+	private UserDataMetaComparator udmComparator = new UserDataMetaComparator();
+	
 	@Override
 	public String readData(DataType type, String name) throws IOException
 	{
@@ -92,6 +96,9 @@ public class SwiftUserDataDaoImpl implements IUserDataDao {
 	        		currentObject.getContentLength(), 
 	        		currentObject.getLastModifiedAsDate()));
 	    }
+		Collections.sort(result, udmComparator);
+		Collections.reverse(result);
+
 		return result;
 
 	}

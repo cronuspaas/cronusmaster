@@ -302,12 +302,16 @@ public class Commands extends Controller {
 			HttpTaskRequest req = cmd.createCopy();
 
 			// enhance the request by its category
+			ICommandEnhancer cmdEnhancer = null;
 			if (!StringUtil.isNullOrEmpty(cmd.getCategory())) {
-				ICommandEnhancer cmdEnhancer = SpringContextUtil.getBean("resources", cmd.getCategory(), ICommandEnhancer.class);
-				if (cmdEnhancer != null) {
-					cmdEnhancer.enhanceRequest(req);
-				}
+				cmdEnhancer = SpringContextUtil.getBean("resources", cmd.getCategory(), ICommandEnhancer.class);
+			} 
+			if (cmdEnhancer == null) {
+				cmdEnhancer = SpringContextUtil.getBean("resources", "genericcommand", ICommandEnhancer.class);
 			}
+			cmdEnhancer.enhanceRequest(req);
+
+			// get options for execution
 			ExecuteOption eo = req.getExecutionOption()==null ? new ExecuteOption() : req.getExecutionOption();
 			result.add(createResultItem("exe_initde", Long.toString(eo.getInitDelaySec())));
 			result.add(createResultItem("exe_to", Long.toString(eo.getTimeOutSec())));

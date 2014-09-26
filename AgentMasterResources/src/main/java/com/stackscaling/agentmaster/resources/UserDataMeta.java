@@ -1,5 +1,6 @@
 package com.stackscaling.agentmaster.resources;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -41,6 +42,18 @@ public class UserDataMeta {
 
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
+	}
+	
+	public static class UserDataMetaComparator implements Comparator<UserDataMeta> {
+
+		@Override
+		public int compare(UserDataMeta o1, UserDataMeta o2) {
+			if (o1==null || o2==null || o1.name==null || o2.name==null) {
+				throw new IllegalArgumentException("user data meta cannot be empty");
+			}
+			return o1.name.compareTo(o2.name);
+		}
+		
 	}
 
 }

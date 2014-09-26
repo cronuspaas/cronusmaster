@@ -3,12 +3,6 @@
   "httpTaskRequest" : {
     "taskType" : "async",
     "httpClientType" : "httpClient",
-    "executionOption" : {
-      "timeOutSec" : 0,
-      "initDelaySec" : 0,
-      "maxRetry" : 3,
-      "retryDelaySec" : 0
-    },
     "urlTemplate" : {
       "url" : "https://<host>:12020/agent/config",
       "method" : "POST",
@@ -16,19 +10,14 @@
         "configs" : "{\"<configName>\": \"<configValue>\"}"
       },
       "headers" : {
-        "content-type" : "application/json",
-        "Authorization" : "Basic <agentAuthKey>",
-        "X-CORRELATIONID" : "<correlationId>"
       },
       "parameters" : {
       }
-    },
-    "resProcessorName" : "agentProcessor",
-    "globalContext" : "agentAuthKeyContext"
+    }
   },
   "userData" : {
     "configName" : "configName",
     "configValue" : "configValue"
   },
-  "hasRawLogs" : false
+  "category" : "agentcommand"
 }

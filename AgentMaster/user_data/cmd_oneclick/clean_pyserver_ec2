@@ -1,0 +1,13 @@
+{
+  "name" : "clean_pyserver_ec2",
+  "displayName" : "clean_pyserver_ec2",
+  "userData" : {
+    "mon_int" : "10",
+    "exe_retry" : "3",
+    "mon_retry" : "3",
+    "thrStrategy" : "UNLIMITED",
+    "var_values" : "{  \"serviceName\" : \"pyserver\" }"
+  },
+  "commandKey" : "Agent_Cleanup_Service",
+  "nodeGroupKey" : "EC2_NODES"
+}
