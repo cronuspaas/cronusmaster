@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.session.FlowInfo;
 import org.lightj.task.TaskResultEnum;
 import org.lightj.util.StringUtil;
@@ -33,6 +34,8 @@ public abstract class BaseLog extends BaseUserData implements ILog {
 	/** timestamp of the log */
 	protected String timestamp = DateUtils.getNowDateTimeDotStr();
 
+	protected HttpTaskRequest httpTask;
+	
 	/** user data */
 	protected Map<String, String> userData;
 	
@@ -159,6 +162,12 @@ public abstract class BaseLog extends BaseUserData implements ILog {
 	}
 	public void setRawLogsFetched(boolean rawLogsFetched) {
 		this.rawLogsFetched = rawLogsFetched;
+	}
+	public HttpTaskRequest getHttpTask() {
+		return httpTask;
+	}
+	public void setHttpTask(HttpTaskRequest httpTask) {
+		this.httpTask = httpTask;
 	}
 	public DataType getLogType() {
 		return logType;

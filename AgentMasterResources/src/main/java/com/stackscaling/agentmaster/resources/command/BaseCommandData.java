@@ -3,9 +3,12 @@ package com.stackscaling.agentmaster.resources.command;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskRequest;
@@ -23,7 +26,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.stackscaling.agentmaster.resources.DataType;
 import com.stackscaling.agentmaster.resources.IUserDataDao;
 import com.stackscaling.agentmaster.resources.UserDataMeta;
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
+import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkg;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 /**
  * base class for command dao
@@ -104,6 +110,7 @@ public abstract class BaseCommandData implements ICommandData {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
+	@SuppressWarnings("rawtypes")
 	public static HttpTaskRequest createTaskByRequest(
 			String[] hosts, 
 			ICommand cmd, 
@@ -153,8 +160,20 @@ public abstract class BaseCommandData implements ICommandData {
 		for (Entry<String, ?> entry : userData.entrySet()) {
 			Object v = entry.getValue();
 			if (v instanceof String) {
-				values.put(entry.getKey(), (String) v);
-			} else {
+				values.put(entry.getKey(), checkLatestValue((String) v));
+			} 
+			else if (v instanceof List) {
+				List lvs = (List) v;
+				for (int i = 0; i < lvs.size(); i++) {
+					String lv = (String) lvs.get(i);
+					String nv = checkLatestValue(lv);
+					if (nv != null) {
+						lvs.set(i, nv);
+					}
+				}
+				values.put(entry.getKey(), JsonUtil.encode(v));
+			}
+			else {
 				values.put(entry.getKey(), JsonUtil.encode(v));
 			}
 		}
@@ -164,6 +183,51 @@ public abstract class BaseCommandData implements ICommandData {
 		}
 		reqTemplate.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(values));
 		return reqTemplate;
+	}
+	
+	/**
+	 * convenient method of matching and replacing latest pkg
+	 */
+	static Pattern latestPattern = Pattern.compile("(.*)<(.*)\\.latest>$");
+	static Pattern cmIpPatternE = Pattern.compile("(.*)<(cmExternalIp)>(.*)");
+	static Pattern cmIpPatternI = Pattern.compile("(.*)<(cmInternalIp)>(.*)");
+	private static String checkLatestValue(String v) throws IOException {
+		Matcher matcher = latestPattern.matcher(v);
+		boolean replaced = false;
+		if (matcher.matches()) {
+			List<ICronusPkg> pkgs = UserDataProviderFactory.getCronusPkgData()
+					.getPkgsByFilter("name", matcher.group(2));
+			if (!pkgs.isEmpty()) {
+				v = matcher.replaceFirst(String.format("$1%s", pkgs.get(0).getName()));
+				replaced = true;
+			}
+		}
+		matcher = cmIpPatternE.matcher(v);
+		if (matcher.matches()) {
+			v = matcher.replaceFirst(String.format("$1%s$3", VarUtils.externalIp));
+			replaced = true;
+		}
+		matcher = cmIpPatternI.matcher(v);
+		if (matcher.matches()) {
+			v = matcher.replaceFirst(String.format("$1%s$3", VarUtils.internalIp));
+			replaced = true;
+		}
+		return replaced ? v : null;
+	}
+	
+	public static void main(String[] args) {
+			String pkg = "http://<cmExternalIp>:9000/agent/downloadPkg/<simple_pyserver-*.all.cronus.latest>";
+			Matcher matcher = latestPattern.matcher(pkg);
+			System.out.println(matcher.matches());
+			System.out.println(matcher.group(2));
+			pkg = matcher.replaceFirst("$1newvalue");
+			System.out.println(pkg);
+			matcher = cmIpPatternE.matcher(pkg);
+			System.out.println(matcher.matches());
+			System.out.println(matcher.group(1));
+			pkg = matcher.replaceFirst("$1newvalue$3");
+			System.out.println(pkg);
+			
 	}
 
 }

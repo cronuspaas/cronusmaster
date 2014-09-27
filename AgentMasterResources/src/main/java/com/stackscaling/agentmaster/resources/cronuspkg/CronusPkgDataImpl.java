@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,31 +126,50 @@ public class CronusPkgDataImpl implements ICronusPkgData {
 	}
 
 	@Override
-	public List<ICronusPkg> getPkgsByFilters(Map<String, String> filters)
+	public List<ICronusPkg> getPkgsByFilter(final String fn, String fvReg)
 			throws IOException 
 	{
+		Pattern pattern = Pattern.compile(fvReg);
+		Matcher matcher = null;
 		List<ICronusPkg> rst = new ArrayList<ICronusPkg>();
 		for (ICronusPkg pkg : pkgs.values()) {
-			boolean match = true;
-			for (Entry<String, String> filter : filters.entrySet()) {
-				String fn = filter.getKey();
-				String fv = filter.getValue();
-				if (StringUtil.equalIgnoreCase("version", fn)) {
-					match &= StringUtil.equalIgnoreCase(pkg.getVersion(), fv);
-				} else if (StringUtil.equalIgnoreCase("platform", fn)) {
-					match &= StringUtil.equalIgnoreCase(pkg.getPlatform(), fv);
-				} else if (StringUtil.equalIgnoreCase("appname", fn)) {
-					match &= StringUtil.equalIgnoreCase(pkg.getAppName(), fv);
-				} else if (StringUtil.equalIgnoreCase("name", fn)) {
-					match &= StringUtil.equalIgnoreCase(pkg.getName(), fv);
-				}
+			String mv = null;
+			if (StringUtil.equalIgnoreCase("version", fn)) {
+				mv = pkg.getVersion();
+			} else if (StringUtil.equalIgnoreCase("platform", fn)) {
+				mv = pkg.getPlatform();
+			} else if (StringUtil.equalIgnoreCase("appname", fn)) {
+				mv = pkg.getAppName();
+			} else if (StringUtil.equalIgnoreCase("name", fn)) {
+				mv = pkg.getName();
 			}
-			if (match) {
+			matcher = pattern.matcher(mv);
+			if (matcher.matches()) {
 				rst.add(pkg);
 			}
 		}
+		
+		// always sort desc before return
+		Collections.sort(rst, Collections.reverseOrder(new Comparator<ICronusPkg>() {
+
+			@Override
+			public int compare(ICronusPkg o1, ICronusPkg o2) {
+				if (StringUtil.equalIgnoreCase("version", fn)) {
+					return o1.getVersion().compareTo(o2.getVersion());
+				} else if (StringUtil.equalIgnoreCase("platform", fn)) {
+					return o1.getPlatform().compareTo(o2.getPlatform());
+				} else if (StringUtil.equalIgnoreCase("appname", fn)) {
+					return o1.getAppName().compareTo(o2.getAppName());
+				} else if (StringUtil.equalIgnoreCase("name", fn)) {
+					return o1.getName().compareTo(o2.getName());
+				}
+				return o1.getName().compareTo(o2.getName());
+			}
+		}));
+		
 		return rst;
 	}
+	
 
 	@Override
 	public void save(String pkgName, InputStream dataInputStream) throws IOException 

@@ -35,7 +35,7 @@ public interface ICronusPkgData extends IUserDataProvider {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<ICronusPkg> getPkgsByFilters(Map<String, String> filters) throws IOException;
+	public List<ICronusPkg> getPkgsByFilter(String field, String filter) throws IOException;
 
 	
 	/**

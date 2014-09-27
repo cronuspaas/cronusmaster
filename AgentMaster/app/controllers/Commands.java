@@ -349,75 +349,6 @@ public class Commands extends Controller {
 	
 	
 	/**
-	 * rerun the same command from a cmd log
-	 * @param logType
-	 * @param logId
-	 */
-	public static void runCmdFromLog(String logType, String logId) {
-
-		try {
-			
-			DataType lType = DataType.valueOf(logType.toUpperCase());
-			ILog log = UserDataProviderFactory.getJobLoggerOfType(lType).readLog(logId);
-			
-			String dataType = log.getNodeGroup().getType();
-			String nodeGroupType = log.getNodeGroup().getName();
-			String agentCommandType = log.getCommandKey();
-			Map<String, String> options = log.getUserData();
-			
-			DataType dType = DataType.valueOf(dataType.toUpperCase());
-			ICommandData userConfigs = UserDataProviderFactory.getCommandConfigs();
-			INodeGroupData ngConfigs = UserDataProviderFactory.getNodeGroupOfType(dType);
-
-			// build task
-			ICommand cmd = userConfigs.getCommandByName(agentCommandType);
-			String[] hosts = null;
-			INodeGroup ng = null;
-			if (!StringUtil.isNullOrEmpty(nodeGroupType)) {
-				ng = ngConfigs.getNodeGroupByName(nodeGroupType);
-				hosts = ng.getHosts();
-			}
-			else {
-				ng = INodeGroupData.NG_EMPTY;
-			}
-
-			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
-			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-			HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
-
-			// prepare log
-			CmdLog jobLog = new CmdLog();
-			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
-			jobLog.setUserData(optionCleanup);
-			jobLog.setCommandKey(cmd.getName());
-			jobLog.setNodeGroup(ng);
-			boolean hasRawLogs = StringUtil.equalIgnoreCase(cmd.getCategory(), "agent");
-			jobLog.setHasRawLogs(hasRawLogs);
-			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
-			logger.saveLog(jobLog);
-			reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
-			
-			// fire task
-			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
-			StandaloneTaskListener listener = new StandaloneTaskListener();
-			int numOfHost = hosts!=null ? hosts.length : 1;
-			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
-			handler.saveLog(true);
-			listener.setDelegateHandler(handler);
-			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
-			
-			String alert = String.format("%s fired on %s successfully ", agentCommandType, nodeGroupType);
-			
-			redirect("Logs.cmdLogs", alert);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			error(String.format("Error occur in job wizard, %s", e.getLocalizedMessage()));
-		}
-
-	}
-	
-	/**
 	 * save as one click command internal
 	 * @param logType
 	 * @param logId
@@ -498,7 +429,8 @@ public class Commands extends Controller {
 	 * @param logType
 	 * @param logId
 	 */
-	private static String oneclickRunInternal(String dataId, String ngName) throws Exception {
+	private static String oneclickRunInternal(String dataId, String ngName) throws Exception 
+	{
 		IOneClickCommand oneclickCmd = UserDataProviderFactory.getOneClickCommandConfigs().getCommandByName(dataId);
 		
 		ICommandData userConfigs = UserDataProviderFactory.getCommandConfigs();
@@ -523,30 +455,22 @@ public class Commands extends Controller {
 		Map<String, String> options = oneclickCmd.getUserData();
 		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 		Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-		HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
+		HttpTaskRequest httpTask = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
 
-		// prepare log
-		CmdLog jobLog = new CmdLog();
-		Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
-		jobLog.setUserData(optionCleanup);
-		jobLog.setCommandKey(cmd.getName());
-		jobLog.setNodeGroup(ng);
-		boolean hasRawLogs = StringUtil.equalIgnoreCase(cmd.getCategory(), "agent");
-		jobLog.setHasRawLogs(hasRawLogs);
-		reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
+		CmdLog cmdLog = prepareLog(cmd, ng, options, httpTask);
 		
 		// fire task
-		ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+		ExecutableTask reqTask = HttpTaskBuilder.buildTask(httpTask);
 		StandaloneTaskListener listener = new StandaloneTaskListener();
 		int numOfHost = hosts!=null ? hosts.length : 1;
-		LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
+		LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(cmdLog, numOfHost);
 		handler.saveLog(true);
 		listener.setDelegateHandler(handler);
-		new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+		new StandaloneTaskExecutor(httpTask.getBatchOption(), listener, reqTask).execute();
 
-		return jobLog.uuid();
+		return cmdLog.uuid();
 	}
-
+	
 	/**
 	 * run oneclick command
 	 * @param logType
@@ -613,31 +537,19 @@ public class Commands extends Controller {
 
 			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
 			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-			HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
+			HttpTaskRequest httpTask = BaseCommandData.createTaskByRequest(hosts, cmd, options, userData);
 
 			// prepare log
-			CmdLog jobLog = new CmdLog();
-			Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
-			jobLog.setUserData(optionCleanup);
-			jobLog.setCommandKey(cmd.getName());
-			jobLog.setNodeGroup(ng);
-			boolean hasRawLogs = StringUtil.equalIgnoreCase(cmd.getCategory(), "agent");
-			jobLog.setHasRawLogs(hasRawLogs);
-			jobLog.setStatus(TaskResultEnum.Running.name());
-			IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
-			logger.saveLog(jobLog);
-			if (reqTemplate.getUrlTemplate().hasVariableKey("correlationId")) {
-				reqTemplate.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", jobLog.uuid());
-			}
+			CmdLog cmdLog = prepareLog(cmd, ng, options, httpTask);
 			
 			// fire task
-			ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+			ExecutableTask reqTask = HttpTaskBuilder.buildTask(httpTask);
 			StandaloneTaskListener listener = new StandaloneTaskListener();
 			int numOfHost = hosts!=null ? hosts.length : 1;
-			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(jobLog, numOfHost);
+			LogTaskEventHandler handler = new TaskResourcesProvider.LogTaskEventHandler(cmdLog, numOfHost);
 			handler.saveLog(true);
 			listener.setDelegateHandler(handler);
-			new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+			new StandaloneTaskExecutor(httpTask.getBatchOption(), listener, reqTask).execute();
 			
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -646,4 +558,35 @@ public class Commands extends Controller {
 
 	}
 	
+	/**
+	 * prepare cmd log
+	 * @param cmd
+	 * @param ng
+	 * @param options
+	 * @param httpTask
+	 * @return
+	 * @throws IOException
+	 */
+	static private CmdLog prepareLog(
+			ICommand cmd, 
+			INodeGroup ng, 
+			Map<String, String> options, 
+			HttpTaskRequest httpTask) throws IOException 
+	{
+		// prepare log
+		CmdLog cmdLog = new CmdLog();
+		Map<String, String> optionCleanup = DataUtil.removeNullAndZero(options);
+		cmdLog.setUserData(optionCleanup);
+		cmdLog.setCommandKey(cmd.getName());
+		cmdLog.setNodeGroup(ng);
+		boolean hasRawLogs = (cmd.getCategory()!=null && cmd.getCategory().toLowerCase().startsWith("agent"));
+		cmdLog.setHasRawLogs(hasRawLogs);
+		cmdLog.setHttpTask(httpTask);
+		cmdLog.setStatus(TaskResultEnum.Running.name());
+		IJobLogger logger = UserDataProviderFactory.getJobLoggerOfType(DataType.CMDLOG);
+		logger.saveLog(cmdLog);
+		httpTask.getTemplateValuesForAllHosts().addToCurrentTemplate("correlationId", cmdLog.uuid());
+		return cmdLog;
+	}
+
 }

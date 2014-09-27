@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
+import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.example.task.HttpTaskRequest.TaskType;
 import org.lightj.task.BatchOption;
@@ -87,6 +88,7 @@ public class AgentResourceProvider {
 			@Override
 			public void enhanceRequest(HttpTaskRequest request) {
 				boolean isPolling = (StringUtil.equalIgnoreCase(request.getTaskType(), TaskType.asyncpoll.name()));
+				// execution and monitor options
 				if (request.getExecutionOption()==null) {
 					request.setExecutionOption(defExecOption);
 				}
@@ -96,18 +98,21 @@ public class AgentResourceProvider {
 				if (isPolling && request.getMonitorOption()==null) {
 					request.setMonitorOption(defMonOption);
 				}
+				// agent status polling
 				if (isPolling && request.getPollTemplate()==null) {
 					UrlTemplate pollTemplate = new UrlTemplate("https://<host>:12020/status/<uuid>");
 					pollTemplate.addHeader("content-type", "application/json");
 					request.setPollTemplate(pollTemplate);
 				}
-				
+				// agent request headers
 				request.getUrlTemplate().addHeader("content-type", "application/json");
 				request.getUrlTemplate().addHeader("Authorization", "Basic <agentAuthKey>");
 				request.getUrlTemplate().addHeader("X-CORRELATIONID", "<correlationId>");
+				// agent auth
 				if (request.getGlobalContext()==null) {
 					request.setGlobalContext(AGENT_AUTHKEY_BEAN);
 				}
+				// agent response processor
 				if (StringUtil.isNullOrEmpty(request.getResProcessorName())) {
 					if (isPolling) {
 						request.setResProcessorName(AGENT_POLL_PROCESSOR);
@@ -116,6 +121,7 @@ public class AgentResourceProvider {
 						request.setResProcessorName(AGENT_PROCESSOR);
 					}
 				}
+				
 			}
 		};
 	}
