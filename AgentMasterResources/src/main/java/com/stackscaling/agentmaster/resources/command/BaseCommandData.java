@@ -160,7 +160,7 @@ public abstract class BaseCommandData implements ICommandData {
 		for (Entry<String, ?> entry : userData.entrySet()) {
 			Object v = entry.getValue();
 			if (v instanceof String) {
-				values.put(entry.getKey(), checkLatestValue((String) v));
+				values.put(entry.getKey(), (String) v);
 			} 
 			else if (v instanceof List) {
 				List lvs = (List) v;
