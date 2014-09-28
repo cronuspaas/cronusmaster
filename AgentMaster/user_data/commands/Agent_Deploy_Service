@@ -4,12 +4,12 @@
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/deployservice",
+      "url" : "https://<host>:12020/services/<serviceName>/action/deploy",
       "method" : "POST",
       "body" : {
         "upstartService" : "<upstartService>",
-        "manifest" : "<manifestName>",
         "package" : "<package>",
+        "manifest" : "<manifestName>",
         "daemon" : "<daemon>",
         "env" : "<env>"
       },

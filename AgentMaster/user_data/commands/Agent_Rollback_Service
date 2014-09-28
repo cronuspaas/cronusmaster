@@ -1,11 +1,11 @@
 {
-  "name" : "Agent_Cleanup_Service",
+  "name" : "Agent_Rollback_Service",
   "httpTaskRequest" : {
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/cleanup",
-      "method" : "DELETE",
+      "url" : "https://<host>:12020/services/<serviceName>/action/rollback",
+      "method" : "POST",
       "body" : {
       },
       "headers" : {

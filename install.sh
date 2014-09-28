@@ -23,7 +23,7 @@ echo "will install $PKG"
 
 CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"manifest\": \"0.0.1\", \"env\": \"$env\" $daemon}"
 echo "use cronus cmd $CMD_BODY"
-curl -k -H "content-type:application/json" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deployservice
+curl -k -H "content-type:application/json" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deploy
 echo 
 
 echo "verify installation"
