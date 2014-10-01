@@ -1,12 +1,12 @@
 {
   "name" : "20140923232726",
-  "displayName" : "deploy_play",
+  "displayName" : "deploy_play_local",
   "userData" : {
     "mon_int" : "10",
     "exe_retry" : "3",
     "mon_retry" : "3",
     "thrStrategy" : "UNLIMITED",
-    "var_values" : "{\"serviceName\":\"play\",\"manifestName\":\"0.1.201409240617\",\"package\":[\"http://www.stackscaling.com/agentrepo/play_hw-0.1.201409240617.x64_ubuntu.cronus\"]}"
+    "var_values" : "{\"serviceName\":\"play\",\"package\":[\"http://<cmExternalIp>:9000/agent/downloadPkg/<playapp-.*.all.cronus.latest>\"]}"
   },
   "commandKey" : "Agent_Deploy_Service",
   "nodeGroupKey" : "LOCALHOST"
