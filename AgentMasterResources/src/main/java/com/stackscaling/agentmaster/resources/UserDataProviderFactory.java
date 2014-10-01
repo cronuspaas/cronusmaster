@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 
 import com.stackscaling.agentmaster.resources.command.CommandDataImpl;
 import com.stackscaling.agentmaster.resources.command.ICommandData;
+import com.stackscaling.agentmaster.resources.command.ICommandEnhancer;
 import com.stackscaling.agentmaster.resources.command.SysCommandDataImpl;
 import com.stackscaling.agentmaster.resources.cronuspkg.CronusPkgDataImpl;
 import com.stackscaling.agentmaster.resources.cronuspkg.ICronusPkgData;
@@ -293,6 +294,24 @@ public class UserDataProviderFactory {
 	 */
 	public static ICronusPkgData getCronusPkgData() {
 		return SpringContextUtil.getBean("resources", "cronusPkgData", ICronusPkgData.class);
+	}
+
+	/**
+	 * command enhancer by cmd category
+	 * @param cmdCategory
+	 * @return
+	 */
+	public static ICommandEnhancer getCommandEnhancer(String cmdCategory) {
+		try {
+			if (!StringUtil.isNullOrEmpty(cmdCategory)) {
+				return SpringContextUtil.getBean("resources", cmdCategory, ICommandEnhancer.class);
+			}
+			else {
+				throw new Exception("default category");
+			}
+		} catch (Exception e) {
+			return SpringContextUtil.getBean("resources", "genericcommand", ICommandEnhancer.class);
+		}
 	}
 
 	/**

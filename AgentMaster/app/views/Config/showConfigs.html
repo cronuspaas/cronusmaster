@@ -31,17 +31,17 @@
 					<td>${obj.size}</td>   
 					<td>${obj.lastmodified}</td>   
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/update/${obj}?nav=${topnav}">
+						<a target=_self href="/config/editConfig/${dataType}/update/${obj.name}?nav=${topnav}">
 						<i class="fa fa-wrench fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>   
-						<a target=_self href="/config/editConfig/${dataType}/create/${obj}?nav=${topnav}">
+						<a target=_self href="/config/editConfig/${dataType}/create/${obj.name}?nav=${topnav}">
 						<i class="fa fa-copy fa-lg"></i></a>	
 						</a>
 					</td>
 					<td>
-						<a target=_self href="/config/deleteConfig/${dataType}/${obj}?nav=${topnav}">
+						<a target=_self href="/config/deleteConfig/${dataType}/${obj.name}?nav=${topnav}">
 						<i class="fa fa-trash-o fa-lg"></i></a>
 						</a> 
 					</td>   

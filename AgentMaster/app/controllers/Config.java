@@ -235,6 +235,9 @@ public class Config extends Controller {
 			case SCRIPT:
 				UserDataProviderFactory.getScriptOfType(dType).save(configName, content);
 				break;
+			case SYSCMD:
+				UserDataProviderFactory.getSysCommandConfigs().save(configName, content);
+				break;
 			default:
 				throw new RuntimeException("Invalid datatype " + dataType);
 			}

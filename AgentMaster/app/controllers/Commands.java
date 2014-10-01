@@ -302,13 +302,7 @@ public class Commands extends Controller {
 			HttpTaskRequest req = cmd.createCopy();
 
 			// enhance the request by its category
-			ICommandEnhancer cmdEnhancer = null;
-			if (!StringUtil.isNullOrEmpty(cmd.getCategory())) {
-				cmdEnhancer = SpringContextUtil.getBean("resources", cmd.getCategory(), ICommandEnhancer.class);
-			} 
-			if (cmdEnhancer == null) {
-				cmdEnhancer = SpringContextUtil.getBean("resources", "genericcommand", ICommandEnhancer.class);
-			}
+			ICommandEnhancer cmdEnhancer = UserDataProviderFactory.getCommandEnhancer(cmd.getCategory());
 			cmdEnhancer.enhanceRequest(req);
 
 			// get options for execution

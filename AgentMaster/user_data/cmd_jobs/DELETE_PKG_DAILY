@@ -1,0 +1,1 @@
+{"name":"DELETE_PKG_DAILY","intervalInMinute":1440,"enabled":true,"cmdName":"LOCAL_DELETE_PKGS","nodeGroupName":"LOCALHOST","userData":{"exe_retry":"3","exe_to":"3600","thrStrategy":"UNLIMITED","exe_rede":"1","var_values":"{\n  \"retainFactor\" : \"name\",\n  \"numToKeep\" : \"1\"\n}"},"description":"Run LOCAL_DELETE_PKGS on LOCALHOST every 1440 minute"}

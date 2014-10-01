@@ -120,11 +120,9 @@ public abstract class BaseCommandData implements ICommandData {
 		HttpTaskRequest reqTemplate = cmd.createCopy();
 		
 		// enhance the request by its category
-		if (!StringUtil.isNullOrEmpty(cmd.getCategory())) {
-			ICommandEnhancer cmdEnhancer = SpringContextUtil.getBean("resources", cmd.getCategory(), ICommandEnhancer.class);
-			if (cmdEnhancer != null) {
-				cmdEnhancer.enhanceRequest(reqTemplate);
-			}
+		ICommandEnhancer cmdEnhancer = UserDataProviderFactory.getCommandEnhancer(cmd.getCategory());
+		if (cmdEnhancer != null) {
+			cmdEnhancer.enhanceRequest(reqTemplate);
 		}
 
 		// process user input for execution

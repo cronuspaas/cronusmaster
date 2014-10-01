@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
-import org.lightj.example.task.HostTemplateValues;
 import org.lightj.example.task.HttpTaskRequest;
 import org.lightj.example.task.HttpTaskRequest.TaskType;
 import org.lightj.task.BatchOption;
@@ -42,7 +41,7 @@ public class AgentResourceProvider {
 	public static final String AGENT_AUTHKEY_BEAN = "agentAuthKeyContext";
 	
 	
-	@Bean(name={"genericcommand", "genericcmd", "command"}) 
+	@Bean(name={"genericcommand", "genericcmd", "command", "system"}) 
 	@Scope("singleton")
 	public ICommandEnhancer genericCommandEnhancer() {
 

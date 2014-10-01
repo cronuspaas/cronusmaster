@@ -21,8 +21,8 @@ GET		/commands/oneclickRun					Commands.oneclickRun
 GET		/commands/oneclickRunJson				Commands.oneclickRunJson
 
 # workflows
-#GET		/workflows								Workflows.index
-#GET		/workflows/getOptions/{wfName}			Workflows.getOptions
+#GET	/workflows								Workflows.index
+#GET	/workflows/getOptions/{wfName}			Workflows.getOptions
 #POST	/workflows/runWfOnNodeGroup				Workflows.runWfOnNodeGroup
 
 
@@ -38,24 +38,22 @@ GET     /config/deleteConfig/{dataType}/{configName}			Config.deleteConfig
 POST    /config/editConfigUpdate/{dataType}/{configName}		Config.editConfigUpdate
 
 # housekeeping
-POST	/housekeeping/runGC							HouseKeeping.runGC
-POST	/housekeeping/setRunCronJob					HouseKeeping.setRunCronJob	
+#POST	/housekeeping/runGC							HouseKeeping.runGC
+#POST	/housekeeping/setRunCronJob					HouseKeeping.setRunCronJob	
 POST    /housekeeping/deleteLogs		            HouseKeeping.deleteLogs
+POST	/housekeeping/deletePkgs					HouseKeeping.deleteCronusPkg
 
 # logs page
 GET     /logs                                       Logs.index
 GET     /logs/cmdlogs                                       Logs.cmdLogs
 GET     /logs/cmdLogsJson                                   Logs.cmdLogsJson
 GET     /logs/joblogs                                       Logs.jobLogs
-# wf related
-#GET     /logs/wflogs                                       Logs.wfLogs
+#GET    /logs/wflogs                                       	Logs.wfLogs   # workflow logs
 GET     /logs/download                                      Logs.download
-# enable this make cronus master as file explorer (not secure)
-#GET     /logs/exploreFiles                                 Logs.exploreFiles
+#GET    /logs/exploreFiles                                 	Logs.exploreFiles   # enable this make cronus master as file explorer (not secure)
 GET     /logs/delete                                        Logs.delete
 GET     /logs/fileContent                                   Logs.getFileContent
-# deprecated, we now always fetch logs
-#GET		/logs/fetchRawLogs/{logId}						Logs.fetchRawLogs
+#GET	/logs/fetchRawLogs/{logId}							Logs.fetchRawLogs  # deprecated, we now always fetch logs
 
 # jobs page
 GET		/jobs										Jobs.index
