@@ -44,7 +44,9 @@ public class DataUtil {
 	 * @return
 	 */
 	public static String getOptionValue(Map<String, String> options, String key, String defVal) {
-		return (options.containsKey(key) && !StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
+		return (options != null && 
+				options.containsKey(key) && 
+				!StringUtil.isNullOrEmpty(options.get(key))) ? options.get(key) : defVal;
 	}
 
 	/**

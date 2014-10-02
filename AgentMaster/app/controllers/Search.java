@@ -17,6 +17,7 @@ limitations under the License.
 */
 package controllers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class Search extends Controller {
 	/**
 	 * proxy search to elastic search backend
 	 */
-	public static void proxySearch() {
+	public static void proxySearch(String logType) {
 		
 		try {
 
@@ -89,8 +90,9 @@ public class Search extends Controller {
 			{
 				Map<String, String> userData = new HashMap<String, String>();
 				userData.put("<uri>", "log/cmdlog/_search");
-				userData.put("<querystring>", request.querystring);
-				HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(new String[] {"localhost"}, cmd, null, userData);
+				userData.put("<source>", request.querystring);
+				HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(
+						new String[] {"localhost"}, cmd, null, userData);
 
 				// fire task
 				ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
