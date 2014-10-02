@@ -1,0 +1,27 @@
+{
+  "name" : "_CM_Proxy_Search",
+  "httpTaskRequest" : {
+    "taskType" : "async",
+    "httpClientType" : "httpClient",
+    "executionOption" : {
+      "timeOutSec" : 0,
+      "initDelaySec" : 0,
+      "maxRetry" : 0,
+      "retryDelaySec" : 0
+    },
+    "urlTemplate" : {
+      "url" : "http://<host>:9200/<uri>",
+      "method" : "GET",
+      "body" : { },
+      "headers" : { },
+      "parameters" : {
+        "source" : "<source>"
+      }
+    },
+    "resProcessorName" : "agentProcessor"
+  },
+  "userData" : {
+    "uri" : "uri",
+    "source" : "querystring"
+  }
+}

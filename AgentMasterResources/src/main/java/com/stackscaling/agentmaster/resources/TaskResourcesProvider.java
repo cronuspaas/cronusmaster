@@ -138,8 +138,12 @@ public class TaskResourcesProvider {
 				if (result.getStatus() == TaskResultEnum.Success) {
 					SimpleHttpResponse res = result.<SimpleHttpResponse>getRawResult();
 					try {
-						R resBean = JsonUtil.decode(res.getResponseBody(), resBeanKlass);
-						results.put(host, resBean);
+						if (resBeanKlass != String.class) {
+							R resBean = JsonUtil.decode(res.getResponseBody(), resBeanKlass);
+							results.put(host, resBean);
+						} else {
+							results.put(host, ((R)res.getResponseBody()));
+						}
 					} catch (IOException e) {
 						failures.put(host, e.getLocalizedMessage());
 					}
