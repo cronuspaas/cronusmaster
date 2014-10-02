@@ -811,7 +811,7 @@
             $('#facetview_freetext',obj).bindWithDelay('keyup',dosearch,options.freetext_submit_delay);
 
             // trigger the search once on load, to get all results
-            dosearch();
+            //dosearch();
 
         }); // end of the function  
 

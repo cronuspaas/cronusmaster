@@ -14,7 +14,7 @@
   
 jQuery(document).ready(function($) {
   $('.facet-view-simple').facetview({
-    search_url: "/proxysearch/log/cmdlog?",
+    search_url: "/proxysearch/log/${logType}?",
     search_index: 'elasticsearch',
     facets: [
         {'field':'host', 'display': 'host'},
@@ -27,6 +27,9 @@ jQuery(document).ready(function($) {
       size: 10
     }
   });
+
+  // set search values  
+  #{if (logId != null)} $('#facetview_freetext').val("\"${logId}\"").focus().trigger('keyup'); #{/if}
   
   // set up form
   $('.demo-form').submit(function(e) {
@@ -39,8 +42,17 @@ jQuery(document).ready(function($) {
     $('.facet-view-here').facetview(_data);
   });
   
-  #{if (logId != null)} $('#facetview_freetext').val("\"${logId}\"").focus().trigger('keyup'); #{/if}
-  
+});
+
+// disable keypress enter to submit the form and lose the query
+$(document).on("keypress", 'form', function (e) {
+    var code = e.keyCode || e.which;
+    console.log(code);
+    if (code == 13) {
+        console.log('Inside');
+        e.preventDefault();
+        return false;
+    }
 });
   </script>
 

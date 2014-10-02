@@ -131,6 +131,7 @@ public class TaskResourcesProvider {
 			this.resBeanKlass = resBeanKlass;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void executeOnResult(FlowContext ctx, Task task, TaskResult result) {
 			if (task instanceof SimpleHttpTask) {
@@ -326,6 +327,18 @@ public class TaskResourcesProvider {
 		// create and configure async http client
 		AsyncHttpClientConfigBean config = new AsyncHttpClientConfigBean();
 		config.setConnectionTimeOutInMs(3000);
+		return new AsyncHttpClient(config);
+	}
+	
+	/**
+	 * ning http client for proxy
+	 * @return
+	 */
+	public @Bean @Scope("singleton") AsyncHttpClient proxyHttpClient() {
+		// create and configure async http client for proxy
+		AsyncHttpClientConfigBean config = new AsyncHttpClientConfigBean();
+		config.setConnectionTimeOutInMs(3000);
+		config.setUseRawUrl(true);
 		return new AsyncHttpClient(config);
 	}
 

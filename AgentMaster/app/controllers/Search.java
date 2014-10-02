@@ -17,6 +17,8 @@ limitations under the License.
 */
 package controllers;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +80,12 @@ public class Search extends Controller {
 
 	}
 	
+	
+	private static final String PROXY_SEARCH_CMD = "_CM_Proxy_Search";
 	/**
 	 * proxy search to elastic search backend
+	 * 
+	 * @param logType
 	 */
 	public static void proxySearch(String logType) {
 		
@@ -89,10 +95,23 @@ public class Search extends Controller {
 			if (cmd != null) 
 			{
 				Map<String, String> userData = new HashMap<String, String>();
-				userData.put("<uri>", "log/cmdlog/_search");
-				userData.put("<source>", request.querystring);
+				userData.put("<uri>", "log/" + logType + "/_search");
+				String qs = null;
+				if (request.querystring.startsWith("&source=")) {
+					qs = request.querystring.substring(8);
+				}
+				else {
+					qs = request.querystring;
+				}
+				String decodedQs = URLDecoder.decode(qs, "UTF-8");
+				decodedQs = decodedQs.replace("\\", "\\\\");
+				// we use http proxy client with useRawUrl=true so that we don't have to decode the qs anymore
+				userData.put("<source>", decodedQs);
+				
+				String host = VarUtils.isLocalEsEnabled ? "localhost" : VarUtils.esEp;
+				
 				HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(
-						new String[] {"localhost"}, cmd, null, userData);
+						new String[] {host}, cmd, null, userData);
 
 				// fire task
 				ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
