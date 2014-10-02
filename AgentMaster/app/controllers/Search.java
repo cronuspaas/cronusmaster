@@ -17,9 +17,30 @@ limitations under the License.
 */
 package controllers;
 
-import com.stackscaling.agentmaster.resources.utils.VarUtils;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.lightj.example.task.HostTemplateValues;
+import org.lightj.example.task.HttpTaskBuilder;
+import org.lightj.example.task.HttpTaskRequest;
+import org.lightj.task.ExecutableTask;
+import org.lightj.task.StandaloneTaskExecutor;
+import org.lightj.task.StandaloneTaskListener;
+import org.lightj.util.ConcurrentUtil;
 
 import play.mvc.Controller;
+
+import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
+import com.stackscaling.agentmaster.resources.TaskResourcesProvider.BlockingTaskResultCollector;
+import com.stackscaling.agentmaster.resources.agent.AgentResourceProvider.AgentStatus;
+import com.stackscaling.agentmaster.resources.command.BaseCommandData;
+import com.stackscaling.agentmaster.resources.command.ICommand;
+import com.stackscaling.agentmaster.resources.utils.VarUtils;
 
 /**
  * 
@@ -55,6 +76,46 @@ public class Search extends Controller {
 
 		searchLogs(logId, "workflows", "searchWfLog", "WfLog", VarUtils.esEp);
 
+	}
+	
+	/**
+	 * proxy search to elastic search backend
+	 */
+	public static void proxySearch(String logType) {
+		
+		try {
+
+			ICommand cmd = UserDataProviderFactory.getSysCommandConfigs().getCommandByName("_CM_Proxy_Search");
+			if (cmd != null) 
+			{
+				Map<String, String> userData = new HashMap<String, String>();
+				userData.put("<uri>", "log/cmdlog/_search");
+				userData.put("<source>", request.querystring);
+				HttpTaskRequest reqTemplate = BaseCommandData.createTaskByRequest(
+						new String[] {"localhost"}, cmd, null, userData);
+
+				// fire task
+				ExecutableTask reqTask = HttpTaskBuilder.buildTask(reqTemplate);
+				StandaloneTaskListener listener = new StandaloneTaskListener();
+				ReentrantLock lock = new ReentrantLock();
+				Condition cond = lock.newCondition();
+				BlockingTaskResultCollector<String> handler = new BlockingTaskResultCollector<String>(lock, cond, String.class);
+				listener.setDelegateHandler(handler);
+				new StandaloneTaskExecutor(reqTemplate.getBatchOption(), listener, reqTask).execute();
+				long timeoutMs = 30 * 1000L;
+				ConcurrentUtil.wait(lock, cond, timeoutMs);
+
+				Map<String, String> results = handler.getResults();
+				if (!results.isEmpty()) {
+					renderJSON(results.values().iterator().next());
+				}
+			}
+
+		} catch (Throwable t) {
+			
+			error(t.getMessage());
+			
+		}
 	}
 
 	/**

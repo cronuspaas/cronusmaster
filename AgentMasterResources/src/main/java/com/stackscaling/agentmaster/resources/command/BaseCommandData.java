@@ -126,53 +126,58 @@ public abstract class BaseCommandData implements ICommandData {
 		}
 
 		// process user input for execution
-		long exeInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_initde", "0"));
-		long exeTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "exe_to", "0"));
-		int exeRetry = Integer.parseInt(DataUtil.getOptionValue(options, "exe_retry", "0"));
-		long retryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_rede", "0"));
-		ExecuteOption exeOption = new ExecuteOption(exeInitDelaySec, exeTimoutSec, exeRetry, retryDelaySec);
-		reqTemplate.setExecutionOption(exeOption);
-		
-		if (StringUtil.equalIgnoreCase(HttpTaskRequest.TaskType.asyncpoll.name(), reqTemplate.getTaskType())) {
-			long monIntervalSec = Integer.parseInt(DataUtil.getOptionValue(options, "mon_int", "1"));
-			long monInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_initde", "0"));
-			long monTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "mon_to", "0"));
-			int monRetry = Integer.parseInt(DataUtil.getOptionValue(options, "mon_retry", "0"));
-			long monRetryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_rede", "0"));
-			MonitorOption monOption = new MonitorOption(monInitDelaySec, monIntervalSec, monTimoutSec, monRetry, monRetryDelaySec);
-			reqTemplate.setMonitorOption(monOption);
-		}
-		else {
-			for (String option : new String[] {"mon_int", "mon_initde", "mon_to", "mon_retry", "mon_rede"}) {
-				options.remove(option);
-			}
-		}
-				
-		Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
-		int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
-		BatchOption batchOption = new BatchOption(maxRate, strategy);
-		reqTemplate.setBatchOption(batchOption);
-		
-		// process user input for user data
-		HashMap<String, String> values = new HashMap<String, String>();
-		for (Entry<String, ?> entry : userData.entrySet()) {
-			Object v = entry.getValue();
-			if (v instanceof String) {
-				values.put(entry.getKey(), (String) v);
-			} 
-			else if (v instanceof List) {
-				List lvs = (List) v;
-				for (int i = 0; i < lvs.size(); i++) {
-					String lv = (String) lvs.get(i);
-					String nv = checkLatestValue(lv);
-					if (nv != null) {
-						lvs.set(i, nv);
-					}
-				}
-				values.put(entry.getKey(), JsonUtil.encode(v));
+		if (options != null) {
+			long exeInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_initde", "0"));
+			long exeTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "exe_to", "0"));
+			int exeRetry = Integer.parseInt(DataUtil.getOptionValue(options, "exe_retry", "0"));
+			long retryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "exe_rede", "0"));
+			ExecuteOption exeOption = new ExecuteOption(exeInitDelaySec, exeTimoutSec, exeRetry, retryDelaySec);
+			reqTemplate.setExecutionOption(exeOption);
+			
+			if (StringUtil.equalIgnoreCase(HttpTaskRequest.TaskType.asyncpoll.name(), reqTemplate.getTaskType())) {
+				long monIntervalSec = Integer.parseInt(DataUtil.getOptionValue(options, "mon_int", "1"));
+				long monInitDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_initde", "0"));
+				long monTimoutSec = Long.parseLong(DataUtil.getOptionValue(options, "mon_to", "0"));
+				int monRetry = Integer.parseInt(DataUtil.getOptionValue(options, "mon_retry", "0"));
+				long monRetryDelaySec = Long.parseLong(DataUtil.getOptionValue(options, "mon_rede", "0"));
+				MonitorOption monOption = new MonitorOption(monInitDelaySec, monIntervalSec, monTimoutSec, monRetry, monRetryDelaySec);
+				reqTemplate.setMonitorOption(monOption);
 			}
 			else {
-				values.put(entry.getKey(), JsonUtil.encode(v));
+				for (String option : new String[] {"mon_int", "mon_initde", "mon_to", "mon_retry", "mon_rede"}) {
+					options.remove(option);
+				}
+			}
+
+			Strategy strategy = Strategy.valueOf(DataUtil.getOptionValue(options, "thrStrategy", "UNLIMITED"));
+			int maxRate = Integer.parseInt(DataUtil.getOptionValue(options, "thr_rate", "1000"));
+			BatchOption batchOption = new BatchOption(maxRate, strategy);
+			reqTemplate.setBatchOption(batchOption);
+			
+		}
+				
+		// process user input for user data
+		HashMap<String, String> values = new HashMap<String, String>();
+		if (userData != null) {
+			for (Entry<String, ?> entry : userData.entrySet()) {
+				Object v = entry.getValue();
+				if (v instanceof String) {
+					values.put(entry.getKey(), (String) v);
+				} 
+				else if (v instanceof List) {
+					List lvs = (List) v;
+					for (int i = 0; i < lvs.size(); i++) {
+						String lv = (String) lvs.get(i);
+						String nv = checkLatestValue(lv);
+						if (nv != null) {
+							lvs.set(i, nv);
+						}
+					}
+					values.put(entry.getKey(), JsonUtil.encode(v));
+				}
+				else {
+					values.put(entry.getKey(), JsonUtil.encode(v));
+				}
 			}
 		}
 		

@@ -76,6 +76,7 @@ GET     /public/                                	staticDir:public
 GET		/search/searchCmdLog								Search.searchCmdLog
 GET		/search/searchJobLog								Search.searchJobLog
 GET		/search/searchWfLog									Search.searchWfLog
+GET		/proxysearch/log/{logType}							Search.proxySearch
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
