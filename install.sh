@@ -13,8 +13,9 @@ if [ "$status" == 000 ]; then
 fi
 echo ""
 
-echo "clean any previous cronusmaster installation"
-curl -sSk -H "content-type:application/json" -X DELETE https://localhost:12020/services/cronusmaster/action/cleanup
+echo "clean all local services"
+echo "agent_auth=$agent_auth"
+curl -sSk -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST https://localhost:12020/agent/cleanup
 sleep 2
 echo "Done"
 echo ""
@@ -34,15 +35,15 @@ fi
 echo "package cronus"
 ./package.sh
 
-cd target
+cd target_cronus
 PKG=`ls cronusmaster*.cronus`
 cp cronusmaster*.cronus /var/cronus/software/packages/
 chmod 666 /var/cronus/software/packages/cronusmaster*.cronus
 echo "will install $PKG"
 
-CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"manifest\": \"0.0.1\", \"env\": \"$env\" $daemon}"
+CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"env\": \"$env\" $daemon}"
 echo "use cronus cmd $CMD_BODY"
-curl -k -H "content-type:application/json" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deploy
+curl -k -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deploy
 echo 
 
 echo "verify installation"
