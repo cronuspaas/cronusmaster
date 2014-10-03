@@ -1,6 +1,5 @@
 {
   "name" : "deploy_pyserver_ec2",
-  "displayName" : "deploy_pyserver_ec2",
   "userData" : {
     "exe_retry" : "3",
     "mon_retry" : "3",

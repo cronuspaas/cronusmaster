@@ -1,6 +1,5 @@
 {
-  "name" : "20140911154505",
-  "displayName" : "deploy_module_sysmetrics_local",
+  "name" : "deploy_module_sysmetrics_local",
   "userData" : {
     "mon_int" : "10",
     "exe_retry" : "3",

@@ -1,6 +1,5 @@
 {
-  "name" : "20140919214659",
-  "displayName" : "restart_local_pyserver",
+  "name" : "restart_pyserver_local",
   "userData" : {
     "exe_retry" : "3",
     "mon_retry" : "3",

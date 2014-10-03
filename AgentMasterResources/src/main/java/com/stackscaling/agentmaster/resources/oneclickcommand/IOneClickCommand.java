@@ -7,12 +7,6 @@ import com.stackscaling.agentmaster.resources.IUserData;
 public interface IOneClickCommand extends IUserData 
 {
 
-	/** user defined display name */
-	public String getDisplayName();
-	
-	/** user defined display name */
-	public void setDisplayName(String displayName);
-
 	/** user data */
 	public void setUserData(Map<String, String> userData);
 

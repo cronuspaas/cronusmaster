@@ -30,6 +30,7 @@ import org.lightj.task.MonitorOption;
 import org.lightj.task.asynchttp.AsyncHttpTask.HttpMethod;
 import org.lightj.task.asynchttp.UrlTemplate;
 import org.lightj.util.JsonUtil;
+import org.lightj.util.MapListPrimitiveJsonParser;
 import org.lightj.util.StringUtil;
 
 import play.mvc.Controller;
@@ -40,6 +41,11 @@ import com.stackscaling.agentmaster.resources.IUserDataDao;
 import com.stackscaling.agentmaster.resources.UserDataMeta;
 import com.stackscaling.agentmaster.resources.UserDataProviderFactory;
 import com.stackscaling.agentmaster.resources.command.CommandImpl;
+import com.stackscaling.agentmaster.resources.log.ILog;
+import com.stackscaling.agentmaster.resources.oneclickcommand.IOneClickCommand;
+import com.stackscaling.agentmaster.resources.oneclickcommand.IOneClickCommandData;
+import com.stackscaling.agentmaster.resources.oneclickcommand.OneClickCommandImpl;
+import com.stackscaling.agentmaster.resources.utils.DataUtil;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
 /**
@@ -66,7 +72,7 @@ public class Config extends Controller {
 	}
 
 	/**
-	 * reload all config
+	 * reload all configs, render html response
 	 * @param dataType
 	 */
 	public static void reloadConfig(String dataType, String nav) {
@@ -84,7 +90,7 @@ public class Config extends Controller {
 	}
 
 	/**
-	 * reload all config
+	 * reload all configs, render json response
 	 * @param dataType
 	 */
 	public static void reloadConfigsJson() {
@@ -105,7 +111,9 @@ public class Config extends Controller {
 	 */
 	public static void showConfigs(String dataType, String alert, String nav) {
 		
+		// name used to drive second nav bar
 		String page = "showConfigs"+dataType.toLowerCase();
+		// top nav bar, can be passed in for displaying the page in different context
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
@@ -131,14 +139,20 @@ public class Config extends Controller {
 		}
 	}
 
+	/** name token indicate new config */
+	static final String NEW_CONFIG_NAME = "new";
+
 	/**
-	 * edit page
+	 * create or update config
 	 * @param dataType
 	 */
-	static final String NEW_CONFIG_NAME = "new";
-	public static void editConfig(String dataType, String action, String configName, String topage, String nav) {
+	public static void editConfig(String dataType,
+			String action, String configName, String topage, String nav) 
+	{
 
+		// redirect page
 		String page = "editConfig";
+		// top nav bar
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
 
 		try {
@@ -172,9 +186,6 @@ public class Config extends Controller {
 						command.setHttpTaskRequest(sampleReq);
 					
 						command.addUserData("variableInHttpTemplate", "sample value");
-//						HashMap<String, Object> cmdMap = new LinkedHashMap<String, Object>();
-//						cmdMap.put("httpTaskRequest", command.createCopy());
-//						cmdMap.put("userData", command.getUserData());
 						
 						content = JsonUtil.encodePretty(command);
 					}
@@ -191,6 +202,7 @@ public class Config extends Controller {
 			String alert = null;
 
 			render(page, topnav, dataType, configName, content, topage, alert);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(e);
@@ -199,16 +211,21 @@ public class Config extends Controller {
 	}// end func
 
 	/**
-	 * save after edit
+	 * save config
 	 * @param dataType
 	 * @param content
 	 */
-	public static void editConfigUpdate(String dataType, String configName, String configNameNew, String content, String page, String nav) {
+	public static void editConfigUpdate(String dataType, 
+			String configName, String configNameNew, String content, String page, String nav) 
+	{
 
+		// top nav bar
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
+		// page to redirect to after save, allow config update from different page context
 		String topage = StringUtil.isNullOrEmpty(page) ? "Config.showConfigs" : page;
 
 		try {
+			
 			if (dataType == null) {
 				throw new IllegalArgumentException("configFile is NULL. Error occured in editConfig");
 			}
@@ -242,9 +259,10 @@ public class Config extends Controller {
 				throw new RuntimeException("Invalid datatype " + dataType);
 			}
 			
-			String alert = String.format("%s %s was successfully updated at %s", dType.getLabel(), configName, DateUtils.getNowDateTimeDotStr());
+			String alert = String.format("%s %s was successfully updated at %s", 
+					dType.getLabel(), configName, DateUtils.getNowDateTimeDotStr());
 
-			// reload after
+			// reload all configs after save
 			UserDataProviderFactory.reloadAllConfigs();
 			
 			if ("Config.showConfigs".equalsIgnoreCase(topage)) {
@@ -266,9 +284,12 @@ public class Config extends Controller {
 	 * @param dataType
 	 * @param configName
 	 */
-	public static void deleteConfig(String dataType, String configName, String nav, String page) {
-
+	public static void deleteConfig(String dataType, String configName, String nav, String page) 
+	{
+		
+		// top nav bar
 		String topnav = StringUtil.isNullOrEmpty(nav) ? "config" : nav;
+		// redirect page, allow delete config from different page context
 		String topage = StringUtil.isNullOrEmpty(page) ? "Config.showConfigs" : page;
 
 		try {
@@ -298,12 +319,60 @@ public class Config extends Controller {
 	}// end func
 
 	/**
-	 * show all configs
+	 * config index page, default show nodegroup configs
 	 */
 	public static void index() {
 		
 		redirect("Config.showConfigs", "nodegroup");
 
 	}
+	
+	
+	/**
+	 * edit and save a new oneclick command
+	 * @param logType
+	 * @param logId
+	 */
+	public static void oneclickSave(String logType, String logId) {
+
+		// redirect page
+		String page = "Config/editConfig.html";
+		// top nav bar
+		String topnav = "commands";
+		// redirect page after save
+		String topage = "Commands.oneclick";
+		// data type
+		String dataType = DataType.CMD_ONECLICK.name();
+		String configName = "new";
+		String alert = null;
+
+		try {
+		
+			DataType lType = DataType.valueOf(logType.toUpperCase());
+			ILog log = UserDataProviderFactory.getJobLoggerOfType(lType).readLog(logId);
+			
+			IOneClickCommand oneClickCmd = new OneClickCommandImpl();
+			oneClickCmd.setCommandKey(log.getCommandKey());
+			oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
+			Map<String, String> options = log.getUserData();
+			String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
+			Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
+			String rebuildVarValues = MapListPrimitiveJsonParser.buildJson(userData);
+			options.put("var_values", rebuildVarValues);
+			oneClickCmd.setUserData(options);
+			String cmdName = DateUtils.getNowDateTimeStrConcise();
+			oneClickCmd.setName(cmdName);
+			String content = JsonUtil.encodePretty(oneClickCmd); 
+
+			renderTemplate(page, topnav, dataType, configName, content, topage, alert);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(e);
+		}
+
+	}
+	
+
 
 }

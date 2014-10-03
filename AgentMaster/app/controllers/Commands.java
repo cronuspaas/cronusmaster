@@ -90,7 +90,7 @@ public class Commands extends Controller {
 		@Override
 		public int compare(Map<String, String> o1,
 				Map<String, String> o2) {
-			return o1.get("displayName").compareTo(o2.get("displayName"));
+			return o1.get("name").compareTo(o2.get("name"));
 			
 		}
 	};
@@ -179,7 +179,6 @@ public class Commands extends Controller {
 			Map<String, String> values = new HashMap<String, String>();
 			IOneClickCommand cmd = entry.getValue();
 			values.put("name", entry.getKey());
-			values.put("displayName", cmd.getDisplayName());
 			values.put("command", cmd.getCommandKey());
 			values.put("nodeGroup", cmd.getNodeGroupKey());
 			values.put("description", cmd.getDescription());
@@ -342,82 +341,6 @@ public class Commands extends Controller {
 	}
 	
 	
-	/**
-	 * save as one click command internal
-	 * @param logType
-	 * @param logId
-	 */
-	private static Map<String, String> oneclickSaveInternal(String logType, String logId) throws Exception {
-		
-		DataType lType = DataType.valueOf(logType.toUpperCase());
-		ILog log = UserDataProviderFactory.getJobLoggerOfType(lType).readLog(logId);
-		
-		IOneClickCommandData oneClickDao = UserDataProviderFactory.getOneClickCommandConfigs();
-		IOneClickCommand oneClickCmd = new OneClickCommandImpl();
-		oneClickCmd.setCommandKey(log.getCommandKey());
-		oneClickCmd.setNodeGroupKey(log.getNodeGroup().getName());
-		Map<String, String> options = log.getUserData();
-		String varValues = DataUtil.getOptionValue(options, "var_values", "{}").trim();
-		Map<String, Object> userData = (Map<String, Object>) MapListPrimitiveJsonParser.parseJson(varValues);
-		String rebuildVarValues = MapListPrimitiveJsonParser.buildJson(userData);
-		options.put("var_values", rebuildVarValues);
-		oneClickCmd.setUserData(options);
-		String cmdName = DateUtils.getNowDateTimeStrConcise();
-		oneClickCmd.setName(cmdName);
-		oneClickCmd.setDisplayName(cmdName);
-		oneClickDao.save(cmdName, JsonUtil.encode(oneClickCmd));
-
-		// now read it back for json response
-		Map<String, String> values = new HashMap<String, String>();
-		IOneClickCommand cmd = oneClickDao.getCommandByName(cmdName);
-		values.put("name", cmd.getName());
-		values.put("displayName", cmd.getDisplayName());
-		values.put("command", cmd.getCommandKey());
-		values.put("nodeGroup", cmd.getNodeGroupKey());
-		String ud = DataUtil.getOptionValue(cmd.getUserData(), "var_values", "{}").trim();
-		values.put("userData", ud);
-		
-		return values;
-	}
-
-	/**
-	 * save as one click command
-	 * @param logType
-	 * @param logId
-	 */
-	public static void oneclickSave(String logType, String logId) {
-
-		try {
-		
-			Map<String, String> cmdValues = oneclickSaveInternal(logType, logId);
-			String alert = String.format("One click command %s saved successfully ", cmdValues.get("name"));
-			redirect("Commands.oneclick", alert);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			error(String.format("Error occur in save one click command, %s", e.getLocalizedMessage()));
-		}
-
-	}
-	
-	/**
-	 * save as one click command
-	 * @param logType
-	 * @param logId
-	 */
-	public static void oneclickSaveJson(String logType, String logId) {
-
-		try {
-		
-			Map<String, String> cmdValues = oneclickSaveInternal(logType, logId);
-			renderJSON(JsonResponse.successResponse(null).addResult("command", cmdValues));
-			
-		} catch (Exception e) {
-			renderJSON(JsonResponse.failedResponse(StringUtil.getStackTrace(e, 1000)));
-		}
-
-	}
-
 	/**
 	 * run oneclick command
 	 * @param logType

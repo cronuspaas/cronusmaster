@@ -1,6 +1,5 @@
 {
-  "name" : "20140923232726",
-  "displayName" : "deploy_play_local",
+  "name" : "deploy_play_local",
   "userData" : {
     "mon_int" : "10",
     "exe_retry" : "3",

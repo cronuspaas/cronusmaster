@@ -15,8 +15,6 @@ GET     /commands/oneclickJson             		Commands.oneclickJson
 GET     /commands/wizard                        Commands.wizard
 GET     /commands/getOptions					Commands.getOptions
 POST	/commands/runCmdOnNodeGroup				Commands.runCmdOnNodeGroup
-GET		/commands/oneclickSave					Commands.oneclickSave
-GET		/commands/oneclickSaveJson				Commands.oneclickSaveJson
 GET		/commands/oneclickRun					Commands.oneclickRun
 GET		/commands/oneclickRunJson				Commands.oneclickRunJson
 
@@ -35,6 +33,7 @@ GET     /config/reloadConfigsJson								Config.reloadConfigsJson
 GET		/config/showConfigs/{dataType}							Config.showConfigs
 GET     /config/editConfig/{dataType}/{action}/{configName}		Config.editConfig
 GET     /config/deleteConfig/{dataType}/{configName}			Config.deleteConfig
+GET		/config/oneclickSave									Config.oneclickSave
 POST    /config/editConfigUpdate/{dataType}/{configName}		Config.editConfigUpdate
 
 # housekeeping

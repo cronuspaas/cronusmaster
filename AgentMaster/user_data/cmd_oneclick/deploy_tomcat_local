@@ -1,6 +1,5 @@
 {
-  "name" : "20140923232630",
-  "displayName" : "deploy_tomcat_local",
+  "name" : "deploy_tomcat_local",
   "userData" : {
     "mon_int" : "10",
     "exe_retry" : "3",

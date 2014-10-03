@@ -1,6 +1,5 @@
 {
-  "name" : "20140923232820",
-  "displayName" : "deploy_node_local",
+  "name" : "deploy_node_local",
   "userData" : {
     "mon_int" : "10",
     "exe_retry" : "3",

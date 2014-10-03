@@ -1,6 +1,5 @@
 {
-  "name" : "20140908070151",
-  "displayName" : "cleanup_local_services",
+  "name" : "cleanup_SERVICE_local",
   "userData" : {
     "exe_retry" : "3",
     "mon_retry" : "3",

@@ -12,9 +12,6 @@ import com.stackscaling.agentmaster.resources.BaseUserData;
  */
 public class OneClickCommandImpl extends BaseUserData implements IOneClickCommand {
 	
-	/** user defined display name */
-	private String displayName;
-
 	/** user inputs */
 	private Map<String, String> userData = new HashMap<String, String>();
 	
@@ -67,14 +64,4 @@ public class OneClickCommandImpl extends BaseUserData implements IOneClickComman
 		this.nodeGroupKey = nodeGroupKey;
 	}
 
-	@Override
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	@Override
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-	
 }
