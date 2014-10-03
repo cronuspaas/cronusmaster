@@ -1,11 +1,30 @@
-#!/bin/bash -ae
+#!/bin/bash
+
+# check and install agent if necessary
+agent_url="https://localhost:12020/agent/ValidateInternals"
+status=$(curl -s -k -L --head -o /dev/null -w "%{http_code}" $agent_url)
+echo "check agent status=$status"
+# check if the status has a non-zero length
+if [ "$status" == 000 ]; then
+   echo "Agent not installed, installing with dev mode..."
+   wget -qO- 'http://www.stackscaling.com/downloads/install_agent' | sudo dev=true bash
+   sleep 2
+   echo "Done"
+fi
+echo ""
+
+echo "clean any previous cronusmaster installation"
+curl -sSk -H "content-type:application/json" -X DELETE https://localhost:12020/services/cronusmaster/action/cleanup
+sleep 2
+echo "Done"
+echo ""
 
 if [[ -z "$1" ]]; then
   env="prod"
 else
   env="$1"
 fi
-echo "deploy environment $env"
+echo "deploy to environment $env"
 
 daemon=""
 if [[ ! -z "$2" ]]; then
