@@ -7,16 +7,13 @@
       "url" : "https://<host>:12020/services/<serviceName>/action/deploy",
       "method" : "POST",
       "body" : {
-        "upstartService" : "<upstartService>",
         "package" : "<package>",
         "manifest" : "<manifestName>",
         "daemon" : "<daemon>",
         "env" : "<env>"
       },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
@@ -26,5 +23,5 @@
     "daemon" : "mgmtDaemon",
     "env" : "env"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

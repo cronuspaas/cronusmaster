@@ -11,10 +11,8 @@
         "sudoUser" : "<sudoUser>",
         "params" : "<params>"
       },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
@@ -22,5 +20,5 @@
     "params" : "array of parameters",
     "sudoUser" : "optional sudo user"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

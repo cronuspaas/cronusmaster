@@ -12,10 +12,8 @@
         "params" : "<params>",
         "scriptLocation" : "<scriptLocation>"
       },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
@@ -24,5 +22,5 @@
     "sudoUser" : "optional sudo user",
     "params" : "optional parameters"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

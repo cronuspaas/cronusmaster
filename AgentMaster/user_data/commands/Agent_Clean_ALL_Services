@@ -6,15 +6,11 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/agent/cleanup",
       "method" : "POST",
-      "body" : {
-      },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "body" : { },
+      "headers" : { },
+      "parameters" : { }
     }
   },
-  "userData" : {
-  },
-  "category" : "agentcommand"
+  "userData" : { },
+  "category" : "agent"
 }

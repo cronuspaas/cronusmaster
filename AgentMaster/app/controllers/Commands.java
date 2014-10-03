@@ -122,6 +122,7 @@ public class Commands extends Controller {
 			}
 			values.put("variables", StringUtil.join(req.getVariableNames(), ", "));
 			values.put("userData", JsonUtil.encode(cmd.getUserData()));
+			values.put("category", cmd.getCategory());
 			StringBuffer parameters = new StringBuffer();
 			if (req.getParameters() != null) {
 				for (Entry<String, String> param : req.getParameters().entrySet()) {

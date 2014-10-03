@@ -6,17 +6,14 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/services/<serviceName>/action/<action>",
       "method" : "POST",
-      "body" : {
-      },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "body" : { },
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
     "serviceName" : "myservice",
     "action" : "action"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

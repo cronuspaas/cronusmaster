@@ -9,15 +9,13 @@
       "body" : {
         "package" : "<package>"
       },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
     "moduleName" : "moduleName",
     "package" : "http pkg location"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

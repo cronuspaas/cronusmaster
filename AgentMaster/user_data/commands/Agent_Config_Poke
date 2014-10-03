@@ -9,15 +9,13 @@
       "body" : {
         "configs" : "{\"<configName>\": \"<configValue>\"}"
       },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
     "configName" : "configName",
     "configValue" : "configValue"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

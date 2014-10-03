@@ -6,16 +6,13 @@
     "urlTemplate" : {
       "url" : "https://<host>:12020/services/<serviceName>/action/rollback",
       "method" : "POST",
-      "body" : {
-      },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "body" : { },
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
     "serviceName" : "serviceName"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }

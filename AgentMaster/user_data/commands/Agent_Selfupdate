@@ -10,15 +10,13 @@
         "wisbSource" : "<source>",
         "version" : "<agentVersion>"
       },
-      "headers" : {
-      },
-      "parameters" : {
-      }
+      "headers" : { },
+      "parameters" : { }
     }
   },
   "userData" : {
     "agentVersion" : "0.1.45",
     "source" : "http_agent_repo"
   },
-  "category" : "agentcommand"
+  "category" : "agent"
 }
