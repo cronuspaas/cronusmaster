@@ -65,6 +65,13 @@ if [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/cmd_jobs" ]; then
 fi
 cp -n $app_home/user_data/cmd_jobs/* $CRONUSAPP_HOME/.appdata/user_data/cmd_jobs/
 
+# copy predefined pkg if not there
+if [ ! -d "$CRONUSAPP_HOME/.appdata/user_data/cronus_pkgs" ]; then
+  echo "create predefined cronus pkgs"
+  mkdir -p $CRONUSAPP_HOME/.appdata/user_data/cronus_pkgs
+fi
+cp -n $app_home/user_data/cronus_pkgs/* $CRONUSAPP_HOME/.appdata/user_data/cronus_pkgs/
+
 # Starting application
 
 echo 'precomiling app...'
