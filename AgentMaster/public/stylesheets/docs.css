@@ -213,6 +213,7 @@ only screen and (     -o-min-device-pixel-ratio: 2/1) {
   list-style: none;
 }
 .masthead-links li {
+  font-size: 20px;
   display: inline;
   padding: 0 10px;
   color: rgba(255,255,255,.25);
