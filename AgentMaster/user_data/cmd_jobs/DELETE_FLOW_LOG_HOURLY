@@ -1,1 +1,0 @@
-{"name":"DELETE_FLOW_LOG_HOURLY","intervalInMinute":60,"enabled":true,"cmdName":"LOCAL_DELETE_LOGS","nodeGroupName":"NG-EMPTY","userData":{"thrStrategy":"UNLIMITED","var_values":"{\n  \"dataType\" : \"FLOWLOG\",\n  \"retainFactor\" : \"name\",\n  \"numToKeep\" : \"1\"\n}"},"description":"Run LOCAL_DELETE_LOGS on NG-EMPTY every 60 minute"}
