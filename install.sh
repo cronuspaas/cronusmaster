@@ -13,6 +13,7 @@ if [ "$status" == 000 ]; then
 fi
 echo ""
 
+# cleanup all services running locally on the agent
 echo "clean all local services"
 echo "agent_auth=$agent_auth"
 curl -sSk -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST https://localhost:12020/agent/cleanup
@@ -20,6 +21,7 @@ sleep 2
 echo "Done"
 echo ""
 
+# define environment to deploy cronusmaster in, default "prod"
 if [[ -z "$1" ]]; then
   env="prod"
 else
@@ -27,6 +29,7 @@ else
 fi
 echo "deploy to environment $env"
 
+# define whether to run cronusmaster in daemon mode, default to daemon
 daemon=""
 if [[ ! -z "$2" ]]; then
   daemon=", \"daemon\": \"$2\""
