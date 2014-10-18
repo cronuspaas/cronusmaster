@@ -219,12 +219,8 @@ only screen and (     -o-min-device-pixel-ratio: 2/1) {
   color: rgba(255,255,255,.25);
 }
 
-
-
 .row-colors{
- 
   background-color: #f5f5f5;
- 
 }
 
 /* Social proof buttons from GitHub & Twitter */
