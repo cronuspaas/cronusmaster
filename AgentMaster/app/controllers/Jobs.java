@@ -18,6 +18,7 @@ import com.stackscaling.agentmaster.resources.job.FlowIntervalJobImpl;
 import com.stackscaling.agentmaster.resources.job.IntervalJob;
 import com.stackscaling.agentmaster.resources.job.IntervalJobData;
 import com.stackscaling.agentmaster.resources.log.ILog;
+import com.stackscaling.agentmaster.resources.oneclickcommand.IOneClickCommand;
 import com.stackscaling.agentmaster.resources.utils.DataUtil;
 import com.stackscaling.agentmaster.resources.utils.DateUtils;
 
@@ -140,14 +141,26 @@ public class Jobs extends Controller {
 		try {
 			
 			DataType dType = DataType.valueOf(logType.toUpperCase());
-			ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(logId);
 			HashMap<String, String> meta = new HashMap<String, String>();
 			meta.put("logType", logType);
 			meta.put("logId", logId);
-			meta.put("ng", log.getNodeGroup().getName());
-			meta.put("cmdType", log.getCommandType().name());
-			meta.put("cmdKey", log.getCommandKey());
-			meta.put("userData", JsonUtil.encodePretty(log.getUserData()));
+			if (dType == DataType.CMDLOG) {
+				ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(logId);
+				if (!StringUtil.equalIgnoreCase(log.getNodeGroup().getType(), DataType.NODEGROUP.name())) {
+					throw new RuntimeException("Only predefined nodegroup type is allowed for scheduled job");
+				}
+				meta.put("ng", log.getNodeGroup().getName());
+				meta.put("cmdType", log.getCommandType().name());
+				meta.put("cmdKey", log.getCommandKey());
+				meta.put("userData", JsonUtil.encodePretty(log.getUserData()));
+			}
+			else if (dType == DataType.CMD_ONECLICK) {
+				IOneClickCommand cmd = UserDataProviderFactory.getOneClickCommandConfigs().getCommandByName(logId);
+				meta.put("ng", cmd.getNodeGroupKey());
+				meta.put("cmdType", DataType.COMMAND.name());
+				meta.put("cmdKey", cmd.getCommandKey());
+				meta.put("userData", JsonUtil.encodePretty(cmd.getUserData()));
+			}
 			
 			render(page, topnav, meta);
 
@@ -169,14 +182,11 @@ public class Jobs extends Controller {
 		try {
 			DataType dType = DataType.valueOf(dataType.toUpperCase());
 			DataType jType = null;
-			ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(logId);
-			if (!StringUtil.equalIgnoreCase(log.getNodeGroup().getType(), DataType.NODEGROUP.name())) {
-				throw new RuntimeException("Only predefined nodegroup type is allowed for scheduled job");
-			}
 			BaseIntervalJob job = null;
 			
 			switch (dType) {
 			case CMDLOG:
+			case CMD_ONECLICK:
 				CmdIntervalJobImpl cjob = new CmdIntervalJobImpl();
 				job = cjob;
 				jType = DataType.CMDJOB;
@@ -187,10 +197,23 @@ public class Jobs extends Controller {
 				jType = DataType.FLOWJOB;
 				break;
 			}
-			
-			job.setCmdName(log.getCommandKey());
-			job.setNodeGroupName(log.getNodeGroup().getName());
-			job.setUserData(log.getUserData());
+
+			switch (dType) {
+			case CMDLOG:
+			case FLOWLOG:
+				ILog log = UserDataProviderFactory.getJobLoggerOfType(dType).readLog(logId);
+				job.setCmdName(log.getCommandKey());
+				job.setNodeGroupName(log.getNodeGroup().getName());
+				job.setUserData(log.getUserData());
+				break;
+			case CMD_ONECLICK:
+				IOneClickCommand cmd = UserDataProviderFactory.getOneClickCommandConfigs().getCommandByName(logId);
+				job.setCmdName(cmd.getCommandKey());
+				job.setNodeGroupName(cmd.getNodeGroupKey());
+				job.setUserData(cmd.getUserData());
+				break;
+				
+			}
 
 			job.setName(jobOptions.get("job_name"));
 			int intervalInMinute = Integer.parseInt(DataUtil.getOptionValue(jobOptions, "job_interval", "1")) * 5;

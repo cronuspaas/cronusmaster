@@ -18,6 +18,7 @@
 					<th>Run</th>
 					<th>Edit</th>
 					<th>Copy</th>
+					<th>Schedule</th>
 					<th>Delete</th>
 				</tr>
 			</thead>
@@ -48,6 +49,10 @@
 						<a target=_self href="/config/editConfig/cmd_oneclick/create/${obj.name}?topage=Commands.oneclick&nav=${topnav}">
 						<i class="fa fa-copy fa-lg"></i></a>	
 						</a>
+					</td>
+					<td>   
+						<a target=_self href="/jobs/wizard?logType=cmd_oneclick&logId=${obj.name}" >
+						<i class="fa fa-calendar fa-lg"></i></a> 
 					</td>
 					<td>
 						<a target=_self href="/config/deleteConfig/cmd_oneclick/${obj.name}?page=Commands.oneclick">
