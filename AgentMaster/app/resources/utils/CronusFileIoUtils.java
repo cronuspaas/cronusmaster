@@ -50,8 +50,6 @@ public class CronusFileIoUtils implements IVirtualFileUtils {
 			if (VarUtils.userDataDir == null) {
 				throw new RuntimeException("not in production");
 			}
-//			String rootPathFromEnv = System.getenv(VarUtils.appHome);
-//			LOG.info("user data root dir " + rootPathFromEnv);
 			String pathToPackageRoot = "..";
 			File manifestRoot = new File(Play.applicationPath,
 					pathToPackageRoot);
