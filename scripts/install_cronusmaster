@@ -1,0 +1,18 @@
+
+echo "create tmp directory for packaging"
+mkdir cronusmaster_tmp
+cd cronusmaster_tmp
+
+echo "download play runtime 1.2.7"
+wget -O play-1.2.7.zip http://downloads.typesafe.com/play/1.2.7/play-1.2.7.zip
+unzip play-1.2.7.zip
+mv play-1.2.7 play_runtime 
+rm play-1.2.7.zip
+
+echo "download cornusmaster binaries"
+ver=0.1.1
+wget -O - "https://github.com/stackscaling/cronusmaster/raw/master/releases/cronusmaster-${ver}.gz" | tar xzf -
+
+echo "installing cronusmaster"
+scripts/install.sh
+
