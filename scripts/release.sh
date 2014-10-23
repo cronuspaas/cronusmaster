@@ -26,7 +26,7 @@ fi
 DIR=$(cd "$(dirname "$0")/.."; pwd) # default root dir
 
 cd $DIR
-tar -h --preserve-permissions --ignore-failed-read -czf cronusmaster-$1.gz --directory /home/ubuntu/restcommander AgentMaster cronus scripts
+tar -h --preserve-permissions --ignore-failed-read -czf cronusmaster-$1.gz --directory $DIR AgentMaster cronus scripts
 
 mv cronusmaster-$1.gz releases/
 
