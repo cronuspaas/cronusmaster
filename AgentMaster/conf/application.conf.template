@@ -1,3 +1,11 @@
+#
+# CRONUS usage guide
+# ====================================================
+#   this is a configuration template, can be used as
+#   starting point to create other configurations
+# ====================================================
+#
+
 # This is the main configuration file for the application.
 # ~~~~~
 application.name=AgentMaster
@@ -237,17 +245,17 @@ mail.smtp=mock
 #America/Los_Angeles   America/New_York
 agentmaster.var.LOG_TIME_ZONE=America/Los_Angeles
 
-agentmaster.baseLog.cmdResLength=200
-
 # file | aws_s3 | openstack_swift 
 # (for s3 and swift, bucket/container names are DataType enum name)
 agentmaster.userDataDao=file
 agentmaster.logProgressEnabled=true
+# server public ip, or localhost if in dev, required if use smart parameters in command
 agentmaster.externalIp=localhost
+# server private ip, or localhost if in dev, required if use smart parameters in command
 agentmaster.internalIp=localhost
 
-# file
-#agentmaster.userDataDao.file.dir=user_data
+# file, user data root directory
+agentmaster.userDataDao.file.dir=user_data
 
 # s3 related configs
 agentmaster.userDataDao.s3.myAccessKeyID=your_access_key_id
@@ -263,13 +271,21 @@ agentmaster.userDataDao.swift.authenticationUrl=authn_url
 # elastic search
 # use local or remote elastic search backend
 agentmaster.localEsEnabled=true
+# local, elasticserach_data directory
 agentmaster.esData=user_data/elasticsearch_data/data
+# remote, elasticsearch service endpoint
 agentmaster.esEp=localhost
-agentmaster.esLogDataTtl=1d
 
 # agent 
-agentmaster.cronusagent.password=0d102e8ac269b10d9e5f18ead91439da
+# for agent basic auth
+agentmaster.cronusagent.password=user:password
+# for agent pki auth
 agentmaster.cronusagent.pkicert=location_to_cert
 
 # UI
+# number of logs to show per page
 agentmaster.ui.listlogsize=50
+
+# exeuction log, how much data to keep in the log summary
+agentmaster.baseLog.cmdResLength=200
+

@@ -1,3 +1,11 @@
+#
+# CRONUS usage guide
+# ====================================================
+#   sample configuration for production envionment, 
+#   deploy with param "env": "prod" in agent API call 
+# ====================================================
+#
+
 # This is the main configuration file for the application.
 # ~~~~~
 application.name=AgentMaster
@@ -247,29 +255,28 @@ agentmaster.externalIp=localhost
 agentmaster.internalIp=localhost
 
 # file
-#agentmaster.userDataDao.file.dir=user_data
+agentmaster.userDataDao.file.dir=.appdata
 
 # s3 related configs
-agentmaster.userDataDao.s3.myAccessKeyID=your_access_key_id
-agentmaster.userDataDao.s3.mySecretKey=your_secret_key
+#agentmaster.userDataDao.s3.myAccessKeyID=your_access_key_id
+#agentmaster.userDataDao.s3.mySecretKey=your_secret_key
 
 # swift related configs
-agentmaster.userDataDao.swift.tenantId=your_tenant_id
-agentmaster.userDataDao.swift.tenantName=your_tenant_name
-agentmaster.userDataDao.swift.username=your_username
-agentmaster.userDataDao.swift.password=your_password
-agentmaster.userDataDao.swift.authenticationUrl=authn_url
+#agentmaster.userDataDao.swift.tenantId=your_tenant_id
+#agentmaster.userDataDao.swift.tenantName=your_tenant_name
+#agentmaster.userDataDao.swift.username=your_username
+#agentmaster.userDataDao.swift.password=your_password
+#agentmaster.userDataDao.swift.authenticationUrl=authn_url
 
 # elastic search
 # use local or remote elastic search backend
 agentmaster.localEsEnabled=true
 agentmaster.esData=user_data/elasticsearch_data/data
-agentmaster.esEp=localhost
-agentmaster.esLogDataTtl=1d
+#agentmaster.esEp=localhost
 
 # agent 
-agentmaster.cronusagent.password=user:password
-agentmaster.cronusagent.pkicert=location_to_cert
+#agentmaster.cronusagent.password=user:password
+#agentmaster.cronusagent.pkicert=location_to_cert
 
 # UI
 agentmaster.ui.listlogsize=50
