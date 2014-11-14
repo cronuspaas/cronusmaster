@@ -4,17 +4,32 @@ DIR=$(cd "$(dirname "$0")/.."; pwd)
 cd $DIR
 
 # check and install agent if necessary
-agent_url="https://localhost:12020/agent/ValidateInternals"
-status=$(curl -s -k -L --head -o /dev/null -w "%{http_code}" $agent_url)
-echo "check agent status=$status"
-# check if the status has a non-zero length
-if [ "$status" == 000 ]; then
-   echo "Agent not installed, installing with dev mode..."
-   wget -qO- 'http://www.stackscaling.com/downloads/install_agent' | sudo dev=true bash
-   sleep 2
-   echo "Done"
-fi
-echo ""
+check_agent () {
+   agent_url="https://localhost:12020/agent/ValidateInternals"
+   status=$(curl -s -k -L --head -o /dev/null -w "%{http_code}" $agent_url)
+   echo "check agent status=$status"
+   # check if the status has a non-zero length
+   if [ "$status" == 000 ]; then
+      if [ -z "$1" ]; then
+         echo "Agent not installed, installing with dev mode..."
+         wget -qO- 'http://www.stackscaling.com/downloads/install_agent' | sudo dev=true bash
+         sleep 2
+         echo "Done"
+      else
+         fatal_error $1
+      fi
+   fi
+   echo ""
+}
+
+# Log and exit
+fatal_error () {
+   echo $1
+   exit -1
+}
+
+check_agent
+check_agent "Cronus agent missing, abort"
 
 # cleanup all services running locally on the agent
 echo "clean all local services"
