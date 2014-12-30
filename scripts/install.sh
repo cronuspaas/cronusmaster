@@ -12,7 +12,7 @@ check_agent () {
    if [ "$status" == 000 ]; then
       if [ -z "$1" ]; then
          echo "Agent not installed, installing with dev mode..."
-         wget -qO- 'http://www.stackscaling.com/downloads/install_agent' | sudo dev=true bash
+         wget -qO- 'http://cronuspaas.github.io/downloads/install_agent' | sudo dev=true bash
          sleep 2
          echo "Done"
       else
@@ -29,7 +29,7 @@ fatal_error () {
 }
 
 check_agent
-check_agent "Cronus agent missing, abort"
+check_agent "Cronus agent missing or installation failed, abort"
 
 # cleanup all services running locally on the agent
 echo "clean all local services"

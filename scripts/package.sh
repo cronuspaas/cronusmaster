@@ -47,7 +47,7 @@ platform="all" # platform is x64 or x86
 pkgname="$appname-$version.$platform.cronus"
 
 cd $DIR
-wget -qO- 'http://www.stackscaling.com/downloads/package_cronus' | DIR=$DIR appname=$appname version=$version pkgsrc=$pkgsrc platform=$platform bash
+wget -qO- 'http://cronuspaas.github.io/downloads/package_cronus' | DIR=$DIR appname=$appname version=$version pkgsrc=$pkgsrc platform=$platform bash
 
 mkdir target_cronus
 mv $pkgname $pkgname.prop target_cronus/
