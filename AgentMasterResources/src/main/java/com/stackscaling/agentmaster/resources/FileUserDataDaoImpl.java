@@ -8,8 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,11 +63,10 @@ public class FileUserDataDaoImpl implements IUserDataDao {
 		
 		List<UserDataMeta> fileNames = new ArrayList<UserDataMeta>();
 		for (File file : files) {
-			BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 			fileNames.add(new UserDataMeta(
 					file.getName(), 
-					attr.size(), 
-					new Date(attr.lastModifiedTime().toMillis())));
+					file.length(),
+					new Date(file.lastModified())));
 		}
 		Collections.sort(fileNames, udmComparator);
 		Collections.reverse(fileNames);
