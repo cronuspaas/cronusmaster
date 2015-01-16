@@ -10,7 +10,7 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/restart",
+      "url" : "https://<host>:19000/services/<serviceName>/action/restart",
       "method" : "POST",
       "body" : {
       },
@@ -30,7 +30,7 @@
       "intervalSec" : 10
     },
     "pollTemplate" : {
-      "url" : "https://<host>:12020/status/<uuid>",
+      "url" : "https://<host>:19000/status/<uuid>",
       "method" : "GET",
       "body" : {
       },

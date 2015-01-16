@@ -18,7 +18,7 @@ if [[ ! -z "$AUTHZTOKEN" ]]; then
     curl_cmd="{\"cmd\": \"yum -q -y install java-1.7.0-openjdk\", \"sudoUser\": \"root\"}"
   fi
   echo "$curl_cmd"
-  curl -k -H "Authorization:Basic $AUTHZTOKEN" -H "content-type:application/json" -X POST -d "$curl_cmd" https://localhost:12020/admin/executeCmd
+  curl -k -H "Authorization:Basic $AUTHZTOKEN" -H "content-type:application/json" -X POST -d "$curl_cmd" https://localhost:19000/admin/executeCmd
 
   for i in {1..10}; do
     if which java > /dev/null 2>&1; then

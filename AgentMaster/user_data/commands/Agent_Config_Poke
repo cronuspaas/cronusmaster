@@ -4,7 +4,7 @@
     "taskType" : "async",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/agent/config",
+      "url" : "https://<host>:19000/agent/config",
       "method" : "POST",
       "body" : {
         "configs" : "{\"<configName>\": \"<configValue>\"}"

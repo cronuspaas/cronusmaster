@@ -262,7 +262,7 @@ public class TaskResourcesProvider {
 			// if job has raw log, fetch logs and add to elastic search index
 			if (jobLog.isHasRawLogs()) {
 				HttpTaskRequest taskReq = new HttpTaskRequest();
-				UrlTemplate urlTemplate = new UrlTemplate("https://<host>:12020/status/guidoutput/<guid>", HttpMethod.GET);
+				UrlTemplate urlTemplate = new UrlTemplate("https://<host>:19000/status/guidoutput/<guid>", HttpMethod.GET);
 				taskReq.setSyncTaskOptions(TaskResourcesProvider.HTTP_CLIENT, urlTemplate, new ExecuteOption(), AgentResourceProvider.AGENT_PROCESSOR);
 				taskReq.setHosts(jobLog.getNodeGroup().getHosts());
 				taskReq.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue("guid", jobLog.uuid()));

@@ -4,7 +4,7 @@
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/agent/modules/<moduleName>",
+      "url" : "https://<host>:19000/agent/modules/<moduleName>",
       "method" : "DELETE",
       "body" : { },
       "headers" : { },

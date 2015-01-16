@@ -4,7 +4,7 @@
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/<action>",
+      "url" : "https://<host>:19000/services/<serviceName>/action/<action>",
       "method" : "POST",
       "body" : { },
       "headers" : { },

@@ -10,7 +10,7 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>",
+      "url" : "https://<host>:19000/services/<serviceName>",
       "method" : "POST",
       "body" : {
       },

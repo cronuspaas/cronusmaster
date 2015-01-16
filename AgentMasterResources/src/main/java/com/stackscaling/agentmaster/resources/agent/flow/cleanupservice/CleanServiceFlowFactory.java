@@ -58,7 +58,7 @@ public class CleanServiceFlowFactory {
 
 					// check service have active manifest
 					HttpTaskRequest req = new HttpTaskRequest();
-					UrlTemplate checkService = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:12020/services/serviceName", "host", "serviceName"));
+					UrlTemplate checkService = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:19000/services/serviceName", "host", "serviceName"));
 					checkService.addHeader("content-type", "application/json");
 					req.setSyncTaskOptions("httpClient", checkService, new ExecuteOption(0, 0, 2, 0), "agentProcessor");
 					req.setHosts(context.getGoodHosts());
@@ -106,9 +106,9 @@ public class CleanServiceFlowFactory {
 					// deactivate manifest
 					HttpTaskRequest req2 = new HttpTaskRequest();
 					UrlTemplate deactivateReq = new UrlTemplate(UrlTemplate.encodeAllVariables(
-							"https://host:12020/services/serviceName/action/deactivatemanifest", "host", "serviceName"), HttpMethod.POST);
+							"https://host:19000/services/serviceName/action/deactivatemanifest", "host", "serviceName"), HttpMethod.POST);
 					deactivateReq.addHeader("content-type", "application/json").addHeader("Authorization", "Basic <agentAuthKey>");
-					UrlTemplate pollReq = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:12020/status/uuid", "host", "uuid"));
+					UrlTemplate pollReq = new UrlTemplate(UrlTemplate.encodeAllVariables("https://host:19000/status/uuid", "host", "uuid"));
 					req2.setAsyncPollTaskOption("httpClient", deactivateReq, new ExecuteOption(0, 0, 3, 0), pollReq, new MonitorOption(0, 5, 120, 3, 0), "agentPollProcessor");
 					req2.setTemplateValuesForAllHosts(new HostTemplateValues().addNewTemplateValue(
 							"serviceName", context.getServiceName()));
@@ -177,8 +177,8 @@ public class CleanServiceFlowFactory {
 			}
 		};
 
-		final String reqUrl = UrlTemplate.encodeAllVariables("https://host:12020/services/serviceName", "host", "serviceName");
-		final String pollUrl = UrlTemplate.encodeAllVariables("https://host:12020/status/uuid", "host", "uuid");
+		final String reqUrl = UrlTemplate.encodeAllVariables("https://host:19000/services/serviceName", "host", "serviceName");
+		final String pollUrl = UrlTemplate.encodeAllVariables("https://host:19000/status/uuid", "host", "uuid");
 
 		return new StepBuilder().executeTasks(new IFlowContextTaskFactory<CleanServiceFlowContext>() {
 

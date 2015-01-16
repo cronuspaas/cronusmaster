@@ -10,7 +10,7 @@
       "retryDelaySec" : 0
     },
     "urlTemplate" : {
-      "url" : "https://<host>:12020/agent/servicesinfo",
+      "url" : "https://<host>:19000/agent/servicesinfo",
       "method" : "GET",
       "body" : {
       },

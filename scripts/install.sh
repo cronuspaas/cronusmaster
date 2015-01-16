@@ -5,7 +5,7 @@ cd $DIR
 
 # check and install agent if necessary
 check_agent () {
-   agent_url="https://localhost:12020/agent/ValidateInternals"
+   agent_url="https://localhost:19000/agent/ValidateInternals"
    status=$(curl -s -k -L --head -o /dev/null -w "%{http_code}" $agent_url)
    echo "check agent status=$status"
    # check if the status has a non-zero length
@@ -34,7 +34,7 @@ check_agent "Cronus agent missing or installation failed, abort"
 # cleanup all services running locally on the agent
 echo "clean all local services"
 echo "agent_auth=$agent_auth"
-curl -sSk -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST https://localhost:12020/agent/cleanup
+curl -sSk -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST https://localhost:19000/agent/cleanup
 sleep 2
 echo "Done"
 echo ""
@@ -64,7 +64,7 @@ echo "will install $PKG"
 
 CMD_BODY="{\"package\": [\"http://host/$PKG\"], \"env\": \"$env\" $daemon}"
 echo "use cronus cmd $CMD_BODY"
-curl -k -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST -d "$CMD_BODY" https://localhost:12020/services/cronusmaster/action/deploy
+curl -k -H "content-type:application/json" -H "Authorization:Basic $agent_auth" -X POST -d "$CMD_BODY" https://localhost:19000/services/cronusmaster/action/deploy
 echo 
 
 echo "verify installation"

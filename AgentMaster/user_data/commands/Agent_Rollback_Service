@@ -4,7 +4,7 @@
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/services/<serviceName>/action/rollback",
+      "url" : "https://<host>:19000/services/<serviceName>/action/rollback",
       "method" : "POST",
       "body" : { },
       "headers" : { },

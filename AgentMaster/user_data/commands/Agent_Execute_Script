@@ -4,7 +4,7 @@
     "taskType" : "asyncpoll",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/admin/executeScript",
+      "url" : "https://<host>:19000/admin/executeScript",
       "method" : "POST",
       "body" : {
         "scriptName" : "<scriptName>",

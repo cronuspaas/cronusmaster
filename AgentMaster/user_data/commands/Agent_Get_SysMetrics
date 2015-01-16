@@ -4,7 +4,7 @@
     "taskType" : "async",
     "httpClientType" : "httpClient",
     "urlTemplate" : {
-      "url" : "https://<host>:12020/modules/sysmetrics/getSysMetrics",
+      "url" : "https://<host>:19000/modules/sysmetrics/getSysMetrics",
       "method" : "GET",
       "body" : { },
       "headers" : {

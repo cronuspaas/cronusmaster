@@ -99,7 +99,7 @@ public class AgentResourceProvider {
 				}
 				// agent status polling
 				if (isPolling && request.getPollTemplate()==null) {
-					UrlTemplate pollTemplate = new UrlTemplate("https://<host>:12020/status/<uuid>");
+					UrlTemplate pollTemplate = new UrlTemplate("https://<host>:19000/status/<uuid>");
 					pollTemplate.addHeader("content-type", "application/json");
 					request.setPollTemplate(pollTemplate);
 				}
