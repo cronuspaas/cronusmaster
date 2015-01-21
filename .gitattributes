@@ -1,1 +1,2 @@
 AgentMaster/conf/application.conf.ec2 filter=git-crypt diff=git-crypt
+*.cronus binary
